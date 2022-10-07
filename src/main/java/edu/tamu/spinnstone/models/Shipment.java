@@ -1,64 +1,50 @@
 package edu.tamu.spinnstone.models;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Shipment extends PgObject {
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+public class Shipment extends Table {
   public long shipmentId;
   public Date shipmentDate;
   public Boolean fulfilled;
-
-  public Shipment(Connection conn, long shipmentId, Date shipmentDate, Boolean fulfilled) throws SQLException {
-    super(
-      conn,
-      "shipment",
-      Arrays.asList("shipment_id", "shipment_date", "fulfilled"),
-      Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.BOOLEAN)
-    );
-
-    this.shipmentId = shipmentId;
-    this.shipmentDate = shipmentDate;
-    this.fulfilled = fulfilled;
+  
+  public Shipment(Database db) {
+    super(db);
+    tableName = "shipment";
+    columnNames = Arrays.asList("shipment_id", "shipment_date", "fulfilled");
+    columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.BOOLEAN);
   }
 
-  public long insert() throws SQLException {
-    Object[] values = {
+  // region overrides
+
+  @Override
+  public ArrayList<Object> getColumnValues() {
+    return new ArrayList<Object>(Arrays.asList(
       this.shipmentId,
       this.shipmentDate,
       this.fulfilled
-    };
-    
-    return super.insert(
-      values
-    );
+    ));
   }
 
-  public static Shipment create(Connection conn, Date shipmentDate, Boolean fulfilled) throws SQLException {
-    Shipment p = new Shipment(
-      conn,
-      0,
-      shipmentDate,
-      fulfilled
-    );
-
-    long id = p.insert();
-    p.shipmentId = id;
-
-    return p;
+  @Override
+  public void setColumnValues(List<Object> values) {
+    this.shipmentId = (long) values.get(0);
+    this.shipmentDate = (Date) values.get(1);
+    this.fulfilled = (Boolean) values.get(2);
   }
 
-  public void addProduct(long productId, double quantityOrdered) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement(
-      String.format(
-        "INSERT INTO shipment_product (shipment_shipment_id, product_product_id, quantity_ordered) VALUES (%s,%s,%s)",
-        shipmentId,
-        productId,
-        quantityOrdered
-      )
-    );
+  // endregion
 
-    statement.execute();
-    
-  }
+  
+  // region static methods
+
+  // endregion
+
+
   
 }

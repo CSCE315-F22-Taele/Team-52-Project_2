@@ -1,21 +1,24 @@
 package edu.tamu.spinnstone;
 
-public final class App {
-    private App() {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public final class App extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        String javaVersion = System.getProperty("java.version");
+        String javafxVersion = System.getProperty("javafx.version");
+        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
+        Scene scene = new Scene(new StackPane(l), 640, 480);
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
-      try {
-        Migration migration = new Migration(
-            "csce331_904_kevin",
-            "friendlyalpaca",
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu:5432/csce331_904_52"
-          );
-
-        migration.populate();
-      }  catch(Exception e) {
-        System.out.println(e);
-        e.printStackTrace(System.out);
-      }
+      launch();
     }
 }

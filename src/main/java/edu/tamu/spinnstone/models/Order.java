@@ -3,53 +3,48 @@ package edu.tamu.spinnstone.models;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Order extends PgObject {
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+public class Order extends Table {
     public long orderId;
     public Date orderDate;
     public BigDecimal orderTotal;
+    
 
 
-    public Order(Connection conn, long orderId, Date orderDate, BigDecimal orderTotal) throws SQLException {
-        super(
-          conn,
-          "\"order\"",
-          Arrays.asList("order_id", "order_date", "order_total"),
-          Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY)
-        );
-
-      this.orderId = orderId;
-      this.orderDate = orderDate;
-      this.orderTotal = orderTotal;
+    public Order(Database db) {
+      super(db);
+      tableName = "\"order\"";
+      columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
+      columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
     }
 
-    
-    public long insert() throws SQLException {
-      Object[] values = {
+    // region overrides
+
+    @Override
+    public ArrayList<Object> getColumnValues() {
+      return new ArrayList<Object>(Arrays.asList(
         this.orderId,
         this.orderDate,
         this.orderTotal
-      };
-      
-      return super.insert(
-        values
-      );
+      ));
     }
 
-    public static Order create(Connection conn, Date orderDate, BigDecimal orderTotal) throws SQLException {
-      Order p = new Order(
-        conn,
-        0,
-        orderDate,
-        orderTotal
-      );
-
-      long id = p.insert();
-      p.orderId = id;
-
-      return p;
+    @Override
+    public void setColumnValues(List<Object> values) {
+      this.orderId = (long) values.get(0);
+      this.orderDate = (Date) values.get(1);
+      this.orderTotal = (BigDecimal) values.get(2);
     }
+
+    // endregion
+
 
 }
