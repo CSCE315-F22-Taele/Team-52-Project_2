@@ -1,21 +1,22 @@
 package edu.tamu.spinnstone;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import edu.tamu.spinnstone.ui.Window;
+import edu.tamu.spinnstone.ui.screens.ServerScreen;
+
 public final class App {
-    private App() {
-    }
-
-    public static void main(String[] args) {
-      try {
-        Migration migration = new Migration(
-            "csce331_904_kevin",
-            "friendlyalpaca",
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu:5432/csce331_904_52"
-          );
-
-        migration.populate();
-      }  catch(Exception e) {
-        System.out.println(e);
-        e.printStackTrace(System.out);
-      }
-    }
+  
+  public static void main(String[] args) throws Exception {
+    Window window = new Window();
+    ServerScreen serverScreen = new ServerScreen(window);
+    javax.swing.SwingUtilities.invokeLater(() -> {
+      window.show();
+      serverScreen.render();
+    });
+  }
 }

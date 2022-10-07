@@ -2,61 +2,59 @@ package edu.tamu.spinnstone.models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class OrderItem extends PgObject {
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+public class OrderItem extends Table {
     public long orderItemId;
     public long orderId;
     public long menuItemId;
 
+    public List<Product> products;
 
-    public OrderItem(Connection conn, long orderItemId, long orderId, long menuItemId) throws SQLException {
-        super(
-          conn,
-          "order_item",
-          Arrays.asList("order_item_id", "order_id", "menu_item_id"),
-          Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG)
-        );
 
-      this.orderId = orderId;
-      this.menuItemId = menuItemId;
+    public OrderItem(Database db) {
+      super(db);
+      tableName = "order_item";
+      columnNames = new ArrayList<String>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
+      columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
     }
 
-    
-    public long insert() throws SQLException {
-      Object[] values = {
+    // region overrides
+    @Override
+    public ArrayList<Object> getColumnValues() {
+      return new ArrayList<Object>(Arrays.asList(
         this.orderItemId,
         this.orderId,
         this.menuItemId
-      };
-      
-      return super.insert(
-        values
-      );
+      ));
     }
 
-    public static OrderItem create(Connection conn, long orderId, long menuItemId) throws SQLException {
-      OrderItem p = new OrderItem(
-        conn,
-        0,
-        orderId,
-        menuItemId
-      );
+    @Override
+    public void setColumnValues(List<Object> values) {
+      this.orderItemId = (long) values.get(0);
+      this.orderId = (long) values.get(1);
+      this.menuItemId = (long) values.get(2);
+    }
+    // endregion
 
-      long id = p.insert();
-      p.orderItemId = id;
 
-      return p;
+    public boolean addProduct(long productId) throws SQLException {
+      // adds a product to the order item and returns true if successful
+      throw new UnsupportedOperationException();
     }
 
-    public void addProduct(long productId) throws SQLException {
-      PreparedStatement statement = connection.prepareStatement(
-        String.format("INSERT INTO order_item_product (order_item_order_item_id, product_product_id) VALUES (%s,%s)", orderItemId, productId)
-      );
-
-      statement.execute();
-      
+    public boolean removeProduct(long productId) throws SQLException {
+      // removes a product from the order item and returns true if successful
+      throw new UnsupportedOperationException();
     }
+
+    
 
 }

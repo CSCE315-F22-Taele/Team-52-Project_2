@@ -1,95 +1,51 @@
 package edu.tamu.spinnstone.models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Product extends PgObject {
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+public class Product extends Table {
+    //region Fields
     public long productId;
     public String productName;
     public double quantityInStock;
+    //endregion
 
-
-
-
-    public Product(Connection conn, long productId, String productName, double quantityInStock) throws SQLException {
-        super(
-          conn,
-          "product",
-          Arrays.asList("product_id", "product_name", "quantity_in_stock"),
-          Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.DOUBLE)
-        );
-
-      this.productId = productId;
-      this.productName = productName;
-      this.quantityInStock = quantityInStock;
-
+    public Product(Database db) {
+        super(db);
+        this.tableName = "product";
+        this.columnNames = Arrays.asList("product_id", "product_name", "quantity_in_stock");
+        this.columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.DOUBLE);
     }
 
-    
-    public long insert() throws SQLException {
-      Object[] values = {
+    // region overrides
+
+    @Override
+    public ArrayList<Object> getColumnValues() {
+      return new ArrayList<Object>(Arrays.asList(
         this.productId,
         this.productName,
         this.quantityInStock
-      };
-      
-      return super.insert(
-        values
-      );
+      ));
     }
+
+    @Override
+    public void setColumnValues(List<Object> values) {
+      this.productId = (long) values.get(0);
+      this.productName = (String) values.get(1);
+      this.quantityInStock = (double) values.get(2);
+    }
+    // endregion
+
+    // region instance methods
 
     public Boolean updateQuantity(double quantity) throws SQLException {
       // returns true if the update was successful, false otherwise
-      return connection.createStatement()
-        .executeUpdate(
-          String.format(
-            "UPDATE product SET quantity_in_stock = %s WHERE product_id = %s",
-            quantity,
-            productId
-          )
-        ) > 0;
-    }
-
-    public static ArrayList<Product> getAll(Connection conn) throws SQLException {
-      PreparedStatement statement = conn.prepareStatement(
-        "SELECT * FROM product"
-      );
-
-      ResultSet rs = statement.executeQuery();
-
-      ArrayList<Product> products = new ArrayList<Product>();
-
-      while (rs.next()) {
-        Product p = new Product(
-          conn,
-          rs.getLong("product_id"),
-          rs.getString("product_name"),
-          rs.getDouble("quantity_in_stock")
-        );
-
-        products.add(p);
-      }
-
-      return products;
-    }
-
-    public static Product create(Connection conn, String name, Double quantityInStock) throws SQLException {
-      Product p = new Product(
-        conn,
-        0,
-        name,
-        quantityInStock
-      );
-
-      long productId = p.insert();
-      p.productId = productId;
-
-      return p;
+      throw new UnsupportedOperationException("updateQuantity not implemented");
     }
 
 }
