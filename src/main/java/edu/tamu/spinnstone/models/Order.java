@@ -16,6 +16,8 @@ public class Order extends Table {
     public long orderId;
     public Date orderDate;
     public BigDecimal orderTotal;
+
+    public List<OrderItem> orderItems;
     
 
 
@@ -45,6 +47,35 @@ public class Order extends Table {
     }
 
     // endregion
+
+    public boolean addOrderItem(MenuItem menuItem) throws SQLException {
+      // adds a order item of the given menuitem type to the order and returns true if successful
+      // this should update the model to reflect the change
+      // this should update the order total locally
+      throw new UnsupportedOperationException("Unimplemented");
+    }
+
+    public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
+      // removes a order item of the given menuitem type from the order and returns true if successful
+      // this should update the model to reflect the change
+      throw new UnsupportedOperationException("Unimplemented");
+    }
+
+    public boolean placeOrder() throws SQLException {
+      // places the order and returns true if successful
+      // these changes should be created or updated in the database
+      throw new UnsupportedOperationException("Unimplemented");
+    }
+
+    public boolean cancelOrder() throws SQLException {
+      // cancels the order and returns true if successful
+      // these changes should be created or updated in the database
+      throw new UnsupportedOperationException("Unimplemented");
+    }
+
+
+
+
 
 
 }

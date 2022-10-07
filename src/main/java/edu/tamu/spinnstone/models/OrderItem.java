@@ -16,6 +16,8 @@ public class OrderItem extends Table {
     public long orderId;
     public long menuItemId;
 
+    public List<Product> products;
+
 
     public OrderItem(Database db) {
       super(db);
@@ -43,8 +45,16 @@ public class OrderItem extends Table {
     // endregion
 
 
-    public void addProduct(long productId) throws SQLException {
+    public boolean addProduct(long productId) throws SQLException {
+      // adds a product to the order item and returns true if successful
       throw new UnsupportedOperationException();
     }
+
+    public boolean removeProduct(long productId) throws SQLException {
+      // removes a product from the order item and returns true if successful
+      throw new UnsupportedOperationException();
+    }
+
+    
 
 }

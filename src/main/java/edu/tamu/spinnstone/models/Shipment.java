@@ -3,6 +3,7 @@ package edu.tamu.spinnstone.models;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.tamu.spinnstone.models.sql.Database;
@@ -12,6 +13,9 @@ public class Shipment extends Table {
   public long shipmentId;
   public Date shipmentDate;
   public Boolean fulfilled;
+
+  // product -> quantity ordered
+  public HashMap<Product, Integer> products;
   
   public Shipment(Database db) {
     super(db);
@@ -45,6 +49,27 @@ public class Shipment extends Table {
 
   // endregion
 
+  public boolean addProduct(Product product, int quantity) {
+    // returns true if the product was added to the shipment, false otherwise
+    throw new UnsupportedOperationException("addProductToShipment not implemented");
+  }
+
+  public boolean removeProduct(Product product) {
+    // returns true if the product was removed from the shipment, false otherwise
+    throw new UnsupportedOperationException("removeProductFromShipment not implemented");
+  }
+
+  public boolean updateQuantity(Product product, int quantity) {
+    // update the quantity of a product in the shipment
+    // this should not update the table! assume anything that was persisted is already en-route
+    // only update the quantity in the shipment object before finalizing
+    throw new UnsupportedOperationException("updateQuantity not implemented");
+  }
+
+  public boolean finalizeShipment() {
+    // returns true if the shipment was finalized, false otherwise
+    throw new UnsupportedOperationException("finalizeShipment not implemented");
+  }
 
   
 }

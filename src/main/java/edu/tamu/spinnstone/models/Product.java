@@ -47,4 +47,5 @@ public class Product extends Table {
       // returns true if the update was successful, false otherwise
       throw new UnsupportedOperationException("updateQuantity not implemented");
     }
+
 }
