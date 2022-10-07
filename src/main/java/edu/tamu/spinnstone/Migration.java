@@ -180,7 +180,7 @@ public class Migration {
 
     // create shipments
     for (int i = 0; i <= 2; ++i) {
-      Shipment shipment = Shipment.create(connection, new Date(2020,1,(i + 1) * 8), false);
+      Shipment shipment = Shipment.create(connection, Date.valueOf(LocalDate.of(2020,1,(i + 1) * 8)), false);
 
       // For each product
       for (Product product : products) {
