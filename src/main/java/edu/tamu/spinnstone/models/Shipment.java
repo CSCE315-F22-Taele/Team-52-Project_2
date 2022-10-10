@@ -47,6 +47,15 @@ public class Shipment extends Table {
   
   // region static methods
 
+  public static Shipment create(Database db, Date shipmentDate, Boolean fulfilled) throws SQLException {
+    Shipment shipment = new Shipment(db);
+    shipment.shipmentDate = shipmentDate;
+    shipment.fulfilled = fulfilled;
+    shipment.shipmentId = shipment.insert();
+
+    return shipment;
+  }
+
   // endregion
 
   public boolean addProduct(Product product, int quantity) {

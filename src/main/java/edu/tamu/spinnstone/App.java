@@ -1,22 +1,28 @@
 package edu.tamu.spinnstone;
 
-import java.io.IOException;
-import java.nio.file.Path;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
-import edu.tamu.spinnstone.ui.Window;
+import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.ui.screens.ServerScreen;
 
+import javax.swing.*;
+
 public final class App {
-  
   public static void main(String[] args) throws Exception {
-    Window window = new Window();
-    ServerScreen serverScreen = new ServerScreen(window);
+    JFrame frame = new JFrame("Spin N' Stone");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    Database db = new Database();
+    db.connect();
+    ServerScreen serverScreen = new ServerScreen(db);
+
     javax.swing.SwingUtilities.invokeLater(() -> {
-      window.show();
-      serverScreen.render();
+      try {
+        UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
+      } catch (Exception e) {
+        System.out.println("unable to set look and feel");
+      }
+      frame.setSize(980, 735);
+      frame.setContentPane(serverScreen.screen);
+      frame.setVisible(true);
     });
   }
 }

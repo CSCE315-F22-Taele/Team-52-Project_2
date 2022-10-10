@@ -1,9 +1,7 @@
 package edu.tamu.spinnstone.models;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +24,7 @@ public class Order extends Table {
       tableName = "\"order\"";
       columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
       columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
+      orderItems = new ArrayList<OrderItem>();
     }
 
     // region overrides
@@ -46,13 +45,49 @@ public class Order extends Table {
       this.orderTotal = (BigDecimal) values.get(2);
     }
 
+    @Override
+    public void update() throws SQLException {
+      super.update();
+      // get the id of the order
+      for (OrderItem orderItem : orderItems) {
+        // cheap way to check if it already exists
+        // we could probably do this in sql
+        if(!orderItem.sync()) {
+          orderItem.insert();
+        }
+      }
+    }
+
+    public static Order create(Database db, Date date, BigDecimal total) throws SQLException {
+      Order order = new Order(db);
+      order.orderDate = date;
+      order.orderTotal = total;
+      order.orderId = order.insert();
+
+      return order;
+    }
+
+    public void calculateOrderTotal() {
+        for(OrderItem orderItem : orderItems) {
+            if(orderItem.menuItem == null) {
+                try {
+                    orderItem.getMenuItem();
+                } catch (Exception e) {
+                    System.out.println(String.format("unable to calculate order total: %s", e));
+
+                }
+            }
+        }
+        orderTotal = orderItems.stream().map(item -> item.menuItem.menuItemPrice).reduce(new BigDecimal(0), BigDecimal::add);
+    }
+
     // endregion
 
-    public boolean addOrderItem(MenuItem menuItem) throws SQLException {
+    public void addOrderItem(OrderItem orderItem) {
       // adds a order item of the given menuitem type to the order and returns true if successful
       // this should update the model to reflect the change
       // this should update the order total locally
-      throw new UnsupportedOperationException("Unimplemented");
+        orderItems.add(orderItem);
     }
 
     public boolean removeOrderItem(MenuItem menuItem) throws SQLException {

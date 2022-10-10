@@ -1,14 +1,13 @@
 package edu.tamu.spinnstone.models.sql;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class Query {
@@ -56,6 +55,60 @@ public class Query {
     this.clauses = clauses;
     this.requiredClauses = requiredClauses;
     this.optionalClauses = optionalClauses;
+  }
+
+  private void setStatementValue(
+          PreparedStatement statement,
+          int index,
+          Object value
+  ) throws SQLException {
+    if (value instanceof String) {
+      statement.setString(index, (String) value);
+    } else if (value instanceof Float) {
+      statement.setFloat(index, (Float) value);
+    } else if (value instanceof Date) {
+      statement.setDate(index, (Date) value);
+    } else if (value instanceof Integer) {
+      statement.setInt(index, (Integer) value);
+    } else if (value instanceof Boolean) {
+      statement.setBoolean(index, (Boolean) value);
+    } else if (value instanceof Long) {
+      statement.setLong(index, (Long) value);
+    } else if (value instanceof Double) {
+      statement.setDouble(index, (Double) value);
+    } else if (value instanceof BigDecimal) {
+      statement.setBigDecimal(index, (BigDecimal) value);
+    } else if (value == null) {
+      statement.setNull(index, java.sql.Types.NULL);
+    } else {
+      throw new UnsupportedOperationException("Unsupported type");
+    }
+  }
+
+  private List<String> prepareValues(List<Object> values) {
+    // prepare a list of values for use in a sql statement
+    try {
+      PreparedStatement statement = database.connection.prepareStatement(
+              String.join("~", values.stream().map(v -> "?").collect(Collectors.toList()))
+      );
+      for (int i = 0; i < values.size(); i++) {
+        Object value = values.get(i);
+        if (value == null) {
+          // support optional parameters
+          continue;
+        }
+        setStatementValue(statement, i + 1, values.get(i));
+      }
+      return Arrays.asList(statement.toString().split("~"));
+    } catch (Exception e) {
+      return new ArrayList<String>();
+    }
+
+  }
+
+  private String prepareValue(Object value) {
+    // prepare a single value for use in a sql statement
+    return prepareValues(new ArrayList<Object>(Arrays.asList(value))).get(0);
   }
 
   // make sure that all required clauses are present
@@ -155,8 +208,9 @@ public class Query {
     this.clauses.put(ClauseType.WHERE, String.format(whereTemplate, whereArgs));
     return this;
   }
-  public Query where(String key, String value) {
-    this.clauses.put(ClauseType.WHERE, String.format("%s = %s", key, value));
+
+  public Query where(String key, Object value) {
+    this.clauses.put(ClauseType.WHERE, String.format("%s = %s", key, prepareValue(value)));
     return this;
   }
   public Query where(Map<String, String> whereMap) {

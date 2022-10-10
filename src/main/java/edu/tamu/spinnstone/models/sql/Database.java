@@ -2,7 +2,9 @@ package edu.tamu.spinnstone.models.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,6 +35,12 @@ public class Database {
 
   public void disconnect() throws SQLException {
     connection.close();
+  }
+
+  public ResultSet query(String query) throws SQLException {
+    Statement stm = connection.createStatement();
+    boolean success = stm.execute(query);
+    return success ? stm.getResultSet() : null;
   }
 
   public Query.Insert insert(String tableName) {

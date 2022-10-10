@@ -28,13 +28,17 @@ public class Table {
     MONEY
   }
 
-  protected String tableName;
-  protected List<String> columnNames;
-  protected List<ColumnType> columnTypes;
-  protected Database database;
+  public String tableName;
+  public List<String> columnNames;
+  public List<ColumnType> columnTypes;
+  public Database database;
 
   public Table(Database database) {
     this.database = database;
+  }
+
+  public List<String> getColumnNames() {
+    return columnNames;
   }
 
   // region abstract methods
@@ -164,32 +168,46 @@ public class Table {
       setMap.put(columnNames.get(i), prepareValue(values.get(i)));
     }
 
-    database.update(tableName)
+    ResultSet result = database.update(tableName)
       .set(setMap)
-      .where(columnNames.get(0), values.get(0).toString())
+      .where(columnNames.get(0), values.get(0))
+      .returning(columnNames.get(0))
       .execute();
+
+    if(result.next()) {
+      // we are updating id in case this was a new object
+      values.set(0, result.getLong(1));
+      setColumnValues(values);
+    }
   }
 
   
   public void delete() throws SQLException {
     database.delete(tableName)
-    .where(columnNames.get(0), getColumnValues().get(0).toString())
+    .where(columnNames.get(0), getColumnValues().get(0))
     .execute();
   }
 
-  public void sync() throws SQLException {
+  public boolean sync() throws SQLException {
+    // return true if successful, false if not
     ResultSet rs = database.select(columnNames)
       .from(tableName)
-      .where(columnNames.get(0), getColumnValues().get(0).toString())
+      .where(columnNames.get(0), getColumnValues().get(0))
       .execute();
 
-    if (rs.next()) {
+    boolean exists = rs.next();
+
+    if (exists) {
       updateFromResultSet(rs);
     }
+
+    return exists;
   }
 
   public boolean find(long id) throws SQLException {
     // true if found, false if not found
+    // same as sync but intended to be used for a new object
+    // a little awkward
 
     Query query = database.select(columnNames)
       .from(tableName)
@@ -206,7 +224,7 @@ public class Table {
   }
 
 
-  public Table findWhere(String where, String orderBy, int limit) throws SQLException {
+  public ResultSet findWhere(String where, String orderBy, int limit) throws SQLException {
     Query query = database.select(columnNames).from(tableName);
     if(where != null) {
       query.where(where);
@@ -221,7 +239,7 @@ public class Table {
     ResultSet rs = query.execute();
 
     while (rs.next()) {
-      updateFromResultSet(rs);
+      return rs;
     }
 
     return null;

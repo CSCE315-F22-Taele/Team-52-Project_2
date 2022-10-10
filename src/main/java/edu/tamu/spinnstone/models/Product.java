@@ -41,6 +41,19 @@ public class Product extends Table {
     }
     // endregion
 
+    // region static methods
+
+    public static Product create(Database db, String productName, double quantityInStock) throws SQLException {
+      Product product = new Product(db);
+      product.productName = productName;
+      product.quantityInStock = quantityInStock;
+      product.productId = product.insert();
+
+      return product;
+    }
+
+    // endregion
+
     // region instance methods
 
     public Boolean updateQuantity(double quantity) throws SQLException {
@@ -48,4 +61,50 @@ public class Product extends Table {
       throw new UnsupportedOperationException("updateQuantity not implemented");
     }
 
+    // endregion
+
+    // region static declarations
+
+    public static enum Name {
+      FOUNTAIN_CUP("Fountain Cup"),
+      BOTTLE_BEVERAGE("Bottle Beverage"),
+      GATORADE("Gatorade"),
+      CAULIFLOWER("Cauliflower"),
+      STANDARD("Standard"),
+      ALFREDO("Alfredo"),
+      TRADITIONAL_RED("Traditional Red"),
+      ZESTY_RED("Zesty Red"),
+      HOUSE_BLEND("House Blend"),
+      PARMESAN("Parmesan"),
+      BBQ_SAUCE("BBQ Sauce"),
+      OLIVE_OIL("Olive Oil"),
+      OREGANO("Oregano"),
+      RANCH("Ranch"),
+      SRIRACHA("Sriracha"),
+      DICED_HAM("Diced Ham"),
+      ITALIAN_SAUSAGE("Italian Sausage"),
+      MEATBALL("Meatball"),
+      PEPPERONI("Pepperoni"),
+      SALAMI("Salami"),
+      SMOKED_CHICKEN("Smoked Chicken"),
+      BANANA_PEPPERS("Banana Peppers"),
+      BLACK_OLIVES("Black Olives"),
+      GREEN_PEPPERS("Green Peppers"),
+      JALAPENOS("Jalapenos"),
+      MUSHROOMS("Mushrooms"),
+      ONIONS("Onions"),
+      PINEAPPLE("Pineapple"),
+      ROASTED_GARLIC("Roasted Garlic"),
+      SPINACH("Spinach"),
+      TOMATOES("Tomatoes");
+      
+      private final String name;
+
+      private Name(String name) {
+        this.name = name;
+      }
+      public String toString() {
+        return this.name;
+      }
+    }
 }
