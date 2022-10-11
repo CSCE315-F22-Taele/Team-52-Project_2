@@ -44,6 +44,26 @@ public class ServerScreen {
                 Actions.setOptionsCard.onNext(Actions.OptionCards.DRINKS);
             }
         });
+        CHECKOUTButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Order order = Actions.getOrder.getValue();
+                Database database = Actions.getDatabase.getValue();
+                if (order == null || database == null) {
+                    return;
+                }
+                try {
+                    order.placeOrder();
+                    Order newOrder = new Order(database);
+                    Actions.getOrder.onNext(newOrder);
+                    Actions.orderUpdated.onNext(newOrder);
+                    Actions.setOptionsCard.onNext(Actions.OptionCards.PIZZA);
+                } catch (Exception err) {
+                    System.out.println(String.format("error placing order: %s", err.toString()));
+                }
+            }
+        });
     }
 
     {
@@ -124,6 +144,7 @@ public class ServerScreen {
     public JComponent $$$getRootComponent$$$() {
         return screen;
     }
+
     // @formatter:on
 
 }

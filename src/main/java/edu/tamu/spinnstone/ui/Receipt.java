@@ -4,10 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import com.intellij.uiDesigner.core.Spacer;
-import edu.tamu.spinnstone.models.Order;
 import edu.tamu.spinnstone.models.OrderItem;
 import edu.tamu.spinnstone.models.Product;
-import rx.functions.Action1;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -19,8 +17,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Receipt {
     private JLabel subtotal;
@@ -40,10 +36,9 @@ public class Receipt {
             order.calculateOrderTotal();
 
             // set total labels
-            subtotal.setText(NumberFormat.getCurrencyInstance().format(order.orderTotal));
-            BigDecimal taxCharge = order.orderTotal.multiply(new BigDecimal(".0625"));
-            tax.setText(NumberFormat.getCurrencyInstance().format(taxCharge));
-            total.setText(NumberFormat.getCurrencyInstance().format(order.orderTotal.add(taxCharge)));
+            subtotal.setText(NumberFormat.getCurrencyInstance().format(order.subTotal));
+            tax.setText(NumberFormat.getCurrencyInstance().format(order.taxCharge));
+            total.setText(NumberFormat.getCurrencyInstance().format(order.orderTotal));
 
             // out with the old
             receiptLines.clear();
@@ -63,15 +58,17 @@ public class Receipt {
                 line.price.setText(NumberFormat.getCurrencyInstance().format(item.menuItem.menuItemPrice));
 
                 // build the ingredients list
-                String ingredientText = "";
-                if (!item.products.isEmpty()) {
-                    ingredientText += "<html><ul>";
-                    for (Product ingredient : item.products) {
-                        ingredientText += String.format("<li>%s</li>", ingredient.productName);
+                if (!item.isDrink) {
+                    String ingredientText = "";
+                    if (!item.products.isEmpty()) {
+                        ingredientText += "<html><ul>";
+                        for (Product ingredient : item.products) {
+                            ingredientText += String.format("<li>%s</li>", ingredient.productName);
+                        }
+                        ingredientText += "</ul></html>";
                     }
-                    ingredientText += "</ul></html>";
+                    line.ingredients.setText(ingredientText);
                 }
-                line.ingredients.setText(ingredientText);
 
                 receiptLines.add(line);
             }

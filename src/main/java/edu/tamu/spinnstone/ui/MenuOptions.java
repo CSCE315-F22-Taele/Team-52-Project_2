@@ -368,47 +368,33 @@ public class MenuOptions {
         TOMATOESButton.setText("TOMATOES");
         panel21.add(TOMATOESButton);
         drinkMenu = new JPanel();
-        drinkMenu.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        drinkMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         drinkMenu.setBackground(new Color(-1644826));
         MenuOptionCards.add(drinkMenu, "drinks");
-        final JPanel panel22 = new JPanel();
-        panel22.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
-        drinkMenu.add(panel22, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel23 = new JPanel();
-        panel23.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel22.add(panel23, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         BOTTLEDButton = new JButton();
         BOTTLEDButton.setBackground(new Color(-15066598));
         BOTTLEDButton.setForeground(new Color(-1));
         BOTTLEDButton.setMinimumSize(new Dimension(0, 30));
         BOTTLEDButton.setText("BOTTLED");
-        panel23.add(BOTTLEDButton);
+        drinkMenu.add(BOTTLEDButton);
         WATERButton = new JButton();
         WATERButton.setBackground(new Color(-15066598));
         WATERButton.setForeground(new Color(-1));
         WATERButton.setMinimumSize(new Dimension(0, 30));
         WATERButton.setText("WATER");
-        panel23.add(WATERButton);
+        drinkMenu.add(WATERButton);
         GATORADEButton = new JButton();
         GATORADEButton.setBackground(new Color(-15066598));
         GATORADEButton.setForeground(new Color(-1));
         GATORADEButton.setMinimumSize(new Dimension(0, 30));
         GATORADEButton.setText("GATORADE");
-        panel23.add(GATORADEButton);
-        final Spacer spacer2 = new Spacer();
-        panel22.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JPanel panel24 = new JPanel();
-        panel24.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel22.add(panel24, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        drinkMenu.add(GATORADEButton);
         FOUNTAINButton = new JButton();
         FOUNTAINButton.setBackground(new Color(-15066598));
         FOUNTAINButton.setForeground(new Color(-1));
         FOUNTAINButton.setMinimumSize(new Dimension(0, 30));
         FOUNTAINButton.setText("FOUNTAIN");
-        panel24.add(FOUNTAINButton);
-        final JPanel panel25 = new JPanel();
-        panel25.setLayout(new CardLayout(0, 0));
-        drinkMenu.add(panel25, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        drinkMenu.add(FOUNTAINButton);
         ButtonGroup buttonGroup;
         buttonGroup = new ButtonGroup();
         buttonGroup.add(STANDARDButton);
@@ -707,11 +693,38 @@ public class MenuOptions {
                         return;
                     }
 
+
+                    // get the associated product
+                    Product product = new Product(db);
+                    try {
+                        ResultSet rs = db.select("*").from(product.tableName)
+                                .where(
+                                        Product.ColumnNames.PRODUCT_NAME.toString(),
+                                        entry.getKey().toString())
+                                .execute();
+                        if (rs.next()) {
+                            product.updateFromResultSet(rs);
+                            if (product.quantityInStock <= 0) {
+                                System.out.println("out of stock");
+                                entry.getValue().setEnabled(false);
+                                return;
+                            }
+                        } else {
+                            System.out.println("unkown drink type:");
+                            return;
+                        }
+
+                    } catch (Exception ex) {
+                        System.out.println("Error trying to get drink product: " + ex.getMessage());
+                        return;
+                    }
+
                     // creae a new drink order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
 
-                    // no orderid yet (until it is finalized)
+                    orderItem.addProduct(product);
+                    orderItem.isDrink = true;
 
 
                     activeOrder.addOrderItem(orderItem);

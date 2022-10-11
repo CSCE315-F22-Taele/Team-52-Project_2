@@ -14,6 +14,24 @@ public class Database {
     private String password;
     public Connection connection;
 
+    public enum TableNames {
+        ORDER_ITEM_PRODUCT("order_item_product"),
+        SHIPMENT("shipment"),
+        ORDER_ITEM("order_item"),
+        SHIPMENT_PRODUCT("shipment_product"),
+        ORDER("order"),
+        PRODUCT("product"),
+        MENU_ITEM("menu_item");
+
+        public String name;
+        TableNames(String name) {
+            this.name = name;
+        }
+        public String toString() {
+            return name;
+        }
+    }
+
     public Database() {
         this.url = "jdbc:postgresql://csce-315-db.engr.tamu.edu:5432/csce331_904_52";
         this.user = "csce331_904_kevin";

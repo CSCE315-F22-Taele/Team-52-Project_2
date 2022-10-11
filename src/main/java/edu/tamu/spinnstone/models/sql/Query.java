@@ -221,10 +221,10 @@ public class Query {
         return this;
     }
 
-    public Query where(Map<String, String> whereMap) {
+    public Query where(Map<String, Object> whereMap) {
         ArrayList<String> whereClauses = new ArrayList<String>();
-        for (Map.Entry<String, String> entry : whereMap.entrySet()) {
-            whereClauses.add(String.format("%s = %s", entry.getKey(), entry.getValue()));
+        for (Map.Entry<String, Object> entry : whereMap.entrySet()) {
+            whereClauses.add(String.format("%s = %s", entry.getKey(), prepareValue(entry.getValue())));
         }
         this.clauses.put(ClauseType.WHERE, String.join(", ", whereClauses));
         return this;
@@ -255,8 +255,8 @@ public class Query {
         return this;
     }
 
-    public Query values(String... values) {
-        this.clauses.put(ClauseType.VALUES, String.join(", ", values));
+    public Query values(Object... values) {
+        this.clauses.put(ClauseType.VALUES, String.join(", ", prepareValues(Arrays.asList(values))));
         return this;
     }
 

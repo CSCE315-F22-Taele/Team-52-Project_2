@@ -583,8 +583,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="8321" binding="drinkMenu" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <grid id="8321" binding="drinkMenu" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
         <constraints>
           <card name="drinks"/>
         </constraints>
@@ -593,83 +592,42 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="fe142" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <grid id="62074" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="67bbf" class="javax.swing.JButton" binding="BOTTLEDButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <background color="-15066598"/>
-                      <foreground color="-1"/>
-                      <minimumSize width="0" height="30"/>
-                      <text value="BOTTLED"/>
-                    </properties>
-                  </component>
-                  <component id="8b787" class="javax.swing.JButton" binding="WATERButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <background color="-15066598"/>
-                      <foreground color="-1"/>
-                      <minimumSize width="0" height="30"/>
-                      <text value="WATER"/>
-                    </properties>
-                  </component>
-                  <component id="59faf" class="javax.swing.JButton" binding="GATORADEButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <background color="-15066598"/>
-                      <foreground color="-1"/>
-                      <minimumSize width="0" height="30"/>
-                      <text value="GATORADE"/>
-                    </properties>
-                  </component>
-                </children>
-              </grid>
-              <vspacer id="8b417">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </vspacer>
-              <grid id="d870b" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="95c26" class="javax.swing.JButton" binding="FOUNTAINButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <background color="-15066598"/>
-                      <foreground color="-1"/>
-                      <minimumSize width="0" height="30"/>
-                      <text value="FOUNTAIN"/>
-                    </properties>
-                  </component>
-                </children>
-              </grid>
-            </children>
-          </grid>
-          <grid id="6dfe1" layout-manager="CardLayout" hgap="0" vgap="0">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children/>
-          </grid>
+          <component id="67bbf" class="javax.swing.JButton" binding="BOTTLEDButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <background color="-15066598"/>
+              <foreground color="-1"/>
+              <minimumSize width="0" height="30"/>
+              <text value="BOTTLED"/>
+            </properties>
+          </component>
+          <component id="8b787" class="javax.swing.JButton" binding="WATERButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <background color="-15066598"/>
+              <foreground color="-1"/>
+              <minimumSize width="0" height="30"/>
+              <text value="WATER"/>
+            </properties>
+          </component>
+          <component id="59faf" class="javax.swing.JButton" binding="GATORADEButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <background color="-15066598"/>
+              <foreground color="-1"/>
+              <minimumSize width="0" height="30"/>
+              <text value="GATORADE"/>
+            </properties>
+          </component>
+          <component id="95c26" class="javax.swing.JButton" binding="FOUNTAINButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <background color="-15066598"/>
+              <foreground color="-1"/>
+              <minimumSize width="0" height="30"/>
+              <text value="FOUNTAIN"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>

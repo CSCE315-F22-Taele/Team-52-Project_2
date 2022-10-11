@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
+import edu.tamu.spinnstone.models.sql.Query;
 
 public class Product extends Table {
     //region Fields
@@ -59,6 +60,26 @@ public class Product extends Table {
     public Boolean updateQuantity(double quantity) throws SQLException {
         // returns true if the update was successful, false otherwise
         throw new UnsupportedOperationException("updateQuantity not implemented");
+    }
+
+    public void decrementQuantity(double by) throws SQLException {
+        database.update(tableName)
+                .set(
+                        String.format(
+                                "%s = %s - %.3f",
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                by
+                        )
+                )
+                .where(
+                        String.format(
+                                "%s = %s AND %s > 0",
+                                ColumnNames.PRODUCT_ID.toString(),
+                                prepareValue(productId),
+                                ColumnNames.QUANTITY_IN_STOCK.toString()
+                        )
+                ).execute();
     }
 
     // endregion

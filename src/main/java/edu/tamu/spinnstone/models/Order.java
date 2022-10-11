@@ -3,6 +3,7 @@ package edu.tamu.spinnstone.models;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,10 +12,14 @@ import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
 
 public class Order extends Table {
+    // db values
     public long orderId;
     public Date orderDate;
     public BigDecimal orderTotal;
 
+    // local values
+    public BigDecimal subTotal;
+    public BigDecimal taxCharge;
     public List<OrderItem> orderItems;
 
 
@@ -24,6 +29,7 @@ public class Order extends Table {
         columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
         columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
         orderItems = new ArrayList<OrderItem>();
+        orderId = -1;
     }
 
     // region overrides
@@ -48,13 +54,6 @@ public class Order extends Table {
     public void update() throws SQLException {
         super.update();
         // get the id of the order
-        for (OrderItem orderItem : orderItems) {
-            // cheap way to check if it already exists
-            // we could probably do this in sql
-            if (!orderItem.sync()) {
-                orderItem.insert();
-            }
-        }
     }
 
     public static Order create(Database db, Date date, BigDecimal total) throws SQLException {
@@ -65,6 +64,7 @@ public class Order extends Table {
 
         return order;
     }
+
 
     public void calculateOrderTotal() {
         for (OrderItem orderItem : orderItems) {
@@ -77,10 +77,31 @@ public class Order extends Table {
                 }
             }
         }
-        orderTotal = orderItems.stream().map(item -> item.menuItem.menuItemPrice).reduce(new BigDecimal(0), BigDecimal::add);
+        subTotal = orderItems.stream().map(item -> item.menuItem.menuItemPrice).reduce(new BigDecimal(0), BigDecimal::add);
+        taxCharge = subTotal.multiply(new BigDecimal(".0625"));
+        orderTotal = subTotal.add(taxCharge);
     }
 
     // endregion
+
+    public void placeOrder() throws SQLException {
+        orderDate = Date.valueOf(LocalDate.now());
+        // create the order
+        orderId = insert();
+        for (OrderItem orderItem : orderItems) {
+            // create the order items (associated to this order)
+            orderItem.orderId = orderId;
+            orderItem.orderItemId = orderItem.insert();
+
+            // create the orderItem/product link
+            orderItem.insertProducts();
+
+            // update product inventory
+            for(Product product : orderItem.products) {
+                product.decrementQuantity(1.0);
+            }
+        }
+    }
 
     public void addOrderItem(OrderItem orderItem) {
         // adds a order item of the given menuitem type to the order and returns true if successful
@@ -92,12 +113,6 @@ public class Order extends Table {
     public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
         // removes a order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
-        throw new UnsupportedOperationException("Unimplemented");
-    }
-
-    public boolean placeOrder() throws SQLException {
-        // places the order and returns true if successful
-        // these changes should be created or updated in the database
         throw new UnsupportedOperationException("Unimplemented");
     }
 

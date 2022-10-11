@@ -1,9 +1,11 @@
 package edu.tamu.spinnstone.models;
 
 import java.awt.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.tamu.spinnstone.models.sql.Database;
@@ -19,6 +21,7 @@ public class OrderItem extends Table {
 
     // strictly for drinks
     public int quantity;
+    public boolean isDrink;
 
 
     public OrderItem(Database db) {
@@ -28,6 +31,8 @@ public class OrderItem extends Table {
         columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
         products = new ArrayList<Product>();
         quantity = 1;
+        orderItemId = -1;
+        isDrink = false;
     }
 
     // region overrides
@@ -46,7 +51,34 @@ public class OrderItem extends Table {
         this.orderId = (long) values.get(1);
         this.menuItemId = (long) values.get(2);
     }
+
+    @Override
+    public void update() throws SQLException {
+        if(menuItem != null) {
+            menuItemId = menuItem.menuItemId;
+        }
+        // create if not exists order_item_product relation for each product
+        super.update();
+    }
     // endregion
+
+    public void insertProducts() throws SQLException {
+        // assume all products have not been inserted
+        for(Product product : products) {
+            // probably a way to do this in sql with a single statement
+//            ResultSet existingRecord = database.select("*").from(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
+//                    .where(new HashMap<String, Object>() {{
+//                        put("order_item_order_item_id", orderItemId);
+//                        put("product_product_id", product.productId);
+//                    }}).execute();
+
+//            if(!existingRecord.next()) {
+                database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
+                        .columns("order_item_order_item_id", "product_product_id")
+                        .values(orderItemId, product.productId).execute();
+//            }
+        }
+    }
 
     //region static methods
     public static OrderItem create(Database db, long orderId, long menuItemId) throws SQLException {

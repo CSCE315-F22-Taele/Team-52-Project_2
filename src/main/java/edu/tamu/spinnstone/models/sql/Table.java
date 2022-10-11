@@ -53,7 +53,7 @@ public class Table {
 
     // region helpers
 
-    private void setStatementValue(
+    protected void setStatementValue(
             PreparedStatement statement,
             int index,
             Object value
@@ -81,7 +81,7 @@ public class Table {
         }
     }
 
-    private List<String> prepareValues(List<Object> values) throws SQLException {
+    protected List<String> prepareValues(List<Object> values) throws SQLException {
         // prepare a list of values for use in a sql statement
         PreparedStatement statement = database.connection.prepareStatement(
                 String.join("~", values.stream().map(v -> "?").collect(Collectors.toList()))
@@ -97,7 +97,7 @@ public class Table {
         return Arrays.asList(statement.toString().split("~"));
     }
 
-    private String prepareValue(Object value) throws SQLException {
+    protected String prepareValue(Object value) throws SQLException {
         // prepare a single value for use in a sql statement
         return prepareValues(new ArrayList<Object>(Arrays.asList(value))).get(0);
     }

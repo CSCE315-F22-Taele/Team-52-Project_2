@@ -26,5 +26,6 @@ public final class App {
       frame.setContentPane(serverScreen.screen);
       frame.setVisible(true);
     });
+    
   }
 }
