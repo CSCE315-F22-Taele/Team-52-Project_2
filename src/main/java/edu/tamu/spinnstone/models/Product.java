@@ -3,7 +3,6 @@ package edu.tamu.spinnstone.models;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
