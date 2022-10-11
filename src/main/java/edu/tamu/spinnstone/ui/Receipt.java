@@ -3,7 +3,11 @@ package edu.tamu.spinnstone.ui;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
+import com.intellij.uiDesigner.core.Spacer;
+import edu.tamu.spinnstone.models.Order;
 import edu.tamu.spinnstone.models.OrderItem;
+import edu.tamu.spinnstone.models.Product;
+import rx.functions.Action1;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -16,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Receipt {
     private JLabel subtotal;
@@ -29,17 +34,24 @@ public class Receipt {
     public Receipt() {
         receiptLines = new ArrayList<ReceiptLine>();
 
+
         Actions.orderUpdated.subscribe(order -> {
+            // update total
+            order.calculateOrderTotal();
+
+            // set total labels
             subtotal.setText(NumberFormat.getCurrencyInstance().format(order.orderTotal));
             BigDecimal taxCharge = order.orderTotal.multiply(new BigDecimal(".0625"));
             tax.setText(NumberFormat.getCurrencyInstance().format(taxCharge));
             total.setText(NumberFormat.getCurrencyInstance().format(order.orderTotal.add(taxCharge)));
-            subtotal.repaint();
 
-            for (ReceiptLine line : receiptLines) {
-                receiptItems.remove(line.container);
-            }
+            // out with the old
             receiptLines.clear();
+            receiptItems.removeAll();
+
+            // create enough rows to hold each line plus one row for spacer
+            receiptItems.setLayout(new GridLayoutManager(order.orderItems.size() + 1, 1, new Insets(16, 8, 0, 0), 0, 0));
+
 
             for (OrderItem item : order.orderItems) {
                 ReceiptLine line = new ReceiptLine();
@@ -49,24 +61,35 @@ public class Receipt {
                 // could group the items together by type
                 line.quantity.setText(String.format("x%d", 1));
                 line.price.setText(NumberFormat.getCurrencyInstance().format(item.menuItem.menuItemPrice));
-                line.ingredients.setListData(
-                        item.products.stream()
-                                .map(product -> new JLabel(product.productName))
-                                .toArray(JLabel[]::new)
-                );
 
+                // build the ingredients list
+                String ingredientText = "";
+                if (!item.products.isEmpty()) {
+                    ingredientText += "<html><ul>";
+                    for (Product ingredient : item.products) {
+                        ingredientText += String.format("<li>%s</li>", ingredient.productName);
+                    }
+                    ingredientText += "</ul></html>";
+                }
+                line.ingredients.setText(ingredientText);
 
                 receiptLines.add(line);
             }
 
-            for (ReceiptLine line : receiptLines) {
-
+            for (int i = 0; i < receiptLines.size(); i++) {
                 receiptItems.add(
-                        line.$$$getRootComponent$$$(),
-                        new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(50, -1), null, 0, false)
+                        receiptLines.get(i).$$$getRootComponent$$$(),
+                        new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(50, -1), null, 0, false)
                 );
             }
 
+
+            // add spacer to bottom to make lines stick to the top
+            final Spacer spacer1 = new Spacer();
+            receiptItems.add(spacer1, new GridConstraints(order.orderItems.size(), 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+            receiptItems.setAutoscrolls(true);
+
+            receiptItems.revalidate();
             receiptItems.repaint();
 
 
@@ -172,10 +195,15 @@ public class Receipt {
         total.setForeground(new Color(-16777216));
         total.setText("");
         panel11.add(total, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setBackground(new Color(-1));
+        scrollPane1.setForeground(new Color(-1));
+        scrollPane1.setHorizontalScrollBarPolicy(31);
+        container.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         receiptItems = new JPanel();
         receiptItems.setLayout(new GridLayoutManager(1, 1, new Insets(16, 8, 0, 0), 0, 0));
         receiptItems.setBackground(new Color(-1));
-        container.add(receiptItems, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setViewportView(receiptItems);
     }
 
     /**

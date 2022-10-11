@@ -14,10 +14,14 @@ import edu.tamu.spinnstone.models.Order;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ServerScreen {
     public JPanel screen;
     private JButton CHECKOUTButton;
+    private JLabel pizzaButton;
+    private JLabel drinkButton;
 
 
     public ServerScreen(Database db) {
@@ -26,17 +30,18 @@ public class ServerScreen {
         Actions.getOrder.onNext(order);
         Actions.getDatabase.onNext(db);
 
-        Actions.addOrderItem.subscribe(new Action1<OrderItem>() {
+        pizzaButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void call(OrderItem orderItem) {
-                try {
-                    Order order = Actions.getOrder.getValue();
-                    order.addOrderItem(orderItem);
-                    order.calculateOrderTotal();
-                    Actions.orderUpdated.onNext(order);
-                } catch (Exception e) {
-                    System.out.println(String.format("error adding item to order: %s", e));
-                }
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setOptionsCard.onNext(Actions.OptionCards.PIZZA);
+            }
+        });
+        drinkButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setOptionsCard.onNext(Actions.OptionCards.DRINKS);
             }
         });
     }
@@ -59,7 +64,7 @@ public class ServerScreen {
         screen = new JPanel();
         screen.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 0, 0));
         screen.setBackground(new Color(-1));
-        screen.setPreferredSize(new Dimension(980, 735));
+        screen.setPreferredSize(new Dimension(1080, 810));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), 0, 0));
         panel1.setBackground(new Color(-1644826));
@@ -79,17 +84,17 @@ public class ServerScreen {
         panel3.setLayout(new GridLayoutManager(4, 1, new Insets(16, 8, 16, 8), 0, 0));
         panel3.setBackground(new Color(-2954282));
         panel1.add(panel3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(125, 251), null, 0, true));
-        final JLabel label1 = new JLabel();
-        label1.setIcon(new ImageIcon(getClass().getResource("/pizza_100x100_circle.png")));
-        label1.setText("");
-        label1.putClientProperty("html.disable", Boolean.FALSE);
-        panel3.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pizzaButton = new JLabel();
+        pizzaButton.setIcon(new ImageIcon(getClass().getResource("/pizza_100x100_circle.png")));
+        pizzaButton.setText("");
+        pizzaButton.putClientProperty("html.disable", Boolean.FALSE);
+        panel3.add(pizzaButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panel3.add(spacer2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setIcon(new ImageIcon(getClass().getResource("/soda_100x100_circle.png")));
-        label2.setText("");
-        panel3.add(label2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        drinkButton = new JLabel();
+        drinkButton.setIcon(new ImageIcon(getClass().getResource("/soda_100x100_circle.png")));
+        drinkButton.setText("");
+        panel3.add(drinkButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         panel3.add(spacer3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 8), null, 0, false));
         final JPanel panel4 = new JPanel();
@@ -110,7 +115,7 @@ public class ServerScreen {
         panel6.setBackground(new Color(-1));
         screen.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final Receipt nestedForm3 = new Receipt();
-        panel6.add(nestedForm3.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(200, -1), new Dimension(200, 720), null, 0, false));
+        panel6.add(nestedForm3.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(240, -1), new Dimension(240, 720), null, 0, false));
     }
 
     /**

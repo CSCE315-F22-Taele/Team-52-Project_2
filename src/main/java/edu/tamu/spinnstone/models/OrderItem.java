@@ -67,9 +67,14 @@ public class OrderItem extends Table {
     }
 
 
-    public boolean addProduct(long productId) throws SQLException {
+    public void addProduct(Product product) {
       // adds a product to the order item and returns true if successful
-      throw new UnsupportedOperationException();
+      products.add(product);
+    }
+
+    public void removeProductByName(Product.Name name) {
+      // removes a product from the order item
+      products.removeIf(product -> product.productName.equals(name.toString()));
     }
 
     public boolean removeProduct(long productId) throws SQLException {

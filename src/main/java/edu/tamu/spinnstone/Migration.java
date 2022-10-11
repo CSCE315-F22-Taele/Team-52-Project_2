@@ -56,7 +56,7 @@ public class Migration {
       for(int j = 0; j < 5; j++) {
         int productIndex = (int) (Math.random() * products.size());
         Product product = products.get(productIndex);
-        orderItem.addProduct(product.productId);
+        orderItem.addProduct(product);
       }
     }
 

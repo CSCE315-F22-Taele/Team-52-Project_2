@@ -11,7 +11,7 @@ public class ReceiptLine {
     public JLabel itemName;
     public JLabel quantity;
     public JLabel price;
-    public JList<JLabel> ingredients;
+    public JLabel ingredients;
     public JPanel container;
 
     {
@@ -32,7 +32,7 @@ public class ReceiptLine {
         container = new JPanel();
         container.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), 0, 0));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 8, 0), 0, 0));
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 8, 32), 0, 0));
         panel1.setBackground(new Color(-1));
         container.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
@@ -68,10 +68,11 @@ public class ReceiptLine {
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), 0, 0));
         panel5.setBackground(new Color(-1));
         container.add(panel5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        ingredients = new JList();
+        ingredients = new JLabel();
         ingredients.setBackground(new Color(-1));
-        ingredients.setForeground(new Color(-1));
-        panel5.add(ingredients, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+        ingredients.setForeground(new Color(-16777216));
+        ingredients.setText("");
+        panel5.add(ingredients, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**

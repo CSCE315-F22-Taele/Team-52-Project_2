@@ -65,6 +65,22 @@ public class Product extends Table {
 
     // region static declarations
 
+    public static enum ColumnNames {
+        PRODUCT_ID("product_id"),
+        PRODUCT_NAME("product_name"),
+        QUANTITY_IN_STOCK("quantity_in_stock");
+
+        private String columnName;
+
+        private ColumnNames(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public String toString() {
+            return this.columnName;
+        }
+    }
+
     public static enum Name {
       FOUNTAIN_CUP("Fountain Cup"),
       BOTTLE_BEVERAGE("Bottle Beverage"),
