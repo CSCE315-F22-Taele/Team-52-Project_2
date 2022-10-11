@@ -1,19 +1,19 @@
 package edu.tamu.spinnstone;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Properties;
+// import java.io.IOException;
+// import java.math.BigDecimal;
+// import java.nio.file.Files;
+// import java.nio.file.Path;
+// import java.sql.*;
+// import java.time.LocalDate;
+// import java.util.ArrayList;
+// import java.util.Properties;
 
-import edu.tamu.spinnstone.models.MenuItem;
-import edu.tamu.spinnstone.models.Order;
-import edu.tamu.spinnstone.models.OrderItem;
-import edu.tamu.spinnstone.models.Product;
-import edu.tamu.spinnstone.models.Shipment;
+// import edu.tamu.spinnstone.models.MenuItem;
+// import edu.tamu.spinnstone.models.Order;
+// import edu.tamu.spinnstone.models.OrderItem;
+// import edu.tamu.spinnstone.models.Product;
+// import edu.tamu.spinnstone.models.Shipment;
 
 // migration to be fixed once tests are done for basic functionality
 public class Migration {

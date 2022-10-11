@@ -10,7 +10,6 @@ public class Window {
 
   static final String projectRoot = System.getProperty("user.dir");
 
-
   public String rootRelativePath(String path) {
     return Path.of(projectRoot, path).toString();
   }
@@ -18,7 +17,7 @@ public class Window {
   public JFrame frame;
 
   public Window() {
-    frame = new JFrame("Spinnstone");
+    frame = new JFrame("Spin 'N Stone");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(screenWidth, screenHeight);
   }
