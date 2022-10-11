@@ -65,18 +65,11 @@ public class OrderItem extends Table {
     public void insertProducts() throws SQLException {
         // assume all products have not been inserted
         for(Product product : products) {
-            // probably a way to do this in sql with a single statement
-//            ResultSet existingRecord = database.select("*").from(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
-//                    .where(new HashMap<String, Object>() {{
-//                        put("order_item_order_item_id", orderItemId);
-//                        put("product_product_id", product.productId);
-//                    }}).execute();
 
-//            if(!existingRecord.next()) {
-                database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
-                        .columns("order_item_order_item_id", "product_product_id")
-                        .values(orderItemId, product.productId).execute();
-//            }
+          database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
+                  .columns("order_item_order_item_id", "product_product_id")
+                  .values(orderItemId, product.productId).execute();
+
         }
     }
 

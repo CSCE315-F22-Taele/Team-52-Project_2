@@ -58,9 +58,13 @@ public class Shipment extends Table {
 
     // endregion
 
-    public boolean addProduct(Product product, int quantity) {
+    public void addProduct(Product product, double quantity) throws SQLException {
         // returns true if the product was added to the shipment, false otherwise
-        throw new UnsupportedOperationException("addProductToShipment not implemented");
+        database.insert("shipment_product")
+                .columns("shipment_shipment_id", "product_product_id", "quantity_ordered")
+                .values(shipmentId, product.productId, quantity)
+                .execute();
+        // throw new UnsupportedOperationException("addProductToShipment not implemented");
     }
 
     public boolean removeProduct(Product product) {

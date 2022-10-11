@@ -416,6 +416,7 @@ public class MenuOptions {
         return MenuOptionCards;
     }
 
+    // @formatter:on
     private enum PizzaType {
         one_topping,
         cheese,
