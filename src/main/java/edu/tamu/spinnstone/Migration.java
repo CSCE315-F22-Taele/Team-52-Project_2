@@ -105,9 +105,9 @@ public class Migration {
       "one topping pizza",
       "two - four topping pizza",
       "orginal cheese pizza",
-      "bottled beverage",
-      "gatorade",
-      "fountain drink",
+      "Bottle Beverage",
+      "Gatorade",
+      "Fountain Cup",
      };
       
 

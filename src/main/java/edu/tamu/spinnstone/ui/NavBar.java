@@ -69,4 +69,7 @@ public class NavBar {
     public JComponent $$$getRootComponent$$$() {
         return navContainer;
     }
+
+    // @formatter:on
+
 }

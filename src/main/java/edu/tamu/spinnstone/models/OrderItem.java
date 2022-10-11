@@ -17,48 +17,52 @@ public class OrderItem extends Table {
     public List<Product> products;
     public MenuItem menuItem;
 
+    // strictly for drinks
+    public int quantity;
+
 
     public OrderItem(Database db) {
-      super(db);
-      tableName = "order_item";
-      columnNames = new ArrayList<String>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
-      columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
-      products = new ArrayList<Product>();
+        super(db);
+        tableName = "order_item";
+        columnNames = new ArrayList<String>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
+        columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
+        products = new ArrayList<Product>();
+        quantity = 1;
     }
 
     // region overrides
     @Override
     public ArrayList<Object> getColumnValues() {
-      return new ArrayList<Object>(Arrays.asList(
-        this.orderItemId,
-        this.orderId,
-        this.menuItemId
-      ));
+        return new ArrayList<Object>(Arrays.asList(
+                this.orderItemId,
+                this.orderId,
+                this.menuItemId
+        ));
     }
 
     @Override
     public void setColumnValues(List<Object> values) {
-      this.orderItemId = (long) values.get(0);
-      this.orderId = (long) values.get(1);
-      this.menuItemId = (long) values.get(2);
+        this.orderItemId = (long) values.get(0);
+        this.orderId = (long) values.get(1);
+        this.menuItemId = (long) values.get(2);
     }
     // endregion
 
     //region static methods
     public static OrderItem create(Database db, long orderId, long menuItemId) throws SQLException {
-      OrderItem orderItem = new OrderItem(db);
-      orderItem.orderId = orderId;
-      orderItem.menuItemId = menuItemId;
-      orderItem.orderItemId = orderItem.insert();
+        OrderItem orderItem = new OrderItem(db);
+        orderItem.orderId = orderId;
+        orderItem.menuItemId = menuItemId;
+        orderItem.orderItemId = orderItem.insert();
 
-      return orderItem;
+        return orderItem;
     }
     //endregion
 
     public void getMenuItem() throws SQLException {
         MenuItem item = new MenuItem(database);
         boolean found = item.find(menuItemId);
-        if(!found) {
+        if (!found) {
             throw new SQLException("unable to find menu item");
         }
 
@@ -68,20 +72,19 @@ public class OrderItem extends Table {
 
 
     public void addProduct(Product product) {
-      // adds a product to the order item and returns true if successful
-      products.add(product);
+        // adds a product to the order item and returns true if successful
+        products.add(product);
     }
 
     public void removeProductByName(Product.Name name) {
-      // removes a product from the order item
-      products.removeIf(product -> product.productName.equals(name.toString()));
+        // removes a product from the order item
+        products.removeIf(product -> product.productName.equals(name.toString()));
     }
 
     public boolean removeProduct(long productId) throws SQLException {
-      // removes a product from the order item and returns true if successful
-      throw new UnsupportedOperationException();
+        // removes a product from the order item and returns true if successful
+        throw new UnsupportedOperationException();
     }
-
 
 
 }

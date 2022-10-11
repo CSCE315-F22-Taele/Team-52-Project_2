@@ -26,30 +26,30 @@ public class Product extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-      return new ArrayList<Object>(Arrays.asList(
-        this.productId,
-        this.productName,
-        this.quantityInStock
-      ));
+        return new ArrayList<Object>(Arrays.asList(
+                this.productId,
+                this.productName,
+                this.quantityInStock
+        ));
     }
 
     @Override
     public void setColumnValues(List<Object> values) {
-      this.productId = (long) values.get(0);
-      this.productName = (String) values.get(1);
-      this.quantityInStock = (double) values.get(2);
+        this.productId = (long) values.get(0);
+        this.productName = (String) values.get(1);
+        this.quantityInStock = (double) values.get(2);
     }
     // endregion
 
     // region static methods
 
     public static Product create(Database db, String productName, double quantityInStock) throws SQLException {
-      Product product = new Product(db);
-      product.productName = productName;
-      product.quantityInStock = quantityInStock;
-      product.productId = product.insert();
+        Product product = new Product(db);
+        product.productName = productName;
+        product.quantityInStock = quantityInStock;
+        product.productId = product.insert();
 
-      return product;
+        return product;
     }
 
     // endregion
@@ -57,8 +57,8 @@ public class Product extends Table {
     // region instance methods
 
     public Boolean updateQuantity(double quantity) throws SQLException {
-      // returns true if the update was successful, false otherwise
-      throw new UnsupportedOperationException("updateQuantity not implemented");
+        // returns true if the update was successful, false otherwise
+        throw new UnsupportedOperationException("updateQuantity not implemented");
     }
 
     // endregion
@@ -82,45 +82,46 @@ public class Product extends Table {
     }
 
     public static enum Name {
-      FOUNTAIN_CUP("Fountain Cup"),
-      BOTTLE_BEVERAGE("Bottle Beverage"),
-      GATORADE("Gatorade"),
-      CAULIFLOWER("Cauliflower"),
-      STANDARD("Standard"),
-      ALFREDO("Alfredo"),
-      TRADITIONAL_RED("Traditional Red"),
-      ZESTY_RED("Zesty Red"),
-      HOUSE_BLEND("House Blend"),
-      PARMESAN("Parmesan"),
-      BBQ_SAUCE("BBQ Sauce"),
-      OLIVE_OIL("Olive Oil"),
-      OREGANO("Oregano"),
-      RANCH("Ranch"),
-      SRIRACHA("Sriracha"),
-      DICED_HAM("Diced Ham"),
-      ITALIAN_SAUSAGE("Italian Sausage"),
-      MEATBALL("Meatball"),
-      PEPPERONI("Pepperoni"),
-      SALAMI("Salami"),
-      SMOKED_CHICKEN("Smoked Chicken"),
-      BANANA_PEPPERS("Banana Peppers"),
-      BLACK_OLIVES("Black Olives"),
-      GREEN_PEPPERS("Green Peppers"),
-      JALAPENOS("Jalapenos"),
-      MUSHROOMS("Mushrooms"),
-      ONIONS("Onions"),
-      PINEAPPLE("Pineapple"),
-      ROASTED_GARLIC("Roasted Garlic"),
-      SPINACH("Spinach"),
-      TOMATOES("Tomatoes");
-      
-      private final String name;
+        FOUNTAIN_CUP("Fountain Cup"),
+        BOTTLE_BEVERAGE("Bottle Beverage"),
+        GATORADE("Gatorade"),
+        CAULIFLOWER("Cauliflower"),
+        STANDARD("Standard"),
+        ALFREDO("Alfredo"),
+        TRADITIONAL_RED("Traditional Red"),
+        ZESTY_RED("Zesty Red"),
+        HOUSE_BLEND("House Blend"),
+        PARMESAN("Parmesan"),
+        BBQ_SAUCE("BBQ Sauce"),
+        OLIVE_OIL("Olive Oil"),
+        OREGANO("Oregano"),
+        RANCH("Ranch"),
+        SRIRACHA("Sriracha"),
+        DICED_HAM("Diced Ham"),
+        ITALIAN_SAUSAGE("Italian Sausage"),
+        MEATBALL("Meatball"),
+        PEPPERONI("Pepperoni"),
+        SALAMI("Salami"),
+        SMOKED_CHICKEN("Smoked Chicken"),
+        BANANA_PEPPERS("Banana Peppers"),
+        BLACK_OLIVES("Black Olives"),
+        GREEN_PEPPERS("Green Peppers"),
+        JALAPENOS("Jalapenos"),
+        MUSHROOMS("Mushrooms"),
+        ONIONS("Onions"),
+        PINEAPPLE("Pineapple"),
+        ROASTED_GARLIC("Roasted Garlic"),
+        SPINACH("Spinach"),
+        TOMATOES("Tomatoes");
 
-      private Name(String name) {
-        this.name = name;
-      }
-      public String toString() {
-        return this.name;
-      }
+        private final String name;
+
+        private Name(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return this.name;
+        }
     }
 }

@@ -59,7 +59,7 @@ public class Receipt {
 
                 // quantity only makes sense for drinks
                 // could group the items together by type
-                line.quantity.setText(String.format("x%d", 1));
+                line.quantity.setText(String.format("x%d", item.quantity));
                 line.price.setText(NumberFormat.getCurrencyInstance().format(item.menuItem.menuItemPrice));
 
                 // build the ingredients list
@@ -234,5 +234,7 @@ public class Receipt {
     public JComponent $$$getRootComponent$$$() {
         return container;
     }
+
+    // @formatter:on
 
 }

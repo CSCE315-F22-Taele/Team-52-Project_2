@@ -5,6 +5,7 @@ import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.ui.screens.ServerScreen;
 
 import javax.swing.*;
+import java.awt.*;
 
 public final class App {
   public static void main(String[] args) throws Exception {
@@ -17,6 +18,7 @@ public final class App {
     javax.swing.SwingUtilities.invokeLater(() -> {
       try {
         UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
+        UIManager.put("ToggleButton.select", Color.getColor("#197278"));
       } catch (Exception e) {
         System.out.println("unable to set look and feel");
       }

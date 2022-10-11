@@ -124,5 +124,6 @@ public class ServerScreen {
     public JComponent $$$getRootComponent$$$() {
         return screen;
     }
+    // @formatter:on
 
 }
