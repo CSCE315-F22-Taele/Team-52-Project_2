@@ -58,12 +58,12 @@ public class ServerScreen {
     JButton checkOutButton = new JButton("Checkout");
     generateButton(checkOutButton, 100, 600);
     
-    JPanel greenPanelCol = new JPanel();
-    greenPanelCol.setBackground(Color.green);
-    greenPanelCol.setPreferredSize(new Dimension(100, window.screenHeight));
-    greenPanelCol.setLocation(0, 0);
+    // JPanel greenPanelCol = new JPanel();
+    // greenPanelCol.setBackground(Color.green);
+    // greenPanelCol.setPreferredSize(new Dimension(100, window.screenHeight));
+    // greenPanelCol.setLocation(0, 0);
 
-    panel.add(greenPanelCol);
+    // panel.add(greenPanelCol);
     panel.add(cheesePizzaButton);
     panel.add(oneToppingPizzaButton);
     panel.add(BYOpizzaButton);
