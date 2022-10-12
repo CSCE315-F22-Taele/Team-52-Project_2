@@ -12,14 +12,15 @@ public class Product extends Table {
     //region Fields
     public long productId;
     public String productName;
-    public double quantityInStock;
+    public int quantityInStock;
+    public double conversion_factor;
     //endregion
 
     public Product(Database db) {
         super(db);
         this.tableName = "product";
-        this.columnNames = Arrays.asList("product_id", "product_name", "quantity_in_stock");
-        this.columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.DOUBLE);
+        this.columnNames = Arrays.asList("product_id", "product_name", "quantity_in_stock", "conversion_factor");
+        this.columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.INT, ColumnType.DOUBLE);
     }
 
     // region overrides
@@ -29,7 +30,8 @@ public class Product extends Table {
       return new ArrayList<Object>(Arrays.asList(
         this.productId,
         this.productName,
-        this.quantityInStock
+        this.quantityInStock,
+        this.conversion_factor
       ));
     }
 
@@ -37,7 +39,8 @@ public class Product extends Table {
     public void setColumnValues(List<Object> values) {
       this.productId = (long) values.get(0);
       this.productName = (String) values.get(1);
-      this.quantityInStock = (double) values.get(2);
+      this.quantityInStock = (int) values.get(2);
+      this.conversion_factor = (double) values.get(3);
     }
     // endregion
 

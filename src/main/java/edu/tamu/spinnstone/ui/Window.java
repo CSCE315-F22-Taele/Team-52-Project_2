@@ -11,9 +11,9 @@ public class Window {
   static final String projectRoot = System.getProperty("user.dir");
 
 
-  public String rootRelativePath(String path) {
-    return Path.of(projectRoot, path).toString();
-  }
+  // public String rootRelativePath(String path) {
+  //   return Path.of(projectRoot, path).toString();
+  // }
 
   public JFrame frame;
 

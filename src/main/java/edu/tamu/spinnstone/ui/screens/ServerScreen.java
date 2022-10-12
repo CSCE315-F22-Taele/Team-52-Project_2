@@ -19,9 +19,9 @@ public class ServerScreen {
     this.window = window;
     screen = new JPanel();
     screen.setSize(window.screenWidth, window.screenHeight);
-    background = ImageIO.read(new File(
-      window.rootRelativePath("src/main/java/edu/tamu/spinnstone/ui/assets/server_view.png")
-    ));
+    // background = ImageIO.read(new File(
+    //   window.rootRelativePath("src/main/java/edu/tamu/spinnstone/ui/assets/server_view.png")
+    // ));
 
     
   }
