@@ -55,9 +55,16 @@ public class ServerScreen {
     BYOpizzaButton.setBackground(Color.BLACK);
     BYOpizzaButton.setForeground(Color.WHITE);
 
+    JPanel greenPanelCol = new JPanel();
+    greenPanelCol.setBackground(Color.green);
+    greenPanelCol.setBounds(0, 0, window.screenWidth, window.screenHeight);
+    greenPanelCol.setPreferredSize(new Dimension(100, window.screenHeight));
+
+    
     panel.add(cheesePizzaButton);
     panel.add(oneToppingPizzaButton);
     panel.add(BYOpizzaButton);
+    panel.add(greenPanelCol);
     f.add(panel);
     f.setLayout(null);
     f.setVisible(true);
