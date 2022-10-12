@@ -3,14 +3,12 @@ package edu.tamu.spinnstone.ui.screens;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import edu.tamu.spinnstone.models.Order;
 import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.ui.Actions;
 import edu.tamu.spinnstone.ui.MenuOptions;
 import edu.tamu.spinnstone.ui.NavBar;
 import edu.tamu.spinnstone.ui.Receipt;
-import rx.functions.Action1;
-import edu.tamu.spinnstone.models.OrderItem;
-import edu.tamu.spinnstone.models.Order;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,7 +58,7 @@ public class ServerScreen {
                     Actions.orderUpdated.onNext(newOrder);
                     Actions.setOptionsCard.onNext(Actions.OptionCards.PIZZA);
                 } catch (Exception err) {
-                    System.out.println(String.format("error placing order: %s", err.toString()));
+                    System.out.printf("error placing order: %s%n", err);
                 }
             }
         });

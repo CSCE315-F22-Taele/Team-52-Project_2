@@ -1,5 +1,8 @@
 package edu.tamu.spinnstone.models;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -7,9 +10,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 public class Order extends Table {
     // db values
@@ -36,11 +36,7 @@ public class Order extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
-                this.orderId,
-                this.orderDate,
-                this.orderTotal
-        ));
+        return new ArrayList<Object>(Arrays.asList(this.orderId, this.orderDate, this.orderTotal));
     }
 
     @Override
@@ -97,21 +93,21 @@ public class Order extends Table {
             orderItem.insertProducts();
 
             // update product inventory
-            for(Product product : orderItem.products) {
+            for (Product product : orderItem.products) {
                 product.decrementQuantity(1.0);
             }
         }
     }
 
     public void addOrderItem(OrderItem orderItem) {
-        // adds a order item of the given menuitem type to the order and returns true if successful
+        // adds an order item of the given menuitem type to the order and returns true if successful
         // this should update the model to reflect the change
         // this should update the order total locally
         orderItems.add(orderItem);
     }
 
     public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
-        // removes a order item of the given menuitem type from the order and returns true if successful
+        // removes an order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
         throw new UnsupportedOperationException("Unimplemented");
     }

@@ -1,15 +1,12 @@
 package edu.tamu.spinnstone.models;
 
-import java.awt.*;
-import java.sql.ResultSet;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 public class OrderItem extends Table {
     public long orderItemId;
@@ -54,7 +51,7 @@ public class OrderItem extends Table {
 
     @Override
     public void update() throws SQLException {
-        if(menuItem != null) {
+        if (menuItem != null) {
             menuItemId = menuItem.menuItemId;
         }
         // create if not exists order_item_product relation for each product
@@ -64,11 +61,11 @@ public class OrderItem extends Table {
 
     public void insertProducts() throws SQLException {
         // assume all products have not been inserted
-        for(Product product : products) {
+        for (Product product : products) {
 
-          database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
-                  .columns("order_item_order_item_id", "product_product_id")
-                  .values(orderItemId, product.productId).execute();
+            database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
+                    .columns("order_item_order_item_id", "product_product_id")
+                    .values(orderItemId, product.productId).execute();
 
         }
     }

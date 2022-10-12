@@ -1,13 +1,12 @@
 package edu.tamu.spinnstone.models;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
-import edu.tamu.spinnstone.models.sql.Query;
 
 public class Product extends Table {
     //region Fields
@@ -67,17 +66,17 @@ public class Product extends Table {
                 .set(
                         String.format(
                                 "%s = %s - %.3f",
-                                ColumnNames.QUANTITY_IN_STOCK.toString(),
-                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                ColumnNames.QUANTITY_IN_STOCK,
+                                ColumnNames.QUANTITY_IN_STOCK,
                                 by
                         )
                 )
                 .where(
                         String.format(
                                 "%s = %s AND %s > 0",
-                                ColumnNames.PRODUCT_ID.toString(),
+                                ColumnNames.PRODUCT_ID,
                                 prepareValue(productId),
-                                ColumnNames.QUANTITY_IN_STOCK.toString()
+                                ColumnNames.QUANTITY_IN_STOCK
                         )
                 ).execute();
     }
@@ -86,14 +85,14 @@ public class Product extends Table {
 
     // region static declarations
 
-    public static enum ColumnNames {
+    public enum ColumnNames {
         PRODUCT_ID("product_id"),
         PRODUCT_NAME("product_name"),
         QUANTITY_IN_STOCK("quantity_in_stock");
 
         private String columnName;
 
-        private ColumnNames(String columnName) {
+        ColumnNames(String columnName) {
             this.columnName = columnName;
         }
 
@@ -102,7 +101,7 @@ public class Product extends Table {
         }
     }
 
-    public static enum Name {
+    public enum Name {
         FOUNTAIN_CUP("Fountain Cup"),
         BOTTLE_BEVERAGE("Bottle Beverage"),
         GATORADE("Gatorade"),
@@ -137,7 +136,7 @@ public class Product extends Table {
 
         private final String name;
 
-        private Name(String name) {
+        Name(String name) {
             this.name = name;
         }
 
