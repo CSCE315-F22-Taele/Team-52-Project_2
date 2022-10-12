@@ -8,13 +8,10 @@ import edu.tamu.spinnstone.models.OrderItem;
 import edu.tamu.spinnstone.models.Product;
 import edu.tamu.spinnstone.models.Shipment;
 import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.sql.Date;
