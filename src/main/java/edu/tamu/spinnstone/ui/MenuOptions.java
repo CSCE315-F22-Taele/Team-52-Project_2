@@ -100,17 +100,17 @@ public class MenuOptions {
         cheeseButton = new JButton();
         cheeseButton.setBackground(new Color(-15066598));
         cheeseButton.setForeground(new Color(-1));
-        cheeseButton.setText("Cheese");
+        cheeseButton.setText("CHEESE");
         pizzaTypeMenu.add(cheeseButton);
         a1ToppingButton = new JButton();
         a1ToppingButton.setBackground(new Color(-15066598));
         a1ToppingButton.setForeground(new Color(-1));
-        a1ToppingButton.setText("1 Topping");
+        a1ToppingButton.setText("1 TOPPING");
         pizzaTypeMenu.add(a1ToppingButton);
         buildYourOwnButton = new JButton();
         buildYourOwnButton.setBackground(new Color(-15066598));
         buildYourOwnButton.setForeground(new Color(-1));
-        buildYourOwnButton.setText("Build Your Own");
+        buildYourOwnButton.setText("BUILD YOUR OWN");
         pizzaTypeMenu.add(buildYourOwnButton);
         pizzaCustomizationMenu = new JPanel();
         pizzaCustomizationMenu.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -495,7 +495,7 @@ public class MenuOptions {
                         if (rs.next()) {
                             menuItem.updateFromResultSet(rs);
                         } else {
-                            System.out.println("unkown pizza type:");
+                            System.out.println("unknown pizza type:");
                             return;
                         }
 
@@ -624,7 +624,7 @@ public class MenuOptions {
                                 return;
                             }
                         } else {
-                            System.out.println("unkown topping type:");
+                            System.out.println("unknown topping type:");
                             return;
                         }
 
@@ -685,7 +685,7 @@ public class MenuOptions {
                         if (rs.next()) {
                             menuItem.updateFromResultSet(rs);
                         } else {
-                            System.out.println("unkown drink type:");
+                            System.out.println("unknown drink type:");
                             return;
                         }
 
@@ -711,7 +711,7 @@ public class MenuOptions {
                                 return;
                             }
                         } else {
-                            System.out.println("unkown drink type:");
+                            System.out.println("unknown drink type:");
                             return;
                         }
 
@@ -726,7 +726,6 @@ public class MenuOptions {
 
                     orderItem.addProduct(product);
                     orderItem.isDrink = true;
-
 
                     activeOrder.addOrderItem(orderItem);
                     Actions.orderUpdated.onNext(activeOrder);

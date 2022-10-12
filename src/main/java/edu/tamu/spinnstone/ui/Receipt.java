@@ -30,7 +30,6 @@ public class Receipt {
     public Receipt() {
         receiptLines = new ArrayList<ReceiptLine>();
 
-
         Actions.orderUpdated.subscribe(order -> {
             // update total
             order.calculateOrderTotal();
@@ -80,7 +79,6 @@ public class Receipt {
                 );
             }
 
-
             // add spacer to bottom to make lines stick to the top
             final Spacer spacer1 = new Spacer();
             receiptItems.add(spacer1, new GridConstraints(order.orderItems.size(), 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -88,8 +86,6 @@ public class Receipt {
 
             receiptItems.revalidate();
             receiptItems.repaint();
-
-
         });
     }
 

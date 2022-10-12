@@ -17,7 +17,6 @@ public final class App {
     javax.swing.SwingUtilities.invokeLater(
         () -> {
           try {
-            UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
             UIManager.put("ToggleButton.select", Color.getColor("#197278"));
           } catch (Exception e) {
             System.out.println("unable to set look and feel");

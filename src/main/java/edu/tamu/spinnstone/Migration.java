@@ -101,12 +101,12 @@ public class Migration {
     };
 
     String[] menuItems = {
-      "one topping pizza",
-      "two - four topping pizza",
-      "orginal cheese pizza",
+      "1 Topping Pizza",
+      "2-4 Topping Pizza",
+      "Original Cheese Pizza",
       "Bottle Beverage",
       "Gatorade",
-      "Fountain Cup",
+      "Fountain Cup"
     };
 
     String[] menuItemPrices = {
@@ -116,7 +116,7 @@ public class Migration {
     // dropTables();
     // createTables();
 
-    // // add products to inventory
+    // add products to inventory
     ArrayList<Product> products = new ArrayList<Product>();
 
     for (int i = 0; i < productNames.length; i++) {
@@ -157,7 +157,7 @@ public class Migration {
 
     // create shipments
     for (int i = 0; i <= 2; ++i) {
-      Shipment shipment = Shipment.create(database, new Date(2020, 1, (i + 1) * 8), false);
+      Shipment shipment = Shipment.create(database, Date.valueOf(LocalDate.of(2020, 1, (i + 1) * 8)), false);
 
       // For each product
       // disabled until addproduct is implemented
