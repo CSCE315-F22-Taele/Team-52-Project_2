@@ -44,8 +44,9 @@ public class MenuItem extends Table {
 
     // endregion
     public boolean setPrice(BigDecimal price) throws SQLException {
-      // sets the price of the menu item and returns true if successful
-      throw new UnsupportedOperationException("Unimplemented");
+      menuItemPrice = price;
+      update();
+      return true;
     }
 
 

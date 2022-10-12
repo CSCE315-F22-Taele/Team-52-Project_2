@@ -46,9 +46,10 @@ public class Product extends Table {
 
     // region instance methods
 
-    public Boolean updateQuantity(double quantity) throws SQLException {
-      // returns true if the update was successful, false otherwise
-      throw new UnsupportedOperationException("updateQuantity not implemented");
+    public Boolean updateQuantity(int quantity) throws SQLException {
+      quantityInStock = quantity;
+      update();
+      return true;
     }
 
 }

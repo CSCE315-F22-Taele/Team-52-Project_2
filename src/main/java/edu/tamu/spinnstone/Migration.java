@@ -51,10 +51,6 @@ public class Migration {
     OrderItem orderItem = new OrderItem(db);
     Product product = new Product(db);
 
-
-    order.orderDate = orderDate;
-    order.orderId = order.insert();
-
     for(int i = 0; i < 3; i++) {
       // Pick a random item on the Menu
       int randomIndex = (int) (Math.random() * 6);
@@ -73,6 +69,9 @@ public class Migration {
         orderItem.sync();
       }
     }
+
+    order.orderDate = orderDate;
+    order.orderId = order.insert();
 
     return order;
   } 

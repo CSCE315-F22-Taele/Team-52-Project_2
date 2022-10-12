@@ -47,6 +47,7 @@ public class OrderItem extends Table {
 
     public boolean addProduct(long productId) throws SQLException {
       // adds a product to the order item and returns true if successful
+      
       throw new UnsupportedOperationException();
     }
 
