@@ -58,8 +58,10 @@ public class MenuItem extends Table {
     // region instance methods
 
     public boolean setPrice(BigDecimal price) throws SQLException {
-        // sets the price of the menu item and returns true if successful
-        throw new UnsupportedOperationException("Unimplemented");
+        sync();
+        menuItemPrice = price;
+        update();
+        return true;
     }
 
     // endregion

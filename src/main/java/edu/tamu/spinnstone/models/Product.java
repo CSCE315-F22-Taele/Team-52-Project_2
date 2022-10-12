@@ -1,6 +1,7 @@
 package edu.tamu.spinnstone.models;
 
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,18 +10,22 @@ import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
 import edu.tamu.spinnstone.models.sql.Query;
 
+import org.postgresql.core.SqlCommand;
+
+
 public class Product extends Table {
     //region Fields
     public long productId;
     public String productName;
-    public double quantityInStock;
+    public int quantityInStock;
+    public double conversion_factor;
     //endregion
 
     public Product(Database db) {
         super(db);
         this.tableName = "product";
-        this.columnNames = Arrays.asList("product_id", "product_name", "quantity_in_stock");
-        this.columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.DOUBLE);
+        this.columnNames = Arrays.asList("product_id", "product_name", "quantity_in_stock", "conversion_factor");
+        this.columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.INT, ColumnType.DOUBLE);
     }
 
     // region overrides
@@ -38,13 +43,14 @@ public class Product extends Table {
     public void setColumnValues(List<Object> values) {
         this.productId = (long) values.get(0);
         this.productName = (String) values.get(1);
-        this.quantityInStock = (double) values.get(2);
+        this.quantityInStock = (int) values.get(2);
+        this.conversion_factor = (double) values.get(3);
     }
     // endregion
 
     // region static methods
 
-    public static Product create(Database db, String productName, double quantityInStock) throws SQLException {
+    public static Product create(Database db, String productName, int quantityInStock, double conversion_factor) throws SQLException {
         Product product = new Product(db);
         product.productName = productName;
         product.quantityInStock = quantityInStock;
@@ -57,34 +63,37 @@ public class Product extends Table {
 
     // region instance methods
 
-    public Boolean updateQuantity(double quantity) throws SQLException {
+    public Boolean updateQuantity(int quantity) throws SQLException {
         // returns true if the update was successful, false otherwise
-        throw new UnsupportedOperationException("updateQuantity not implemented");
+        sync();
+        quantityInStock = quantity;
+        update();
+
+        return true;
     }
 
     public void decrementQuantity(double by) throws SQLException {
-        database.update(tableName)
-                .set(
-                        String.format(
-                                "%s = %s - %.3f",
-                                ColumnNames.QUANTITY_IN_STOCK.toString(),
-                                ColumnNames.QUANTITY_IN_STOCK.toString(),
-                                by
-                        )
-                )
-                .where(
-                        String.format(
-                                "%s = %s AND %s > 0",
-                                ColumnNames.PRODUCT_ID.toString(),
-                                prepareValue(productId),
-                                ColumnNames.QUANTITY_IN_STOCK.toString()
-                        )
-                ).execute();
+        sync();
+        if (quantityInStock > 0) {
+            quantityInStock--;
+        }
+        else {
+            throw new SQLException("Inventory is zero");
+        }
+        update();
     }
 
     // endregion
 
     // region static declarations
+    public ResultSet getInventory() {
+        try {
+            return findWhere(null, "product_id", -1);
+        }
+        catch (SQLException e) {
+            return null;
+        }
+    }
 
     public static enum ColumnNames {
         PRODUCT_ID("product_id"),
