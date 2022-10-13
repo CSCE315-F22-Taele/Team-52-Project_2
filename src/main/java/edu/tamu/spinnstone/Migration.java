@@ -72,6 +72,7 @@ public class Migration {
     }
 
     order.orderDate = orderDate;
+    order.calculateOrderTotal();
     order.orderId = order.insert();
 
     return order;
@@ -95,9 +96,9 @@ public class Migration {
         {"Parmesan"       , "2000", "6"  },
         {"BBQ Sauce"      , "1000", "0.5"},
         {"Olive Oil"      , "1000", "0.5"},
-        {"Oregano"        , "500" , "0.1"},
+        {"Oregano"        , "500" , "0.5"},
         {"Ranch"          , "1000", "0.5"},
-        {"Sriracha"       , "0.5" , "0.5"}, 
+        {"Sriracha"       , "1000" , "0.5"}, 
         {"Diced Ham"      , "2000", "1"  },
         {"Italian Sausage", "2000", "1"  }, 
         {"Meatball"       , "2000", "1"  },
@@ -131,29 +132,20 @@ public class Migration {
     Database db = new Database();
     db.connect();
 
+    //Adds menu options to Menu Items
+    for (String[] menuItem : menuItems) {
+      MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]));
+    }
+
     Product product =  new Product(db);
     MenuItem menu = new MenuItem(db);
     Shipment shipment = new Shipment(db);
-
-    // Add products to inventory
-
+     
+    // Add products to Inventory
     for (String[] p : products) {
-      product.productName = p[0];
-      product.quantityInStock = Integer.parseInt(p[1]);
-      product.conversionFactor = Float.parseFloat(p[2]);
-      product.productId = product.insert();
+      Product.create(db, p[0] , Integer.parseInt(p[1]), Float.parseFloat(p[2]));
     }
-    product.sync();
 
-    //Adds menu options to Menu Items
-
-    for (int i = 0; i < menuItems.length; i++) {
-      menu.itemName = menuItems[i][0];
-      menu.menuItemPrice = new BigDecimal(menuItems[i][1]);
-      menu.menuItemId = menu.insert();
-    }
-    menu.sync();
-    
     // generate and add random orders to database
     // 215 orders per normal day, 400 orders per gameday
     // goes from 9/4 to 9/24; game days are 9/10 and 9/24
@@ -179,7 +171,6 @@ public class Migration {
         }
       }
     }
-  
     // create shipments
     for (int i = 0; i < 3; ++i) {
       // For each product

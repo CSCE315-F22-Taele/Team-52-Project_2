@@ -82,7 +82,8 @@ public class Order extends Table {
                                       "where order_item.order_id = " + orderId +";");
             rs.next();
             subTotal = rs.getBigDecimal("sum");
-            orderTotal = subTotal.multiply(new BigDecimal("1.0625")).setScale(2, RoundingMode.HALF_UP);
+            taxCharge = subTotal.multiply(new BigDecimal("0.0625")).setScale(2, RoundingMode.HALF_UP);
+            orderTotal = subTotal.add(taxCharge);
         }
         catch (SQLException e){
             orderTotal = new BigDecimal("-1");

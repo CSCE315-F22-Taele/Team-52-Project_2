@@ -53,6 +53,7 @@ public class Product extends Table {
 
     // region static methods
 
+    // Create new product in table
     public static Product create(Database db, String productName, int quantityInStock, double conversion_factor) throws SQLException {
         Product product = new Product(db);
         product.productName = productName;
@@ -67,13 +68,11 @@ public class Product extends Table {
 
     // region instance methods
 
-    public Boolean updateQuantity(int quantity) throws SQLException {
-        // returns true if the update was successful, false otherwise
+    // Returns true if the quantiy was updated successfully in table for current product, false otherwise
+    public void updateQuantity(int quantity) throws SQLException {
         sync();
         quantityInStock = quantity;
         update();
-
-        return true;
     }
 
     public void decrementQuantity(double by) throws SQLException {
