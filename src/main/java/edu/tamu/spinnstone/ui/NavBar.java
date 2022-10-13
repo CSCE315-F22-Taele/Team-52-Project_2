@@ -33,6 +33,7 @@ public class NavBar {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 Actions.setViewCard.onNext(Actions.ViewNames.MANAGER);
+                Actions.setViewCard.onNext(Actions.ViewNames.DASHBOARD);
             }
         });
 

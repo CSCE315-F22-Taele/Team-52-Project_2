@@ -31,7 +31,7 @@ public class Actions {
 
         INVENTORY("InventoryCard"),
 
-        SHIPMENTS("ShipmentsCard");
+        SHIPMENTS("ShipmentsCard"), DASHBOARD("DashboardCard");
 
         private final String name;
 
