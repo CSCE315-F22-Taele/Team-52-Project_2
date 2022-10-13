@@ -29,7 +29,7 @@ public class Shipment extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.shipmentId,
                 this.shipmentDate,
                 this.fulfilled

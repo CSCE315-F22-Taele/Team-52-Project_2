@@ -24,9 +24,9 @@ public class OrderItem extends Table {
     public OrderItem(Database db) {
         super(db);
         tableName = "order_item";
-        columnNames = new ArrayList<String>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
-        columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
-        products = new ArrayList<Product>();
+        columnNames = new ArrayList<>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
+        products = new ArrayList<>();
         quantity = 1;
         orderItemId = -1;
         isDrink = false;
@@ -35,7 +35,7 @@ public class OrderItem extends Table {
     // region overrides
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.orderItemId,
                 this.orderId,
                 this.menuItemId

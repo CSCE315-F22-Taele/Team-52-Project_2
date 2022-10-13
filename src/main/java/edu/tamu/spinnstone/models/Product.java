@@ -26,7 +26,7 @@ public class Product extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.productId,
                 this.productName,
                 this.quantityInStock

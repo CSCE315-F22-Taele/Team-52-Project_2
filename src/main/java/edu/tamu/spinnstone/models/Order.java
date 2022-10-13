@@ -26,9 +26,9 @@ public class Order extends Table {
     public Order(Database db) {
         super(db);
         tableName = "\"order\"";
-        columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
-        columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
-        orderItems = new ArrayList<OrderItem>();
+        columnNames = new ArrayList<>(Arrays.asList("order_id", "order_date", "order_total"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
+        orderItems = new ArrayList<>();
         orderId = -1;
     }
 
@@ -36,7 +36,7 @@ public class Order extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(this.orderId, this.orderDate, this.orderTotal));
+        return new ArrayList<>(Arrays.asList(this.orderId, this.orderDate, this.orderTotal));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Order extends Table {
                 try {
                     orderItem.getMenuItem();
                 } catch (Exception e) {
-                    System.out.println(String.format("unable to calculate order total: %s", e));
+                    System.out.printf("unable to calculate order total: %s%n", e);
 
                 }
             }

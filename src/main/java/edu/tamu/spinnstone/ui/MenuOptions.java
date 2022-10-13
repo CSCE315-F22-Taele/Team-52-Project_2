@@ -503,7 +503,7 @@ public class MenuOptions {
                         return;
                     }
 
-                    // creae a new pizza order item with the appropriate menu item link
+                    // create a new pizza order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
                     // no orderid yet (until it is finalized)
@@ -718,7 +718,7 @@ public class MenuOptions {
                         return;
                     }
 
-                    // creae a new drink order item with the appropriate menu item link
+                    // create a new drink order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
 
