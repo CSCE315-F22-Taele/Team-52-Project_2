@@ -38,5 +38,17 @@ public class ProductTest {
         System.out.println(rs.getString(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3));
         } while ((rs.next()));
     }
+
+    @Test
+    void updateQuantity() throws SQLException {
+        Product product = new Product(db);
+        product.find(1);
+        product.updateQuantity(0);
+
+        product.sync();
+        assertEquals(0, product.quantityInStock);
+
+        product.updateQuantity(4999);
+    }
   
 }
