@@ -23,7 +23,7 @@
             <properties>
               <background color="-15066598"/>
               <foreground color="-1"/>
-              <text value="Cheese"/>
+              <text value="CHEESE"/>
             </properties>
           </component>
           <component id="87970" class="javax.swing.JButton" binding="a1ToppingButton" default-binding="true">
@@ -31,7 +31,7 @@
             <properties>
               <background color="-15066598"/>
               <foreground color="-1"/>
-              <text value="1 Topping"/>
+              <text value="1 TOPPING"/>
             </properties>
           </component>
           <component id="fd5ca" class="javax.swing.JButton" binding="buildYourOwnButton" default-binding="true">
@@ -39,7 +39,7 @@
             <properties>
               <background color="-15066598"/>
               <foreground color="-1"/>
-              <text value="Build Your Own"/>
+              <text value="BUILD YOUR OWN"/>
             </properties>
           </component>
         </children>

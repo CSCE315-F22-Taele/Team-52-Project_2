@@ -1,5 +1,8 @@
 package edu.tamu.spinnstone.models;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -7,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.postgresql.core.SqlCommand;
 
 import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
@@ -26,9 +31,9 @@ public class Order extends Table {
     public Order(Database db) {
         super(db);
         tableName = "\"order\"";
-        columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
-        columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
-        orderItems = new ArrayList<OrderItem>();
+        columnNames = new ArrayList<>(Arrays.asList("order_id", "order_date", "order_total"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
+        orderItems = new ArrayList<>();
         orderId = -1;
     }
 
@@ -36,11 +41,7 @@ public class Order extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
-                this.orderId,
-                this.orderDate,
-                this.orderTotal
-        ));
+        return new ArrayList<>(Arrays.asList(this.orderId, this.orderDate, this.orderTotal));
     }
 
     @Override
@@ -48,12 +49,6 @@ public class Order extends Table {
         this.orderId = (long) values.get(0);
         this.orderDate = (Date) values.get(1);
         this.orderTotal = (BigDecimal) values.get(2);
-    }
-
-    @Override
-    public void update() throws SQLException {
-        super.update();
-        // get the id of the order
     }
 
     public static Order create(Database db, Date date, BigDecimal total) throws SQLException {
@@ -65,14 +60,16 @@ public class Order extends Table {
         return order;
     }
 
-
+    /*
+     * 
+     */
     public void calculateOrderTotal() {
         for (OrderItem orderItem : orderItems) {
             if (orderItem.menuItem == null) {
                 try {
                     orderItem.getMenuItem();
                 } catch (Exception e) {
-                    System.out.println(String.format("unable to calculate order total: %s", e));
+                    System.out.printf("unable to calculate order total: %s%n", e);
 
                 }
             }
@@ -98,29 +95,28 @@ public class Order extends Table {
 
             // update product inventory
             for(Product product : orderItem.products) {
-                product.decrementQuantity(1.0);
+                product.decrementQuantity(1);
             }
         }
     }
 
-    public void addOrderItem(OrderItem orderItem) {
+    public boolean addOrderItem(OrderItem orderItem) {
         // adds a order item of the given menuitem type to the order and returns true if successful
-        // this should update the model to reflect the change
-        // this should update the order total locally
         orderItems.add(orderItem);
+        return true;
     }
 
-    public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
+    public boolean removeOrderItem(OrderItem orderItem) throws SQLException {
         // removes a order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.remove(orderItem);
+        return true;
     }
 
     public boolean cancelOrder() throws SQLException {
         // cancels the order and returns true if successful
-        // these changes should be created or updated in the database
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.clear();
+        return true;
     }
-
 
 }

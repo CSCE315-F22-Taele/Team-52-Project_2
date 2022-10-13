@@ -1,13 +1,14 @@
 package edu.tamu.spinnstone.models;
 
-import java.sql.*;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 public class Shipment extends Table {
     public long shipmentId;
@@ -28,7 +29,7 @@ public class Shipment extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.shipmentId,
                 this.shipmentDate,
                 this.fulfilled
@@ -58,6 +59,7 @@ public class Shipment extends Table {
 
     // endregion
 
+
     public void addProduct(Product product, double quantity) throws SQLException {
         // returns true if the product was added to the shipment, false otherwise
         database.insert("shipment_product")
@@ -66,20 +68,24 @@ public class Shipment extends Table {
                 .execute();
         // throw new UnsupportedOperationException("addProductToShipment not implemented");
     }
-
-    public boolean removeProduct(Product product) {
+    
+    // Locally remove product from shipment
+    public boolean removeProduct(Product product) throws SQLException {
         // returns true if the product was removed from the shipment, false otherwise
-        throw new UnsupportedOperationException("removeProductFromShipment not implemented");
+        products.remove(product);
+        return true;
     }
 
     public boolean updateQuantity(Product product, int quantity) {
         // update the quantity of a product in the shipment
         // this should not update the table! assume anything that was persisted is already en-route
         // only update the quantity in the shipment object before finalizing
+        products.put(product, quantity);
         throw new UnsupportedOperationException("updateQuantity not implemented");
     }
 
     public boolean finalizeShipment() {
+        fulfilled = true;
         // returns true if the shipment was finalized, false otherwise
         throw new UnsupportedOperationException("finalizeShipment not implemented");
     }
