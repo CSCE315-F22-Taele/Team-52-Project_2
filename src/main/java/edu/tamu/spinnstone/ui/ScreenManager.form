@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="edu.tamu.spinnstone.ui.ScreenManager">
+  <grid id="27dc6" binding="manageContainer" layout-manager="CardLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="945" height="528"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <nested-form id="67174" form-file="edu/tamu/spinnstone/ui/screens/ServerScreen.form">
+        <constraints>
+          <card name="ServerCard"/>
+        </constraints>
+      </nested-form>
+      <nested-form id="1cffe" form-file="edu/tamu/spinnstone/ui/screens/ManagerView.form" binding="ManagerButton">
+        <constraints>
+          <card name="ManagerCard"/>
+        </constraints>
+      </nested-form>
+    </children>
+  </grid>
+</form>

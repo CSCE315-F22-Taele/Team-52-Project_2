@@ -1,75 +1,94 @@
 package edu.tamu.spinnstone.models;
 
-import java.sql.*;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
-
 public class Shipment extends Table {
-  public long shipmentId;
-  public Date shipmentDate;
-  public Boolean fulfilled;
+    public long shipmentId;
+    public Date shipmentDate;
+    public Boolean fulfilled;
 
-  // product -> quantity ordered
-  public HashMap<Product, Integer> products;
-  
-  public Shipment(Database db) {
-    super(db);
-    tableName = "shipment";
-    columnNames = Arrays.asList("shipment_id", "shipment_date", "fulfilled");
-    columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.BOOLEAN);
-  }
+    // product -> quantity ordered
+    public HashMap<Product, Integer> products;
 
-  // region overrides
+    public Shipment(Database db) {
+        super(db);
+        tableName = "shipment";
+        columnNames = Arrays.asList("shipment_id", "shipment_date", "fulfilled");
+        columnTypes = Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.BOOLEAN);
+    }
 
-  @Override
-  public ArrayList<Object> getColumnValues() {
-    return new ArrayList<Object>(Arrays.asList(
-      this.shipmentId,
-      this.shipmentDate,
-      this.fulfilled
-    ));
-  }
+    // region overrides
 
-  @Override
-  public void setColumnValues(List<Object> values) {
-    this.shipmentId = (long) values.get(0);
-    this.shipmentDate = (Date) values.get(1);
-    this.fulfilled = (Boolean) values.get(2);
-  }
+    @Override
+    public ArrayList<Object> getColumnValues() {
+        return new ArrayList<>(Arrays.asList(
+                this.shipmentId,
+                this.shipmentDate,
+                this.fulfilled
+        ));
+    }
 
-  // endregion
+    @Override
+    public void setColumnValues(List<Object> values) {
+        this.shipmentId = (long) values.get(0);
+        this.shipmentDate = (Date) values.get(1);
+        this.fulfilled = (Boolean) values.get(2);
+    }
 
-  
-  // region static methods
+    // endregion
 
-  // endregion
 
-  public boolean addProduct(Product product, int quantity) {
-    // returns true if the product was added to the shipment, false otherwise
-    throw new UnsupportedOperationException("addProductToShipment not implemented");
-  }
+    // region static methods
 
-  public boolean removeProduct(Product product) {
-    // returns true if the product was removed from the shipment, false otherwise
-    throw new UnsupportedOperationException("removeProductFromShipment not implemented");
-  }
+    public static Shipment create(Database db, Date shipmentDate, Boolean fulfilled) throws SQLException {
+        Shipment shipment = new Shipment(db);
+        shipment.shipmentDate = shipmentDate;
+        shipment.fulfilled = fulfilled;
+        shipment.shipmentId = shipment.insert();
 
-  public boolean updateQuantity(Product product, int quantity) {
-    // update the quantity of a product in the shipment
-    // this should not update the table! assume anything that was persisted is already en-route
-    // only update the quantity in the shipment object before finalizing
-    throw new UnsupportedOperationException("updateQuantity not implemented");
-  }
+        return shipment;
+    }
 
-  public boolean finalizeShipment() {
-    // returns true if the shipment was finalized, false otherwise
-    throw new UnsupportedOperationException("finalizeShipment not implemented");
-  }
+    // endregion
 
-  
+
+    public void addProduct(Product product, double quantity) throws SQLException {
+        // returns true if the product was added to the shipment, false otherwise
+        database.insert("shipment_product")
+                .columns("shipment_shipment_id", "product_product_id", "quantity_ordered")
+                .values(shipmentId, product.productId, quantity)
+                .execute();
+        // throw new UnsupportedOperationException("addProductToShipment not implemented");
+    }
+    
+    // Locally remove product from shipment
+    public boolean removeProduct(Product product) throws SQLException {
+        // returns true if the product was removed from the shipment, false otherwise
+        products.remove(product);
+        return true;
+    }
+
+    public boolean updateQuantity(Product product, int quantity) {
+        // update the quantity of a product in the shipment
+        // this should not update the table! assume anything that was persisted is already en-route
+        // only update the quantity in the shipment object before finalizing
+        products.put(product, quantity);
+        return true;
+    }
+
+    public boolean finalizeShipment() {
+        fulfilled = true;
+        // returns true if the shipment was finalized, false otherwise
+        return true;
+    }
+
+
 }

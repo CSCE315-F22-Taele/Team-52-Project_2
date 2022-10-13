@@ -12,9 +12,22 @@
 
 Point of sale system for Spin 'n Stone. Implemented using JDBC and Swing.
 
-## How to Run
+## Getting Started
 
-mvn clean javafx:run
+assuming intellij:
+- file> new>project from version control
+- top right near build/run bar add configuration. Add a application type run/debug configuration and set the class to edu.tamu.spinnston.App
+- right click the resources folder in the project directory view. mark directory as resource root.  
+- open settings and go to the GUI Designer section. make sure generate java source code is selected
+- should be good to go, click play button in top right corner
+
+### Phase 2 demo
+- check the stock of a few products (ingredients/drinks)
+- create an order that contains those products
+- record the total and checkout
+- look at the order (should be the highest id) total should match
+- using that order id run query 6 from queries.sql
+- the product from this order should match and the quantity in stock should have updated
 
 ### notes to developers
 
