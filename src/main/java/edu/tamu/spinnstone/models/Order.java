@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.postgresql.core.SqlCommand;
+
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 public class Order extends Table {
     // db values
     public long orderId;
@@ -46,12 +51,6 @@ public class Order extends Table {
         this.orderTotal = (BigDecimal) values.get(2);
     }
 
-    @Override
-    public void update() throws SQLException {
-        super.update();
-        // get the id of the order
-    }
-
     public static Order create(Database db, Date date, BigDecimal total) throws SQLException {
         Order order = new Order(db);
         order.orderDate = date;
@@ -61,7 +60,9 @@ public class Order extends Table {
         return order;
     }
 
-
+    /*
+     * 
+     */
     public void calculateOrderTotal() {
         for (OrderItem orderItem : orderItems) {
             if (orderItem.menuItem == null) {
@@ -93,30 +94,29 @@ public class Order extends Table {
             orderItem.insertProducts();
 
             // update product inventory
-            for (Product product : orderItem.products) {
-                product.decrementQuantity(1.0);
+            for(Product product : orderItem.products) {
+                product.decrementQuantity(1);
             }
         }
     }
 
-    public void addOrderItem(OrderItem orderItem) {
-        // adds an order item of the given menuitem type to the order and returns true if successful
-        // this should update the model to reflect the change
-        // this should update the order total locally
+    public boolean addOrderItem(OrderItem orderItem) {
+        // adds a order item of the given menuitem type to the order and returns true if successful
         orderItems.add(orderItem);
+        return true;
     }
 
-    public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
-        // removes an order item of the given menuitem type from the order and returns true if successful
+    public boolean removeOrderItem(OrderItem orderItem) throws SQLException {
+        // removes a order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.remove(orderItem);
+        return true;
     }
 
     public boolean cancelOrder() throws SQLException {
         // cancels the order and returns true if successful
-        // these changes should be created or updated in the database
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.clear();
+        return true;
     }
-
 
 }
