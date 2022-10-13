@@ -8,8 +8,6 @@ import edu.tamu.spinnstone.ui.Inventory;
 import edu.tamu.spinnstone.ui.NavBar;
 import edu.tamu.spinnstone.ui.Shipments;
 
-import edu.tamu.spinnstone.ui.Actions.ViewNames;
-
 import javax.swing.*;
 import java.awt.*;
 
