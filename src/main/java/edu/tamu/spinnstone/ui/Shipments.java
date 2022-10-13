@@ -1,5 +1,9 @@
 package edu.tamu.spinnstone.ui;
 
+import edu.tamu.spinnstone.models.Product;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.Shipment;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -43,6 +47,12 @@ public class Shipments {
 
     public void createUIComponents() {
         // TODO: place custom component creation code here
+
+        Database database = Actions.getDatabase.getValue();
+        Shipment shipments = new Shipment(database);
+
+        //System.out.println(shipments.getColumnValues());
+
         // Data to be displayed in the JTable
         String[][] data = {
                 {"Kundan Kumar Jha", "4031", "CSE"},
@@ -54,6 +64,5 @@ public class Shipments {
 
         // Initializing the JTable
         ShipmentsTable = new JTable(data, columnNames);
-        ShipmentsTable.setBounds(30, 40, 200, 300);
     }
 }
