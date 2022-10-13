@@ -50,7 +50,6 @@ public class Shipments {
 
     private void populateTable() {
         Database database = Actions.getDatabase.getValue();
-        System.out.println(database);
         Shipment shipments = new Shipment(database);
         ArrayList<String[]> dataToDisplay = new ArrayList<>();
 

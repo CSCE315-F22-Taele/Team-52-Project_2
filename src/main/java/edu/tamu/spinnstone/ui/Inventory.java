@@ -18,8 +18,6 @@ public class Inventory {
 
     public Inventory() {
         $$$setupUI$$$();
-        System.out.println("Test");
-        System.out.println(Actions.getDatabase.getValue());
         populateTable();
     }
 
@@ -48,7 +46,6 @@ public class Inventory {
 
     private void populateTable() {
         Database database = Actions.getDatabase.getValue();
-        System.out.println(database);
         Product inventory = new Product(database);
         ArrayList<String[]> dataToDisplay = new ArrayList<>();
 
