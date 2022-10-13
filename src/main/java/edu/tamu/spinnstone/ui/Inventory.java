@@ -50,7 +50,7 @@ public class Inventory {
         return panel1;
     }
 
-    private void createUIComponents() {
+    private void populateTable() {
         // TODO: place custom component creation code here
 
         Database database = Actions.getDatabase.getValue();

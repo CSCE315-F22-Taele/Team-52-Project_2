@@ -1,6 +1,7 @@
 package edu.tamu.spinnstone;
 
 import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.ui.Actions;
 import edu.tamu.spinnstone.ui.ScreenManager;
 import edu.tamu.spinnstone.ui.screens.ServerScreen;
 
@@ -13,6 +14,8 @@ public final class App {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Database db = new Database();
         db.connect();
+
+        Actions.getDatabase.onNext(db);
 
         ScreenManager screenManager = new ScreenManager(db);
 
