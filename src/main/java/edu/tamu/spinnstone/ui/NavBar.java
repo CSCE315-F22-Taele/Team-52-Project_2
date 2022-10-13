@@ -17,7 +17,7 @@ public class NavBar {
     private JPanel col2;
     private JPanel col3;
     private JPanel col4;
-    private JButton InventoryButton;
+    private JButton INVENTORYButton;
     private JButton SHIPMENTSButton;
 
     public NavBar() {
@@ -33,10 +33,11 @@ public class NavBar {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 Actions.setViewCard.onNext(Actions.ViewNames.MANAGER);
+                Actions.setViewCard.onNext(Actions.ViewNames.DASHBOARD);
             }
         });
 
-        InventoryButton.addMouseListener(new MouseAdapter() {
+        INVENTORYButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
@@ -92,11 +93,11 @@ public class NavBar {
         col3 = new JPanel();
         col3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         navContainer.add(col3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        InventoryButton = new JButton();
-        InventoryButton.setBackground(new Color(-15066598));
-        InventoryButton.setForeground(new Color(-1));
-        InventoryButton.setText("INVENTORY");
-        col3.add(InventoryButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        INVENTORYButton = new JButton();
+        INVENTORYButton.setBackground(new Color(-15066598));
+        INVENTORYButton.setForeground(new Color(-1));
+        INVENTORYButton.setText("INVENTORY");
+        col3.add(INVENTORYButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         col4 = new JPanel();
         col4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         navContainer.add(col4, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

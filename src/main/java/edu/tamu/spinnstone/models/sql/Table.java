@@ -237,7 +237,7 @@ public class Table {
 
         ResultSet rs = query.execute();
 
-        while (rs.next()) {
+        if(rs.next()) {
             return rs;
         }
 
