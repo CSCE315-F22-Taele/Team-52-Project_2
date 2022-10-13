@@ -24,11 +24,8 @@ public class ServerScreen {
     private JLabel drinkButton;
 
 
-    public ServerScreen(Database db) {
-        Order order = new Order(db);
+    public ServerScreen() {
 
-        Actions.getOrder.onNext(order);
-        Actions.getDatabase.onNext(db);
 
         pizzaButton.addMouseListener(new MouseAdapter() {
             @Override
