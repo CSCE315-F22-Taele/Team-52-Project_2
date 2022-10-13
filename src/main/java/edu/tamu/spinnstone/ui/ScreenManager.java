@@ -14,7 +14,6 @@ public class ScreenManager {
         Order order = new Order(db);
 
         Actions.getOrder.onNext(order);
-        Actions.getDatabase.onNext(db);
         Actions.setViewCard.subscribe(cardName -> ((CardLayout) manageContainer.getLayout()).show(manageContainer, cardName.toString()));
     }
 
