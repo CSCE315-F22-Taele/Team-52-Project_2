@@ -3,19 +3,20 @@ package edu.tamu.spinnstone.ui;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import edu.tamu.spinnstone.models.Order;
+import edu.tamu.spinnstone.models.OrderItem;
+import edu.tamu.spinnstone.models.Product;
+import edu.tamu.spinnstone.models.sql.Database;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import edu.tamu.spinnstone.models.Order;
-import edu.tamu.spinnstone.models.OrderItem;
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.Product;
 
 public class MenuOptions {
     private JPanel MenuOptionCards;
@@ -100,17 +101,17 @@ public class MenuOptions {
         cheeseButton = new JButton();
         cheeseButton.setBackground(new Color(-15066598));
         cheeseButton.setForeground(new Color(-1));
-        cheeseButton.setText("Cheese");
+        cheeseButton.setText("CHEESE");
         pizzaTypeMenu.add(cheeseButton);
         a1ToppingButton = new JButton();
         a1ToppingButton.setBackground(new Color(-15066598));
         a1ToppingButton.setForeground(new Color(-1));
-        a1ToppingButton.setText("1 Topping");
+        a1ToppingButton.setText("1 TOPPING");
         pizzaTypeMenu.add(a1ToppingButton);
         buildYourOwnButton = new JButton();
         buildYourOwnButton.setBackground(new Color(-15066598));
         buildYourOwnButton.setForeground(new Color(-1));
-        buildYourOwnButton.setText("Build Your Own");
+        buildYourOwnButton.setText("BUILD YOUR OWN");
         pizzaTypeMenu.add(buildYourOwnButton);
         pizzaCustomizationMenu = new JPanel();
         pizzaCustomizationMenu.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -466,9 +467,7 @@ public class MenuOptions {
 
     private void bindActionListeners() {
         Actions.setOptionsCard.subscribe(
-                card -> {
-                    ((CardLayout) MenuOptionCards.getLayout()).show(MenuOptionCards, card.toString());
-                });
+                card -> ((CardLayout) MenuOptionCards.getLayout()).show(MenuOptionCards, card.toString()));
     }
 
     private void bindPizzaButtons() {
@@ -495,7 +494,7 @@ public class MenuOptions {
                         if (rs.next()) {
                             menuItem.updateFromResultSet(rs);
                         } else {
-                            System.out.println("unkown pizza type:");
+                            System.out.println("unknown pizza type:");
                             return;
                         }
 
@@ -504,7 +503,7 @@ public class MenuOptions {
                         return;
                     }
 
-                    // creae a new pizza order item with the appropriate menu item link
+                    // create a new pizza order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
                     // no orderid yet (until it is finalized)
@@ -524,7 +523,7 @@ public class MenuOptions {
                     disablePizzaOptions();
 
                     edu.tamu.spinnstone.models.MenuItem.ItemNames key = entry.getKey();
-                    if (key == edu.tamu.spinnstone.models.MenuItem.ItemNames.ORGINAL_CHEESE_PIZZA) {
+                    if (key == edu.tamu.spinnstone.models.MenuItem.ItemNames.ORIGINAL_CHEESE_PIZZA) {
                         pizzaType = PizzaType.cheese;
                         enablePizzaOptions(cheeseButtons);
                         enablePizzaOptions(sauceButtons);
@@ -564,7 +563,7 @@ public class MenuOptions {
                     }
 
                     List<String> pizzaToppingNames = pizzaToppings.stream()
-                            .map(x -> x.toString())
+                            .map(Product.Name::toString)
                             .collect(Collectors.toList());
 
                     // if the current item is an ingredient
@@ -573,7 +572,6 @@ public class MenuOptions {
                         // this new one)
                         int toppingCount = orderItem.products.stream().map(product -> product.productName)
                                 .filter(pizzaToppingNames::contains)
-                                .distinct()
                                 .collect(Collectors.toSet())
                                 .size() + 1;
 
@@ -624,7 +622,7 @@ public class MenuOptions {
                                 return;
                             }
                         } else {
-                            System.out.println("unkown topping type:");
+                            System.out.println("unknown topping type:");
                             return;
                         }
 
@@ -685,7 +683,7 @@ public class MenuOptions {
                         if (rs.next()) {
                             menuItem.updateFromResultSet(rs);
                         } else {
-                            System.out.println("unkown drink type:");
+                            System.out.println("unknown drink type:");
                             return;
                         }
 
@@ -711,7 +709,7 @@ public class MenuOptions {
                                 return;
                             }
                         } else {
-                            System.out.println("unkown drink type:");
+                            System.out.println("unknown drink type:");
                             return;
                         }
 
@@ -720,13 +718,12 @@ public class MenuOptions {
                         return;
                     }
 
-                    // creae a new drink order item with the appropriate menu item link
+                    // create a new drink order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
 
                     orderItem.addProduct(product);
                     orderItem.isDrink = true;
-
 
                     activeOrder.addOrderItem(orderItem);
                     Actions.orderUpdated.onNext(activeOrder);
@@ -850,7 +847,7 @@ public class MenuOptions {
 
         pizzaMap = new HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton>() {
             {
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.ORGINAL_CHEESE_PIZZA, cheeseButton);
+                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.ORIGINAL_CHEESE_PIZZA, cheeseButton);
                 put(edu.tamu.spinnstone.models.MenuItem.ItemNames.ONE_TOPPING_PIZZA, a1ToppingButton);
                 put(edu.tamu.spinnstone.models.MenuItem.ItemNames.TWO_TO_FOUR_TOPPING_PIZZA, buildYourOwnButton);
             }

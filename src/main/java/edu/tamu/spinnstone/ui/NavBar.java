@@ -15,12 +15,39 @@ public class NavBar {
     private JButton SERVERVIEWButton;
     private JPanel col1;
     private JPanel col2;
+    private JPanel col3;
+    private JPanel col4;
+    private JButton InventoryButton;
+    private JButton SHIPMENTSButton;
 
     public NavBar() {
         SERVERVIEWButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+                Actions.setViewCard.onNext(Actions.ViewNames.SERVER);
+            }
+        });
+        MANAGERVIEWButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setViewCard.onNext(Actions.ViewNames.MANAGER);
+            }
+        });
+
+        InventoryButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setViewCard.onNext(Actions.ViewNames.INVENTORY);
+            }
+        });
+        SHIPMENTSButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setViewCard.onNext(Actions.ViewNames.SHIPMENTS);
             }
         });
     }
@@ -42,7 +69,7 @@ public class NavBar {
      */
     private void $$$setupUI$$$() {
         navContainer = new JPanel();
-        navContainer.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 0, 0));
+        navContainer.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 0, 0));
         navContainer.setBackground(new Color(-8355712));
         col1 = new JPanel();
         col1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), 0, 0));
@@ -53,7 +80,7 @@ public class NavBar {
         SERVERVIEWButton.setText("SERVER VIEW");
         col1.add(SERVERVIEWButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        navContainer.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        navContainer.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         col2 = new JPanel();
         col2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), 0, 0));
         navContainer.add(col2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -62,6 +89,22 @@ public class NavBar {
         MANAGERVIEWButton.setForeground(new Color(-1));
         MANAGERVIEWButton.setText("MANAGER VIEW");
         col2.add(MANAGERVIEWButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        col3 = new JPanel();
+        col3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        navContainer.add(col3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        InventoryButton = new JButton();
+        InventoryButton.setBackground(new Color(-15066598));
+        InventoryButton.setForeground(new Color(-1));
+        InventoryButton.setText("INVENTORY");
+        col3.add(InventoryButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        col4 = new JPanel();
+        col4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        navContainer.add(col4, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        SHIPMENTSButton = new JButton();
+        SHIPMENTSButton.setBackground(new Color(-15066598));
+        SHIPMENTSButton.setForeground(new Color(-1));
+        SHIPMENTSButton.setText("SHIPMENTS");
+        col4.add(SHIPMENTSButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

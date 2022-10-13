@@ -1,5 +1,8 @@
 package edu.tamu.spinnstone.models;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -11,7 +14,6 @@ import edu.tamu.spinnstone.models.sql.Table;
 import edu.tamu.spinnstone.models.sql.Query;
 
 import org.postgresql.core.SqlCommand;
-
 
 public class Product extends Table {
     //region Fields
@@ -32,7 +34,7 @@ public class Product extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.productId,
                 this.productName,
                 this.quantityInStock
@@ -85,14 +87,14 @@ public class Product extends Table {
 
     // endregion
 
-    public static enum ColumnNames {
+    public enum ColumnNames {
         PRODUCT_ID("product_id"),
         PRODUCT_NAME("product_name"),
         QUANTITY_IN_STOCK("quantity_in_stock");
 
         private String columnName;
 
-        private ColumnNames(String columnName) {
+        ColumnNames(String columnName) {
             this.columnName = columnName;
         }
 
@@ -101,7 +103,7 @@ public class Product extends Table {
         }
     }
 
-    public static enum Name {
+    public enum Name {
         FOUNTAIN_CUP("Fountain Cup"),
         BOTTLE_BEVERAGE("Bottle Beverage"),
         GATORADE("Gatorade"),
@@ -136,7 +138,7 @@ public class Product extends Table {
 
         private final String name;
 
-        private Name(String name) {
+        Name(String name) {
             this.name = name;
         }
 

@@ -1,5 +1,8 @@
 package edu.tamu.spinnstone.models;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -28,9 +31,9 @@ public class Order extends Table {
     public Order(Database db) {
         super(db);
         tableName = "\"order\"";
-        columnNames = new ArrayList<String>(Arrays.asList("order_id", "order_date", "order_total"));
-        columnTypes = new ArrayList<ColumnType>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
-        orderItems = new ArrayList<OrderItem>();
+        columnNames = new ArrayList<>(Arrays.asList("order_id", "order_date", "order_total"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.DATE, ColumnType.MONEY));
+        orderItems = new ArrayList<>();
         orderId = -1;
     }
 
@@ -38,11 +41,7 @@ public class Order extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
-                this.orderId,
-                this.orderDate,
-                this.orderTotal
-        ));
+        return new ArrayList<>(Arrays.asList(this.orderId, this.orderDate, this.orderTotal));
     }
 
     @Override
@@ -70,7 +69,7 @@ public class Order extends Table {
                 try {
                     orderItem.getMenuItem();
                 } catch (Exception e) {
-                    System.out.println(String.format("unable to calculate order total: %s", e));
+                    System.out.printf("unable to calculate order total: %s%n", e);
 
                 }
             }
@@ -103,7 +102,6 @@ public class Order extends Table {
 
     public boolean addOrderItem(OrderItem orderItem) {
         // adds a order item of the given menuitem type to the order and returns true if successful
-
         orderItems.add(orderItem);
         return true;
     }

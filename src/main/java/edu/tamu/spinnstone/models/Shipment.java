@@ -1,13 +1,14 @@
 package edu.tamu.spinnstone.models;
 
-import java.sql.*;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
+
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 public class Shipment extends Table {
     public long shipmentId;
@@ -28,7 +29,7 @@ public class Shipment extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<Object>(Arrays.asList(
+        return new ArrayList<>(Arrays.asList(
                 this.shipmentId,
                 this.shipmentDate,
                 this.fulfilled
