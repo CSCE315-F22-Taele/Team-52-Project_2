@@ -1,19 +1,15 @@
 package edu.tamu.spinnstone.ui;
 
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.Product;
-import edu.tamu.spinnstone.ui.Actions;
-
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import edu.tamu.spinnstone.models.Product;
+import edu.tamu.spinnstone.models.sql.Database;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Inventory {
     private JTable InventoryTable;
@@ -51,8 +47,6 @@ public class Inventory {
     }
 
     private void populateTable() {
-        // TODO: place custom component creation code here
-
         Database database = Actions.getDatabase.getValue();
         System.out.println(database);
         Product inventory = new Product(database);
@@ -62,33 +56,22 @@ public class Inventory {
             ResultSet product_data = inventory.getView();
             do {
                 String[] dataRow = new String[3];
+
                 dataRow[0] = product_data.getString("product_name");
                 dataRow[1] = product_data.getString("quantity_in_stock");
                 dataRow[2] = product_data.getString("conversion_factor");
 
-//                System.out.println(Arrays.toString(dataRow));
                 dataToDisplay.add(dataRow);
 
             } while (product_data.next());
-
-            //for()
-
         } catch (SQLException e) {
             System.out.println("SQL exception: " + e);
         }
 
-        // Data to be displayed in the JTable
-        String[][] data = {
-                {"DUN", "4031", "123"},
-                {"JANET", "6014", "456"}
-        };
-
-        // Column Names
-        String[] columnNames = {"Name", "Roll Number", "Department"};
-
         // Initializing the JTable
-        InventoryTable = new JTable(data, columnNames);
-
+        String[] columnNames = {"Product Name", "Quantity in Stock", "Conversion Factor"};
+        String[][] dataToDisplayArray = dataToDisplay.toArray(new String[dataToDisplay.size()][]);
+        InventoryTable = new JTable(dataToDisplayArray, columnNames);
 
         InventoryTableContainer.setViewportView(InventoryTable);
     }
