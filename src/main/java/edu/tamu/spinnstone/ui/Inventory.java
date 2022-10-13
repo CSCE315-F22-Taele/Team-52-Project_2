@@ -55,11 +55,10 @@ public class Inventory {
         try {
             ResultSet product_data = inventory.getView();
             do {
-                String[] dataRow = new String[3];
+                String[] dataRow = new String[2];
 
                 dataRow[0] = product_data.getString("product_name");
                 dataRow[1] = product_data.getString("quantity_in_stock");
-                dataRow[2] = product_data.getInt("conversion_factor") * product_data.getInt("quantity_in_stock") + " oz";
 
                 dataToDisplay.add(dataRow);
 
@@ -69,7 +68,7 @@ public class Inventory {
         }
 
         // Initializing the JTable
-        String[] columnNames = {"Product Name", "Quantity in Stock", "Total Amount"};
+        String[] columnNames = {"Product Name", "Quantity in Stock"};
         String[][] dataToDisplayArray = dataToDisplay.toArray(new String[dataToDisplay.size()][]);
         InventoryTable = new JTable(dataToDisplayArray, columnNames);
 
