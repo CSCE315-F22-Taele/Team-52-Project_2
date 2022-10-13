@@ -35,6 +35,7 @@ class CrudTest {
       Product p = new Product(db);
       p.productName = "Test Product";
       p.quantityInStock = 10;
+      p.conversionFactor = 1.0;
       p.productId = p.insert();
 
       assertNotNull(p.productId);
@@ -62,6 +63,8 @@ class CrudTest {
       Product p4 = new Product(db);
       boolean found = p4.find(p.productId);
       assertFalse(found);
+
+      db.query("DELETE FROM product WHERE product.product_name = \'Test Product\';");
 
     }
     @Test
