@@ -2,7 +2,6 @@ package edu.tamu.spinnstone.ui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-
 import com.intellij.uiDesigner.core.Spacer;
 import edu.tamu.spinnstone.models.OrderItem;
 import edu.tamu.spinnstone.models.Product;
@@ -12,7 +11,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +26,7 @@ public class Receipt {
     private List<ReceiptLine> receiptLines;
 
     public Receipt() {
-        receiptLines = new ArrayList<ReceiptLine>();
-
+        receiptLines = new ArrayList<>();
 
         Actions.orderUpdated.subscribe(order -> {
             // update total
@@ -80,7 +77,6 @@ public class Receipt {
                 );
             }
 
-
             // add spacer to bottom to make lines stick to the top
             final Spacer spacer1 = new Spacer();
             receiptItems.add(spacer1, new GridConstraints(order.orderItems.size(), 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -88,8 +84,6 @@ public class Receipt {
 
             receiptItems.revalidate();
             receiptItems.repaint();
-
-
         });
     }
 

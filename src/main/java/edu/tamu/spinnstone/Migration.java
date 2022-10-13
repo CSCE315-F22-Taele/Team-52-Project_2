@@ -117,12 +117,12 @@ public class Migration {
     };
 
      String[][] menuItems = {
-      {"one topping pizza",         "7.79"},
-      {"two - four topping pizza",  "8.99"},
-      {"orginal cheese pizza",      "6.79"},
-      {"bottled beverage",          "2.39"},
-      {"gatorade",                  "2.39"},
-      {"fountain drink",            "1.99"}
+      {"1 Topping Pizza",        "7.79"},
+      {"2-4 Topping Pizza",      "8.99"},
+      {"Original Cheese Pizza",  "6.79"},
+      {"Bottled Beverage",       "2.39"},
+      {"Gatorade",               "2.39"},
+      {"Fountain Drink",         "1.99"}
      };
 
     dropTables();
@@ -153,14 +153,12 @@ public class Migration {
       menu.menuItemId = menu.insert();
     }
     menu.sync();
-
-
     
     // generate and add random orders to database
     // 215 orders per normal day, 400 orders per gameday
     // goes from 9/4 to 9/24; game days are 9/10 and 9/24
 
-    // TODO: Change order totals to reflect $15/week requirement
+    // TODO: Change order totals to reflect $15k/week requirement
 
     {
       Date gameday1 = Date.valueOf(LocalDate.of(2022, 9, 10));
