@@ -29,10 +29,10 @@ public class ProductTest {
 
 
     @Test
-    void getInventory() throws SQLException{
+    void getView() throws SQLException{
         Product product = new edu.tamu.spinnstone.models.Product(db);
         product.sync();
-        ResultSet rs = product.getInventory();
+        ResultSet rs = product.getView();
         do
         {
         System.out.println(rs.getString(1) + "\t" + rs.getString(2) + "\t" + rs.getString(3));

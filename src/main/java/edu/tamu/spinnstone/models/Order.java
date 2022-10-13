@@ -108,17 +108,17 @@ public class Order extends Table {
         return true;
     }
 
-    public boolean removeOrderItem(MenuItem menuItem) throws SQLException {
+    public boolean removeOrderItem(OrderItem orderItem) throws SQLException {
         // removes a order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.remove(orderItem);
+        return true;
     }
 
     public boolean cancelOrder() throws SQLException {
         // cancels the order and returns true if successful
-        // these changes should be created or updated in the database
-        throw new UnsupportedOperationException("Unimplemented");
+        orderItems.clear();
+        return true;
     }
-
 
 }

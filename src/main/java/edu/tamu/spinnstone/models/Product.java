@@ -85,16 +85,6 @@ public class Product extends Table {
 
     // endregion
 
-    // region static declarations
-    public ResultSet getInventory() {
-        try {
-            return findWhere(null, "product_id", -1);
-        }
-        catch (SQLException e) {
-            return null;
-        }
-    }
-
     public static enum ColumnNames {
         PRODUCT_ID("product_id"),
         PRODUCT_NAME("product_name"),

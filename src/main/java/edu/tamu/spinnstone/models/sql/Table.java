@@ -244,6 +244,10 @@ public class Table {
         return null;
     }
 
+    public ResultSet getView() throws SQLException {
+        return findWhere(null, columnNames.get(0), -1);
+    }
+
     // endregion
 
 }
