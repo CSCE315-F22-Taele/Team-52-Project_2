@@ -74,7 +74,7 @@ public class Product extends Table {
         return true;
     }
 
-    public void decrementQuantity(double by) throws SQLException {
+    public void decrementQuantity() throws SQLException {
         sync();
         if (quantityInStock > 0) {
             quantityInStock--;

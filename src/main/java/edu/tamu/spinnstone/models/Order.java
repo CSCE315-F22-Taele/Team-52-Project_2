@@ -95,7 +95,7 @@ public class Order extends Table {
 
             // update product inventory
             for(Product product : orderItem.products) {
-                product.decrementQuantity(1);
+                product.decrementQuantity();
             }
         }
     }

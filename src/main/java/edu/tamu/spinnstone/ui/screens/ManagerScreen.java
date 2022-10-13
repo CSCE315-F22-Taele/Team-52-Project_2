@@ -14,8 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import edu.tamu.spinnstone.ui.Window;
-
 public class ManagerScreen {
   
 }
