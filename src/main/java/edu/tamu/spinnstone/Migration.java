@@ -140,7 +140,7 @@ public class Migration {
     for (String[] p : products) {
       product.productName = p[0];
       product.quantityInStock = Integer.parseInt(p[1]);
-      product.conversion_factor = Float.parseFloat(p[2]);
+      product.conversionFactor = Float.parseFloat(p[2]);
       product.productId = product.insert();
     }
     product.sync();

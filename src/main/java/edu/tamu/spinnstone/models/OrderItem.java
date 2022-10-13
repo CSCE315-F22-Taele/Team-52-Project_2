@@ -103,10 +103,9 @@ public class OrderItem extends Table {
         products.removeIf(product -> product.productName.equals(name.toString()));
     }
 
-    public boolean removeProduct(long productId) throws SQLException {
+    public void removeProduct(long productId) {
         // removes a product from the order item and returns true if successful
-        throw new UnsupportedOperationException();
+        products.removeIf(product -> product.productId == productId);
     }
-
 
 }

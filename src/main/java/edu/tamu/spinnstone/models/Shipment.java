@@ -81,13 +81,13 @@ public class Shipment extends Table {
         // this should not update the table! assume anything that was persisted is already en-route
         // only update the quantity in the shipment object before finalizing
         products.put(product, quantity);
-        throw new UnsupportedOperationException("updateQuantity not implemented");
+        return true;
     }
 
     public boolean finalizeShipment() {
         fulfilled = true;
         // returns true if the shipment was finalized, false otherwise
-        throw new UnsupportedOperationException("finalizeShipment not implemented");
+        return true;
     }
 
 

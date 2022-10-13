@@ -35,6 +35,7 @@ class CrudTest {
       Product p = new Product(db);
       p.productName = "Test Product";
       p.quantityInStock = 10;
+      p.conversionFactor = 1.0;
       p.productId = p.insert();
 
       assertNotNull(p.productId);
@@ -62,6 +63,8 @@ class CrudTest {
       Product p4 = new Product(db);
       boolean found = p4.find(p.productId);
       assertFalse(found);
+
+      db.query("DELETE FROM product WHERE product.product_name = \'Test Product\';");
 
     }
     @Test
@@ -100,41 +103,7 @@ class CrudTest {
 
     }
 
-    @Test
-    void menuItemCrud() throws SQLException {
-      // create 
-      MenuItem m = new MenuItem(db);
-      m.itemName = "Test Menu Item";
-      m.menuItemPrice = new BigDecimal("10.00");
-      m.menuItemId = m.insert();
-
-      assertNotNull(m.menuItemId);
-
-      // read
-      MenuItem m2 = new MenuItem(db);
-      m2.find(m.menuItemId);
-
-      assertEquals(m.itemName, m2.itemName);
-      assertEquals(m.menuItemPrice, m2.menuItemPrice);
-
-      m2.itemName = "Test Menu Item 2";
-
-      // update
-      m2.update();
-
-      MenuItem m3 = new MenuItem(db);
-      m3.find(m.menuItemId);
-
-      assertEquals(m2.itemName, m3.itemName);
-
-      // delete
-      m3.delete();
-
-      MenuItem m4 = new MenuItem(db);
-      boolean found = m4.find(m.menuItemId);
-      assertFalse(found);
-
-    }
+    
 
     @Test
     void orderCrud() throws SQLException {
