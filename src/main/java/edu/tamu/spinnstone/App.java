@@ -13,7 +13,8 @@ public final class App {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Database db = new Database();
         db.connect();
-        ServerScreen serverScreen = new ServerScreen(db);
+
+        ScreenManager screenManager = new ScreenManager(db);
 
         javax.swing.SwingUtilities.invokeLater(
                 () -> {
@@ -23,7 +24,7 @@ public final class App {
                         System.out.println("unable to set look and feel");
                     }
                     frame.setSize(980, 735);
-                    frame.setContentPane(serverScreen.screen);
+                    frame.setContentPane(screenManager.manageContainer);
                     frame.setVisible(true);
                 });
     }
