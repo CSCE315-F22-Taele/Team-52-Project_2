@@ -2,6 +2,7 @@ package edu.tamu.spinnstone.ui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import edu.tamu.spinnstone.models.Product;
 import edu.tamu.spinnstone.models.Shipment;
 import edu.tamu.spinnstone.models.sql.Database;
 
@@ -15,10 +16,14 @@ public class Shipments {
     private JTable ShipmentsTable;
     private JPanel panel1;
     private JScrollPane ShipmentsTableContainer;
+    private JTable InventoryTable;
+    private JScrollPane InventoryTableContainer;
+    private JButton submitShipmentButton;
 
     public Shipments() {
         $$$setupUI$$$();
-        populateTable();
+        populateShipmentTable();
+        populateInventoryTable();
     }
 
     /**
@@ -31,10 +36,23 @@ public class Shipments {
     private void $$$setupUI$$$() {
         createUIComponents();
         panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(8, 8, 8, 8), -1, -1));
+        panel1.setLayout(new GridLayoutManager(3, 2, new Insets(8, 8, 8, 8), -1, -1));
         ShipmentsTableContainer = new JScrollPane();
-        panel1.add(ShipmentsTableContainer, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel1.add(ShipmentsTableContainer, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         ShipmentsTableContainer.setViewportView(ShipmentsTable);
+        InventoryTableContainer = new JScrollPane();
+        panel1.add(InventoryTableContainer, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        InventoryTable = new JTable();
+        InventoryTableContainer.setViewportView(InventoryTable);
+        final JLabel label1 = new JLabel();
+        label1.setText("Add Products to Shipment");
+        panel1.add(label1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Past Shipments");
+        panel1.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        submitShipmentButton = new JButton();
+        submitShipmentButton.setText("Submit Shipment");
+        panel1.add(submitShipmentButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -48,7 +66,7 @@ public class Shipments {
         // TODO: place custom component creation code here
     }
 
-    private void populateTable() {
+    private void populateShipmentTable() {
         Database database = Actions.getDatabase.getValue();
         Shipment shipments = new Shipment(database);
         ArrayList<String[]> dataToDisplay = new ArrayList<>();
@@ -79,5 +97,34 @@ public class Shipments {
         ShipmentsTable = new JTable(dataToDisplayArray, columnNames);
 
         ShipmentsTableContainer.setViewportView(ShipmentsTable);
+    }
+
+    private void populateInventoryTable() {
+        Database database = Actions.getDatabase.getValue();
+        Product inventory = new Product(database);
+        ArrayList<String[]> dataToDisplay = new ArrayList<>();
+
+        try {
+            ResultSet product_data = inventory.getView();
+            do {
+                String[] dataRow = new String[3];
+
+                dataRow[0] = product_data.getString("product_name");
+                dataRow[1] = product_data.getString("quantity_in_stock");
+                dataRow[2] = "0";
+
+                dataToDisplay.add(dataRow);
+
+            } while (product_data.next());
+        } catch (SQLException e) {
+            System.out.println("SQL exception: " + e);
+        }
+
+        // Initializing the JTable
+        String[] columnNames = {"Product Name", "Quantity in Stock", "Quantity to Add"};
+        String[][] dataToDisplayArray = dataToDisplay.toArray(new String[dataToDisplay.size()][]);
+        InventoryTable = new JTable(dataToDisplayArray, columnNames);
+
+        InventoryTableContainer.setViewportView(InventoryTable);
     }
 }
