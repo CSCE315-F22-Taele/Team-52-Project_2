@@ -100,41 +100,7 @@ class CrudTest {
 
     }
 
-    @Test
-    void menuItemCrud() throws SQLException {
-      // create 
-      MenuItem m = new MenuItem(db);
-      m.itemName = "Test Menu Item";
-      m.menuItemPrice = new BigDecimal("10.00");
-      m.menuItemId = m.insert();
-
-      assertNotNull(m.menuItemId);
-
-      // read
-      MenuItem m2 = new MenuItem(db);
-      m2.find(m.menuItemId);
-
-      assertEquals(m.itemName, m2.itemName);
-      assertEquals(m.menuItemPrice, m2.menuItemPrice);
-
-      m2.itemName = "Test Menu Item 2";
-
-      // update
-      m2.update();
-
-      MenuItem m3 = new MenuItem(db);
-      m3.find(m.menuItemId);
-
-      assertEquals(m2.itemName, m3.itemName);
-
-      // delete
-      m3.delete();
-
-      MenuItem m4 = new MenuItem(db);
-      boolean found = m4.find(m.menuItemId);
-      assertFalse(found);
-
-    }
+    
 
     @Test
     void orderCrud() throws SQLException {
