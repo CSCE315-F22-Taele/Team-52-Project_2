@@ -65,7 +65,7 @@ public class Order extends Table {
     }
 
     /*
-     * Updates the local model orderTotal from all menu_items in order referenced by Order object
+     * Updates the local model orderTotal for currently referenced order from all menu_items currently in the database 
      * Includes 6.25% food tax
      * Does not update database
      * Return value of -1 indicates SQLException
