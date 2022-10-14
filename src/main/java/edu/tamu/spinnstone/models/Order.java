@@ -107,19 +107,19 @@ public class Order extends Table {
 
             // update product inventory
             for(Product product : orderItem.products) {
-                product.decrementQuantity();
+                product.decrementQuantity(1);
             }
         }
     }
 
     public boolean addOrderItem(OrderItem orderItem) {
-        // adds a order item of the given menuitem type to the order and returns true if successful
+        // adds an order item of the given menuitem type to the order and returns true if successful
         orderItems.add(orderItem);
         return true;
     }
 
     public boolean removeOrderItem(OrderItem orderItem) throws SQLException {
-        // removes a order item of the given menuitem type from the order and returns true if successful
+        // removes an order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
         orderItems.remove(orderItem);
         return true;

@@ -69,22 +69,31 @@ public class Product extends Table {
 
     // region instance methods
 
-    // Returns true if the quantiy was updated successfully in table for current product, false otherwise
+    // Returns true if the quantity was updated successfully in table for current product, false otherwise
     public void updateQuantity(int quantity) throws SQLException {
         sync();
         quantityInStock = quantity;
         update();
     }
 
-    public void decrementQuantity() throws SQLException {
-        sync();
-        if (quantityInStock > 0) {
-            quantityInStock--;
-        }
-        else {
-            throw new SQLException("Inventory is zero");
-        }
-        update();
+    public void decrementQuantity(double by) throws SQLException {
+        database.update(tableName)
+                .set(
+                        String.format(
+                                "%s = %s - %.3f",
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                by
+                        )
+                )
+                .where(
+                        String.format(
+                                "%s = %s AND %s > 0",
+                                ColumnNames.PRODUCT_ID.toString(),
+                                prepareValue(productId),
+                                ColumnNames.QUANTITY_IN_STOCK.toString()
+                        )
+                ).execute();
     }
 
     // endregion
