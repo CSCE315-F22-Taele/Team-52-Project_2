@@ -1,5 +1,6 @@
 package edu.tamu.spinnstone;
 
+import edu.tamu.spinnstone.ui.ManagerDashboard;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -101,9 +102,11 @@ public class MenuItemTest {
         db.query("DELETE FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\';");
     }
 
-    @Test
-    void addNewItem() throws SQLException {
-        menuItem = MenuItem.
-    }
+//    @Test
+    //Can't test a private function-- Will update test after demo
+//    void addNewItem() throws SQLException {
+//        MenuItem add = new MenuItem(db);
+//
+//    }
 
 }
