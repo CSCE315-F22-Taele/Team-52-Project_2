@@ -18,6 +18,8 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
 
     private  ArrayList<Integer> editableColumns;
 
+    public boolean supressEvents;
+
     public DataTable(String[][] rawData, String[] rawColumnNames, Integer[] _editableColumns) {
         columnNames = new ArrayList<>();
         columnNames.addAll(Arrays.asList(rawColumnNames));
@@ -32,11 +34,14 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
             row_array.addAll(Arrays.asList(row));
             data.add(row_array);
         }
+
+        supressEvents = false;
     }
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        return editableColumns.contains(col);
+//        return editableColumns.contains(col);
+        return true;
     }
 
     public DataTable(String[][] rawData, String[] rawColumnNames, Integer[] editableColumns, PublishSubject<TableModelEvent> _stream) {
@@ -49,8 +54,23 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
         return columnNames.get(index);
     }
 
+    public void addRow() {
+
+        ArrayList<String> new_row = new ArrayList<>();
+        new_row.addAll(Arrays.asList("", ""));
+        data.add(new_row);
+        fireTableStructureChanged();
+    }
+
+    public ArrayList<ArrayList<String>> getData() {
+        return data;
+    }
+
     @Override
     public void tableChanged(TableModelEvent e) {
+        if(supressEvents == true) {
+            return;
+        }
         if(stream != null) {
             stream.onNext(e);
         }

@@ -417,6 +417,11 @@ public class MenuOptions {
         return MenuOptionCards;
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+
+    }
+
     // @formatter:on
     private enum PizzaType {
         one_topping,

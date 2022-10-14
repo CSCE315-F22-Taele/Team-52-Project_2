@@ -2,7 +2,9 @@ package edu.tamu.spinnstone.ui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import edu.tamu.spinnstone.models.MenuItem;
+import edu.tamu.spinnstone.models.Product;
 import edu.tamu.spinnstone.models.sql.Database;
 import rx.subjects.PublishSubject;
 
@@ -10,6 +12,8 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,13 +25,55 @@ public class ManagerDashboard {
     private JTable MenuItemsTable;
     private JPanel container;
     private JScrollPane DashboardTableContainer;
+    private JButton submitButton;
+    private JButton addProductButton1;
+    private DataTable dataTable;
 
     public ManagerDashboard() {
         $$$setupUI$$$();
         populateMenuItemsTable();
+        addProductButton1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                dataTable.supressEvents = true;
+                dataTable.addRow();
+
+            }
+        });
+        submitButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                ArrayList<ArrayList<String>> table = dataTable.getData();
+                ArrayList<String> newRow = table.get(table.size() - 1);
+                String itemName = newRow.get(0);
+                String price = newRow.get(1);
+                addNewItem(itemName, price);
+                dataTable.supressEvents = false;
+            }
+        });
     }
 
+    private void addNewItem(String name, String price) {
+        Database database = Actions.getDatabase.getValue();
+        MenuItem menu_item = new MenuItem(database);
+        menu_item.itemName = name;
 
+        try {
+            database.insert(MenuItem.TableName)
+                    .columns(MenuItem.ColumnNames.ITEM_NAME.toString(), MenuItem.ColumnNames.MENU_ITEM_PRICE.toString())
+                    .values(name, price)
+                    .execute();
+
+            database.insert(Product.TableName)
+                    .columns(Product.ColumnNames.PRODUCT_NAME.toString(), Product.ColumnNames.QUANTITY_IN_STOCK.toString())
+                    .values(name, 0)
+                    .execute();
+        } catch (SQLException e) {
+            System.out.println("");
+        }
+    }
 
     private void populateMenuItemsTable() {
         Database database = Actions.getDatabase.getValue();
@@ -56,13 +102,15 @@ public class ManagerDashboard {
 
         PublishSubject<TableModelEvent> changeListener = PublishSubject.create();
 
-        DataTable dataTable = new DataTable(dataToDisplayArray, columnNames, editableCols, changeListener);
+        dataTable = new DataTable(dataToDisplayArray, columnNames, editableCols, changeListener);
 
         changeListener.subscribe(event -> {
             Database db = Actions.getDatabase.getValue();
             String value = dataTable.getValueAt(event.getFirstRow(), event.getColumn()).toString();
             String itemName = dataTable.getValueAt(event.getFirstRow(), 0).toString();
+
             try {
+                // this is fragile assuming the name is in the first column... beware
                 db.update(MenuItem.TableName).set(
                         new HashMap<String, Object>() {{
                             put(
@@ -95,11 +143,22 @@ public class ManagerDashboard {
      */
     private void $$$setupUI$$$() {
         container = new JPanel();
-        container.setLayout(new GridLayoutManager(1, 1, new Insets(8, 8, 8, 8), -1, -1));
+        container.setLayout(new GridLayoutManager(2, 1, new Insets(8, 8, 8, 8), -1, -1));
         DashboardTableContainer = new JScrollPane();
         container.add(DashboardTableContainer, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         MenuItemsTable = new JTable();
         DashboardTableContainer.setViewportView(MenuItemsTable);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        container.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        submitButton = new JButton();
+        submitButton.setText("Submit");
+        panel1.add(submitButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        addProductButton1 = new JButton();
+        addProductButton1.setText("Add Product");
+        panel1.add(addProductButton1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

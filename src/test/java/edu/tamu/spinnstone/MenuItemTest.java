@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -98,5 +99,11 @@ public class MenuItemTest {
         rs.next();
         Assert.assertEquals(rs.getBigDecimal("menu_item_price"), new BigDecimal("0.01"));
         db.query("DELETE FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\';");
-    }  
+    }
+
+    @Test
+    void addNewItem() throws SQLException {
+        menuItem = MenuItem.
+    }
+
 }

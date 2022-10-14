@@ -21,6 +21,7 @@ public class Product extends Table {
     public String productName;
     public int quantityInStock;
     public double conversionFactor;
+    public static String TableName = "product";
     //endregion
 
     public Product(Database db) {
