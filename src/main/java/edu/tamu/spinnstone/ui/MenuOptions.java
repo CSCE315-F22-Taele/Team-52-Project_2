@@ -71,7 +71,7 @@ public class MenuOptions {
     private List<Product.Name> pizzaCrusts;
 
     private HashMap<Product.Name, JToggleButton> pizzaToppingMap;
-    private HashMap<Product.Name, JButton> drinkMap;
+    private HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> drinkMap;
     private HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> pizzaMap;
 
     // @formatter:off
@@ -417,6 +417,11 @@ public class MenuOptions {
         return MenuOptionCards;
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+
+    }
+
     // @formatter:on
     private enum PizzaType {
         one_topping,
@@ -506,6 +511,8 @@ public class MenuOptions {
                     // create a new pizza order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
+                    orderItem.menuItem = menuItem;
+                    orderItem.quantity = 1;
                     // no orderid yet (until it is finalized)
 
                     Order activeOrder = Actions.getOrder.getValue();
@@ -641,7 +648,7 @@ public class MenuOptions {
     }
 
     private void bindDrinkButtons() {
-        for (Map.Entry<Product.Name, JButton> entry : drinkMap.entrySet()) {
+        for (Map.Entry<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> entry : drinkMap.entrySet()) {
             entry.getValue().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent event) {
@@ -721,6 +728,8 @@ public class MenuOptions {
                     // create a new drink order item with the appropriate menu item link
                     OrderItem orderItem = new OrderItem(db);
                     orderItem.menuItemId = menuItem.menuItemId;
+                    orderItem.menuItem = menuItem;
+                    orderItem.quantity = 1;
 
                     orderItem.addProduct(product);
                     orderItem.isDrink = true;
@@ -810,11 +819,11 @@ public class MenuOptions {
                 GATORADEButton,
                 FOUNTAINButton);
 
-        drinkMap = new HashMap<Product.Name, JButton>() {
+        drinkMap = new HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton>() {
             {
-                put(Product.Name.BOTTLE_BEVERAGE, BOTTLEDButton);
-                put(Product.Name.GATORADE, GATORADEButton);
-                put(Product.Name.FOUNTAIN_CUP, FOUNTAINButton);
+                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.BOTTLED_BEVERAGE, BOTTLEDButton);
+                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.GATORADE, GATORADEButton);
+                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.FOUNTAIN_DRINK, FOUNTAINButton);
             }
         };
 

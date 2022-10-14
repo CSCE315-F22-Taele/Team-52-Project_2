@@ -11,6 +11,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,12 @@ public class Receipt {
 
         Actions.orderUpdated.subscribe(order -> {
             // update total
-            order.calculateOrderTotal();
+            order.subTotal = order.orderItems.stream()
+                    .map(item -> item.menuItem.menuItemPrice.multiply(new BigDecimal(item.quantity)))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            order.taxCharge = new BigDecimal("0.062").multiply(order.subTotal);
+            order.orderTotal = order.subTotal.add(order.taxCharge);
 
             // set total labels
             subtotal.setText(NumberFormat.getCurrencyInstance().format(order.subTotal));
