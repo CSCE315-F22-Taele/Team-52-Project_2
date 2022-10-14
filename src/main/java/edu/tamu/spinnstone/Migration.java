@@ -72,6 +72,7 @@ public class Migration {
     }
 
     order.orderDate = orderDate;
+    order.calculateOrderTotal();
     order.orderId = order.insert();
 
     return order;
@@ -83,37 +84,37 @@ public class Migration {
     // Product Name, Inventory Count, oz. in serving (1 indicates unitless)
     // 8 oz Dough, 4 oz Sauce, 6 oz Cheese, 1 oz Topping, 0.5 oz Sauce
     String[][] products = {
-        {"Fountain Drink"   , "5000", "1"  },
-        {"Bottled Beverage", "5000", "1"  },
-        {"Gatorade"       , "1000", "1"  },
-        {"Cauliflower"    , "200" , "8"  },
-        {"Standard"       , "3500", "8"  },
-        {"Alfredo"        , "1500", "4"  },
-        {"Traditional Red", "3000", "4"  },
-        {"Zesty Red"      , "2500", "4"  },
-        {"House Blend"    , "2000", "6"  },
-        {"Parmesan"       , "2000", "6"  },
-        {"BBQ Sauce"      , "1000", "0.5"},
-        {"Olive Oil"      , "1000", "0.5"},
-        {"Oregano"        , "500" , "0.1"},
-        {"Ranch"          , "1000", "0.5"},
-        {"Sriracha"       , "0.5" , "0.5"}, 
-        {"Diced Ham"      , "2000", "1"  },
-        {"Italian Sausage", "2000", "1"  }, 
-        {"Meatball"       , "2000", "1"  },
-        {"Pepperoni"      , "2000", "1"  },
-        {"Salami"         , "2000", "1"  },
-        {"Smoked Chicken" , "2000", "1"  },  
-        {"Banana Peppers" , "2000", "1"  },    
-        {"Black Olives"   , "2000", "1"  },
-        {"Green Peppers"  , "2000", "1"  },
-        {"Jalapenos"      , "2000", "1"  },
-        {"Mushrooms"      , "2000", "1"  },
-        {"Onions"         , "2000", "1"  },
-        {"Pineapple"      , "2000", "1"  },
-        {"Roasted Garlic" , "2000", "1"  },   
-        {"Spinach"        , "2000", "1"  },
-        {"Tomatoes"       , "2000", "1"  }
+      {"Fountain Drink"   , "5000", "1"  },
+      {"Bottled Beverage", "5000", "1"  },
+      {"Gatorade"       , "1000", "1"  },
+      {"Cauliflower"    , "200" , "8"  },
+      {"Standard"       , "3500", "8"  },
+      {"Alfredo"        , "1500", "4"  },
+      {"Traditional Red", "3000", "4"  },
+      {"Zesty Red"      , "2500", "4"  },
+      {"House Blend"    , "2000", "6"  },
+      {"Parmesan"       , "2000", "6"  },
+      {"BBQ Sauce"      , "1000", "0.5"},
+      {"Olive Oil"      , "1000", "0.5"},
+      {"Oregano"        , "500" , "0.5"},
+      {"Ranch"          , "1000", "0.5"},
+      {"Sriracha"       , "1000", "0.5"}, 
+      {"Diced Ham"      , "2000", "1"  },
+      {"Italian Sausage", "2000", "1"  }, 
+      {"Meatball"       , "2000", "1"  },
+      {"Pepperoni"      , "2000", "1"  },
+      {"Salami"         , "2000", "1"  },
+      {"Smoked Chicken" , "2000", "1"  },  
+      {"Banana Peppers" , "2000", "1"  },    
+      {"Black Olives"   , "2000", "1"  },
+      {"Green Peppers"  , "2000", "1"  },
+      {"Jalapenos"      , "2000", "1"  },
+      {"Mushrooms"      , "2000", "1"  },
+      {"Onions"         , "2000", "1"  },
+      {"Pineapple"      , "2000", "1"  },
+      {"Roasted Garlic" , "2000", "1"  },   
+      {"Spinach"        , "2000", "1"  },
+      {"Tomatoes"       , "2000", "1"  }
     };
 
      String[][] menuItems = {
@@ -131,29 +132,20 @@ public class Migration {
     Database db = new Database();
     db.connect();
 
+    //Adds menu options to Menu Items
+    for (String[] menuItem : menuItems) {
+      MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]));
+    }
+
     Product product =  new Product(db);
     MenuItem menu = new MenuItem(db);
     Shipment shipment = new Shipment(db);
-
-    // Add products to inventory
-
+     
+    // Add products to Inventory
     for (String[] p : products) {
-      product.productName = p[0];
-      product.quantityInStock = Integer.parseInt(p[1]);
-      product.conversionFactor = Float.parseFloat(p[2]);
-      product.productId = product.insert();
+      Product.create(db, p[0] , Integer.parseInt(p[1]), Float.parseFloat(p[2]));
     }
-    product.sync();
 
-    //Adds menu options to Menu Items
-
-    for (int i = 0; i < menuItems.length; i++) {
-      menu.itemName = menuItems[i][0];
-      menu.menuItemPrice = new BigDecimal(menuItems[i][1]);
-      menu.menuItemId = menu.insert();
-    }
-    menu.sync();
-    
     // generate and add random orders to database
     // 215 orders per normal day, 400 orders per gameday
     // goes from 9/4 to 9/24; game days are 9/10 and 9/24
@@ -179,7 +171,6 @@ public class Migration {
         }
       }
     }
-  
     // create shipments
     for (int i = 0; i < 3; ++i) {
       // For each product

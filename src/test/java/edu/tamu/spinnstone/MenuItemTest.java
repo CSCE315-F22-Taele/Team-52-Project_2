@@ -77,8 +77,8 @@ public class MenuItemTest {
     @Test
     void getView() throws SQLException {
         ResultSet rs = menuItem.getView();
-        Assert.assertEquals(rs.getString("menu_item_id").toString(), "1");
-        Assert.assertEquals(rs.getString("item_name").toString(), "one topping pizza");
+        Assert.assertEquals("1", rs.getString("menu_item_id").toString());
+        Assert.assertEquals(rs.getString("item_name").toString(), "1 Topping Pizza");
     }
 
     @Test
