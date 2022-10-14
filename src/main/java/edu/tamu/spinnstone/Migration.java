@@ -83,8 +83,8 @@ public class Migration {
     // Product Name, Inventory Count, oz. in serving (1 indicates unitless)
     // 8 oz Dough, 4 oz Sauce, 6 oz Cheese, 1 oz Topping, 0.5 oz Sauce
     String[][] products = {
-        {"Fountain Cup"   , "5000", "1"  },
-        {"Bottle Beverage", "5000", "1"  },
+        {"Fountain Drink"   , "5000", "1"  },
+        {"Bottled Beverage", "5000", "1"  },
         {"Gatorade"       , "1000", "1"  },
         {"Cauliflower"    , "200" , "8"  },
         {"Standard"       , "3500", "8"  },
