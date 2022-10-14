@@ -295,10 +295,11 @@ public class Query {
         return this;
     }
 
-    public Query set(Map<String, String> setMap) {
+
+    public Query set(Map<String, Object> setMap) {
         ArrayList<String> setClauses = new ArrayList<String>();
-        for (Map.Entry<String, String> entry : setMap.entrySet()) {
-            setClauses.add(String.format("%s = %s", entry.getKey(), entry.getValue()));
+        for (Map.Entry<String, Object> entry : setMap.entrySet()) {
+            setClauses.add(String.format("%s = %s", entry.getKey(), prepareValue(entry.getValue())));
         }
         this.clauses.put(ClauseType.SET, String.join(", ", setClauses));
         return this;

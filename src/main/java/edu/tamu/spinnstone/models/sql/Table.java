@@ -161,7 +161,7 @@ public class Table {
 
         ArrayList<Object> values = this.getColumnValues();
 
-        Map<String, String> setMap = new HashMap<String, String>();
+        Map<String, Object> setMap = new HashMap<String, Object>();
 
         for (int i = 1; i < columnNames.size(); i++) {
             setMap.put(columnNames.get(i), prepareValue(values.get(i)));

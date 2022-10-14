@@ -4,12 +4,18 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import edu.tamu.spinnstone.models.MenuItem;
 import edu.tamu.spinnstone.models.sql.Database;
+import rx.subjects.PublishSubject;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class ManagerDashboard {
     private JTable MenuItemsTable;
@@ -20,6 +26,8 @@ public class ManagerDashboard {
         $$$setupUI$$$();
         populateMenuItemsTable();
     }
+
+
 
     private void populateMenuItemsTable() {
         Database database = Actions.getDatabase.getValue();
@@ -44,7 +52,32 @@ public class ManagerDashboard {
         // Initializing the JTable
         String[] columnNames = {"Menu Item", "Price"};
         String[][] dataToDisplayArray = dataToDisplay.toArray(new String[dataToDisplay.size()][]);
-        MenuItemsTable = new JTable(dataToDisplayArray, columnNames);
+        Integer[] editableCols = {1};
+
+        PublishSubject<TableModelEvent> changeListener = PublishSubject.create();
+
+        DataTable dataTable = new DataTable(dataToDisplayArray, columnNames, editableCols, changeListener);
+
+        changeListener.subscribe(event -> {
+            Database db = Actions.getDatabase.getValue();
+            String value = dataTable.getValueAt(event.getFirstRow(), event.getColumn()).toString();
+            String itemName = dataTable.getValueAt(event.getFirstRow(), 0).toString();
+            try {
+                db.update(MenuItem.TableName).set(
+                        new HashMap<String, Object>() {{
+                            put(
+                                    MenuItem.ColumnNames.MENU_ITEM_PRICE.toString(),
+                                    new BigDecimal(value.substring(1))
+
+                            );
+                        }}
+                ).where(MenuItem.ColumnNames.ITEM_NAME.toString(), itemName).execute();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        });
+
+        MenuItemsTable = new JTable(dataTable);
 
         DashboardTableContainer.setViewportView(MenuItemsTable);
     }
