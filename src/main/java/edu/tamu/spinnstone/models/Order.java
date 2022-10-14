@@ -74,22 +74,21 @@ public class Order extends Table {
      * @return  None
      */
     public void calculateOrderTotal() {
-        ResultSet rs;
-        BigDecimal orderTotal;
-        try {
-            rs = database.query("select sum(menu_item_price) from order_item " +
-                                      "join menu_item on menu_item.menu_item_id = order_item.menu_item_id " +
-                                      "where order_item.order_id = " + orderId +";");
-            rs.next();
-            subTotal = rs.getBigDecimal("sum");
-            taxCharge = subTotal.multiply(new BigDecimal("0.0625")).setScale(2, RoundingMode.HALF_UP);
-            orderTotal = subTotal.add(taxCharge);
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem.menuItem == null) {
+                try {
+                    orderItem.getMenuItem();
+                } catch (Exception e) {
+                    System.out.println(String.format("unable to calculate order total: %s", e));
+
+                }
+            }
         }
-        catch (SQLException e){
-            orderTotal = new BigDecimal("-1");
-        }
-        this.orderTotal = orderTotal;
+        subTotal = orderItems.stream().map(item -> item.menuItem.menuItemPrice).reduce(new BigDecimal(0), BigDecimal::add);
+        taxCharge = subTotal.multiply(new BigDecimal(".0625"));
+        orderTotal = subTotal.add(taxCharge);
     }
+    
 
     // endregion
 
