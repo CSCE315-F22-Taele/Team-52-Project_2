@@ -50,5 +50,51 @@ public class ProductTest {
 
         product.updateQuantity(4999);
     }
+
+    @Test
+    void populate() throws SQLException {
+
+        String[][] products = {
+            {"Fountain Drink"   , "5000", "1"  },
+            {"Bottled Beverage", "5000", "1"  },
+            {"Gatorade"       , "1000", "1"  },
+            {"Cauliflower"    , "200" , "8"  },
+            {"Standard"       , "3500", "8"  },
+            {"Alfredo"        , "1500", "4"  },
+            {"Traditional Red", "3000", "4"  },
+            {"Zesty Red"      , "2500", "4"  },
+            {"House Blend"    , "2000", "6"  },
+            {"Parmesan"       , "2000", "6"  },
+            {"BBQ Sauce"      , "1000", "0.5"},
+            {"Olive Oil"      , "1000", "0.5"},
+            {"Oregano"        , "500" , "0.5"},
+            {"Ranch"          , "1000", "0.5"},
+            {"Sriracha"       , "1000", "0.5"}, 
+            {"Diced Ham"      , "2000", "1"  },
+            {"Italian Sausage", "2000", "1"  }, 
+            {"Meatball"       , "2000", "1"  },
+            {"Pepperoni"      , "2000", "1"  },
+            {"Salami"         , "2000", "1"  },
+            {"Smoked Chicken" , "2000", "1"  },  
+            {"Banana Peppers" , "2000", "1"  },    
+            {"Black Olives"   , "2000", "1"  },
+            {"Green Peppers"  , "2000", "1"  },
+            {"Jalapenos"      , "2000", "1"  },
+            {"Mushrooms"      , "2000", "1"  },
+            {"Onions"         , "2000", "1"  },
+            {"Pineapple"      , "2000", "1"  },
+            {"Roasted Garlic" , "2000", "1"  },   
+            {"Spinach"        , "2000", "1"  },
+            {"Tomatoes"       , "2000", "1"  }
+        };
+        
+        for (String[] p : products) {
+            db.query("update product set quantity_in_stock = " + Integer.parseInt(p[1]) + " where product_name = \'" + p[0] + "\'");
+            db.query("update product set conversion_factor = " + Float.parseFloat(p[2]) + " where product_name = \'" + p[0] + "\'");
+
+           
+        }
+
+    }
   
 }

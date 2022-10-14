@@ -71,7 +71,7 @@ public class Shipment extends Table {
         database.query("delete from shipment_product where shipment_shipment_id = "+ shipmentId + " and product_product_id = " + product.productId);
     }
 
-    // Edit product quanity in current shipment, updates database
+    // Edit product quantity in current shipment, updates database
     public void updateQuantity(Product product, int quantity) throws SQLException {
         database.query("update shipment_product set quantity_ordered = " + quantity + " where shipment_shipment_id = " + shipmentId + " and product_product_id = " + product.productId);
     }
