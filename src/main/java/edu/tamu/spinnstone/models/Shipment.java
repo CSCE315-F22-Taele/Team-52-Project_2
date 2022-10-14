@@ -46,7 +46,7 @@ public class Shipment extends Table {
 
     // region static methods
 
-    // Create new shippment in table
+    // Create new shipment in table
     public static Shipment create(Database db, Date shipmentDate, Boolean fulfilled) throws SQLException {
         Shipment shipment = new Shipment(db);
         shipment.shipmentDate = shipmentDate;
@@ -76,7 +76,7 @@ public class Shipment extends Table {
         database.query("update shipment_product set quantity_ordered = " + quantity + " where shipment_shipment_id = " + shipmentId + " and product_product_id = " + product.productId);
     }
 
-    // Returns true if current shipment is set as fullfilled, false otherwise
+    // Returns true if current shipment is set as fulfilled, false otherwise
     public boolean finalizeShipment() {
         fulfilled = true;
         try {
