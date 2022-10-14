@@ -129,7 +129,7 @@ public class Query {
             throw new SQLException(String.format("Missing required clauses: %s", missingRequiredClauses.toString()));
         }
 
-        Statement statement = database.connection.createStatement();
+        Statement statement = database.connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         boolean resultSet = statement.execute(this.toString());
 
 
