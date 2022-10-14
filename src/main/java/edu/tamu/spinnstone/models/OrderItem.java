@@ -1,62 +1,111 @@
 package edu.tamu.spinnstone.models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Arrays;
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
 
-public class OrderItem extends PgObject {
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class OrderItem extends Table {
     public long orderItemId;
     public long orderId;
     public long menuItemId;
 
+    public List<Product> products;
+    public MenuItem menuItem;
 
-    public OrderItem(Connection conn, long orderItemId, long orderId, long menuItemId) throws SQLException {
-        super(
-          conn,
-          "order_item",
-          Arrays.asList("order_item_id", "order_id", "menu_item_id"),
-          Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG)
-        );
+    // strictly for drinks
+    public int quantity;
+    public boolean isDrink;
 
-      this.orderId = orderId;
-      this.menuItemId = menuItemId;
+
+    public OrderItem(Database db) {
+        super(db);
+        tableName = "order_item";
+        columnNames = new ArrayList<>(Arrays.asList("order_item_id", "order_id", "menu_item_id"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.LONG, ColumnType.LONG));
+        products = new ArrayList<>();
+        quantity = 1;
+        orderItemId = -1;
+        isDrink = false;
     }
 
-    
-    public long insert() throws SQLException {
-      Object[] values = {
-        this.orderItemId,
-        this.orderId,
-        this.menuItemId
-      };
-      
-      return super.insert(
-        values
-      );
+    // region overrides
+    @Override
+    public ArrayList<Object> getColumnValues() {
+        return new ArrayList<>(Arrays.asList(
+                this.orderItemId,
+                this.orderId,
+                this.menuItemId
+        ));
     }
 
-    public static OrderItem create(Connection conn, long orderId, long menuItemId) throws SQLException {
-      OrderItem p = new OrderItem(
-        conn,
-        0,
-        orderId,
-        menuItemId
-      );
-
-      long id = p.insert();
-      p.orderItemId = id;
-
-      return p;
+    @Override
+    public void setColumnValues(List<Object> values) {
+        this.orderItemId = (long) values.get(0);
+        this.orderId = (long) values.get(1);
+        this.menuItemId = (long) values.get(2);
     }
 
-    public void addProduct(long productId) throws SQLException {
-      PreparedStatement statement = connection.prepareStatement(
-        String.format("INSERT INTO order_item_product (order_item_order_item_id, product_product_id) VALUES (%s,%s)", orderItemId, productId)
-      );
+    @Override
+    public void update() throws SQLException {
+        if (menuItem != null) {
+            menuItemId = menuItem.menuItemId;
+        }
+        // create if not exists order_item_product relation for each product
+        super.update();
+    }
+    // endregion
 
-      statement.execute();
-      
+    public void insertProducts() throws SQLException {
+        // assume all products have not been inserted
+        for (Product product : products) {
+
+            database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
+                    .columns("order_item_order_item_id", "product_product_id")
+                    .values(orderItemId, product.productId).execute();
+
+        }
+    }
+
+    //region static methods
+    public static OrderItem create(Database db, long orderId, long menuItemId) throws SQLException {
+        OrderItem orderItem = new OrderItem(db);
+        orderItem.orderId = orderId;
+        orderItem.menuItemId = menuItemId;
+        orderItem.orderItemId = orderItem.insert();
+
+        return orderItem;
+    }
+    //endregion
+
+    public void getMenuItem() throws SQLException {
+        MenuItem item = new MenuItem(database);
+        boolean found = item.find(menuItemId);
+        if (!found) {
+            throw new SQLException("unable to find menu item");
+        }
+
+        this.menuItem = item;
+
+    }
+
+
+    public void addProduct(Product product) {
+        // adds a product to the order item and returns true if successful
+        products.add(product);
+    }
+
+    public void removeProductByName(Product.Name name) {
+        // removes a product from the order item
+        products.removeIf(product -> product.productName.equals(name.toString()));
+    }
+
+    public void removeProduct(long productId) {
+        // removes a product from the order item and returns true if successful
+        products.removeIf(product -> product.productId == productId);
     }
 
 }

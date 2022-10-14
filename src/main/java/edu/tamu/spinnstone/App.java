@@ -1,21 +1,47 @@
 package edu.tamu.spinnstone;
 
+import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.ui.Actions;
+import edu.tamu.spinnstone.ui.ScreenManager;
+import edu.tamu.spinnstone.ui.screens.ServerScreen;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 public final class App {
-    private App() {
-    }
+    public static void main(String[] args) throws Exception {
+        JFrame frame = new JFrame("Spin N' Stone");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Database db = new Database();
+        db.connect();
 
-    public static void main(String[] args) {
-      try {
-        Migration migration = new Migration(
-            "csce331_904_kevin",
-            "friendlyalpaca",
-            "jdbc:postgresql://csce-315-db.engr.tamu.edu:5432/csce331_904_52"
-          );
+        Actions.getDatabase.onNext(db);
 
-        migration.populate();
-      }  catch(Exception e) {
-        System.out.println(e);
-        e.printStackTrace(System.out);
-      }
+        // disable console output
+        PrintStream ps = new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+
+            }
+        });
+
+        System.setOut(ps);
+
+        ScreenManager screenManager = new ScreenManager(db);
+
+        javax.swing.SwingUtilities.invokeLater(
+                () -> {
+                    try {
+                        UIManager.put("ToggleButton.select", Color.getColor("#197278"));
+                    } catch (Exception e) {
+                        System.out.println("unable to set look and feel");
+                    }
+                    frame.setSize(980, 735);
+                    frame.setContentPane(screenManager.manageContainer);
+                    frame.setVisible(true);
+                });
     }
 }

@@ -14,7 +14,8 @@ create table product
     product_id        bigint generated always as identity
         primary key,
     product_name      text                       not null,
-    quantity_in_stock double precision default 0 not null
+    quantity_in_stock bigint                     not null,
+    conversion_factor double precision default 1 not null
 );
 
 
