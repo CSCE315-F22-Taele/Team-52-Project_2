@@ -16,7 +16,6 @@ public class Shipment extends Table {
     public Boolean fulfilled;
 
     // product -> quantity ordered
-    public HashMap<Product, Integer> products;
 
     public Shipment(Database db) {
         super(db);
@@ -45,9 +44,9 @@ public class Shipment extends Table {
 
     // endregion
 
-
     // region static methods
 
+    // Create new shippment in table
     public static Shipment create(Database db, Date shipmentDate, Boolean fulfilled) throws SQLException {
         Shipment shipment = new Shipment(db);
         shipment.shipmentDate = shipmentDate;
@@ -59,36 +58,33 @@ public class Shipment extends Table {
 
     // endregion
 
-
+    // Add product to current shipment, updates database
     public void addProduct(Product product, double quantity) throws SQLException {
-        // returns true if the product was added to the shipment, false otherwise
         database.insert("shipment_product")
                 .columns("shipment_shipment_id", "product_product_id", "quantity_ordered")
                 .values(shipmentId, product.productId, quantity)
                 .execute();
-        // throw new UnsupportedOperationException("addProductToShipment not implemented");
     }
     
-    // Locally remove product from shipment
-    public boolean removeProduct(Product product) throws SQLException {
-        // returns true if the product was removed from the shipment, false otherwise
-        products.remove(product);
-        return true;
+    // Remove product from current shipment, updates database
+    public void removeProduct(Product product) throws SQLException {
+        database.query("delete from shipment_product where shipment_shipment_id = "+ shipmentId + " and product_product_id = " + product.productId);
     }
 
-    public boolean updateQuantity(Product product, int quantity) {
-        // update the quantity of a product in the shipment
-        // this should not update the table! assume anything that was persisted is already en-route
-        // only update the quantity in the shipment object before finalizing
-        products.put(product, quantity);
-        return true;
+    // Edit product quantity in current shipment, updates database
+    public void updateQuantity(Product product, int quantity) throws SQLException {
+        database.query("update shipment_product set quantity_ordered = " + quantity + " where shipment_shipment_id = " + shipmentId + " and product_product_id = " + product.productId);
     }
 
+    // Returns true if current shipment is set as fullfilled, false otherwise
     public boolean finalizeShipment() {
         fulfilled = true;
-        // returns true if the shipment was finalized, false otherwise
+        try {
+            update();
+        }
+        catch (SQLException e) {
+            return false;
+        }
         return true;
     }
-
-
 }

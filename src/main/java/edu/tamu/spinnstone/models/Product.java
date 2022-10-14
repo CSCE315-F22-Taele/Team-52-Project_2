@@ -20,7 +20,7 @@ public class Product extends Table {
     public long productId;
     public String productName;
     public int quantityInStock;
-    public double conversion_factor;
+    public double conversionFactor;
     //endregion
 
     public Product(Database db) {
@@ -37,7 +37,8 @@ public class Product extends Table {
         return new ArrayList<>(Arrays.asList(
                 this.productId,
                 this.productName,
-                this.quantityInStock
+                this.quantityInStock,
+                this.conversionFactor
         ));
     }
 
@@ -46,16 +47,18 @@ public class Product extends Table {
         this.productId = (long) values.get(0);
         this.productName = (String) values.get(1);
         this.quantityInStock = (int) values.get(2);
-        this.conversion_factor = (double) values.get(3);
+        this.conversionFactor = (double) values.get(3);
     }
     // endregion
 
     // region static methods
 
+    // Create new product in table
     public static Product create(Database db, String productName, int quantityInStock, double conversion_factor) throws SQLException {
         Product product = new Product(db);
         product.productName = productName;
         product.quantityInStock = quantityInStock;
+        product.conversionFactor = conversion_factor;
         product.productId = product.insert();
 
         return product;
@@ -65,13 +68,11 @@ public class Product extends Table {
 
     // region instance methods
 
-    public Boolean updateQuantity(int quantity) throws SQLException {
-        // returns true if the update was successful, false otherwise
+    // Returns true if the quantiy was updated successfully in table for current product, false otherwise
+    public void updateQuantity(int quantity) throws SQLException {
         sync();
         quantityInStock = quantity;
         update();
-
-        return true;
     }
 
     public void decrementQuantity() throws SQLException {

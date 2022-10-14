@@ -1,15 +1,19 @@
 package edu.tamu.spinnstone.models;
 
 import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Query;
 import edu.tamu.spinnstone.models.sql.Table;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.math.RoundingMode;
 
 import org.postgresql.core.SqlCommand;
 
@@ -61,22 +65,30 @@ public class Order extends Table {
     }
 
     /*
+     * Updates the local model orderTotal for currently referenced order from all menu_items currently in the database 
+     * Includes 6.25% food tax
+     * Does not update database
+     * Return value of -1 indicates SQLException
      * 
+     * @param   None
+     * @return  None
      */
     public void calculateOrderTotal() {
-        for (OrderItem orderItem : orderItems) {
-            if (orderItem.menuItem == null) {
-                try {
-                    orderItem.getMenuItem();
-                } catch (Exception e) {
-                    System.out.printf("unable to calculate order total: %s%n", e);
-
-                }
-            }
+        ResultSet rs;
+        BigDecimal orderTotal;
+        try {
+            rs = database.query("select sum(menu_item_price) from order_item " +
+                                      "join menu_item on menu_item.menu_item_id = order_item.menu_item_id " +
+                                      "where order_item.order_id = " + orderId +";");
+            rs.next();
+            subTotal = rs.getBigDecimal("sum");
+            taxCharge = subTotal.multiply(new BigDecimal("0.0625")).setScale(2, RoundingMode.HALF_UP);
+            orderTotal = subTotal.add(taxCharge);
         }
-        subTotal = orderItems.stream().map(item -> item.menuItem.menuItemPrice).reduce(new BigDecimal(0), BigDecimal::add);
-        taxCharge = subTotal.multiply(new BigDecimal(".0625"));
-        orderTotal = subTotal.add(taxCharge);
+        catch (SQLException e){
+            orderTotal = new BigDecimal("-1");
+        }
+        this.orderTotal = orderTotal;
     }
 
     // endregion
