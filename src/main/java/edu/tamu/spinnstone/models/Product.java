@@ -69,7 +69,7 @@ public class Product extends Table {
 
     // region instance methods
 
-    // Returns true if the quantiy was updated successfully in table for current product, false otherwise
+    // Returns true if the quantity was updated successfully in table for current product, false otherwise
     public void updateQuantity(int quantity) throws SQLException {
         sync();
         quantityInStock = quantity;
