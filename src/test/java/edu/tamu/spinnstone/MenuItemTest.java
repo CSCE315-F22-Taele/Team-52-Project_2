@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.SQLPermission;
 import java.sql.ResultSet;
 
 
@@ -100,4 +101,23 @@ public class MenuItemTest {
         Assert.assertEquals(rs.getBigDecimal("menu_item_price"), new BigDecimal("0.01"));
         db.query("DELETE FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\';");
     }  
+
+    @Test
+    void populate() throws SQLException {
+
+        db.query("delete from menu_item");
+
+        String[][] menuItems = {
+            {"1 Topping Pizza",        "7.79"},
+            {"2-4 Topping Pizza",      "8.99"},
+            {"Original Cheese Pizza",  "6.79"},
+            {"Bottled Beverage",       "2.39"},
+            {"Gatorade",               "2.39"},
+            {"Fountain Drink",         "1.99"}
+           };
+
+        for (String[] menuItem : menuItems) {
+            MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]));
+        }
+    }
 }
