@@ -35,7 +35,7 @@ public class Receipt {
                     .map(item -> item.menuItem.menuItemPrice.multiply(new BigDecimal(item.quantity)))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            order.taxCharge = new BigDecimal("1.062").multiply(order.subTotal);
+            order.taxCharge = new BigDecimal("0.062").multiply(order.subTotal);
             order.orderTotal = order.subTotal.add(order.taxCharge);
 
             // set total labels
