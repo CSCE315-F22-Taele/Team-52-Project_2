@@ -48,6 +48,11 @@
               <card name="InventoryCard"/>
             </constraints>
           </nested-form>
+          <nested-form id="b07ba" form-file="edu/tamu/spinnstone/ui/ManagerDashboard.form">
+            <constraints>
+              <card name="DashboardCard"/>
+            </constraints>
+          </nested-form>
         </children>
       </grid>
     </children>

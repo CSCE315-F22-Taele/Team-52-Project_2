@@ -88,6 +88,7 @@ public class NavBar {
                 super.mouseReleased(e);
                 Actions.setViewCard.onNext(Actions.ViewNames.MANAGER);
                 toggleButtons(ActiveButton.manager, true);
+                Actions.setViewCard.onNext(Actions.ViewNames.DASHBOARD);
             }
         });
 
