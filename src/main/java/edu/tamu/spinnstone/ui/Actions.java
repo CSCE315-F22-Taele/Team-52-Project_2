@@ -7,6 +7,9 @@ import edu.tamu.spinnstone.models.sql.Database;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Actions {
     public static PublishSubject<Order> orderUpdated = PublishSubject.create();
 
@@ -50,4 +53,5 @@ public class Actions {
     public static BehaviorSubject<Database> getDatabase = BehaviorSubject.create();
     public static BehaviorSubject<Order> getOrder = BehaviorSubject.create();
     public static BehaviorSubject<OrderItem> activeOrderItem = BehaviorSubject.create();
+    public static BehaviorSubject<ArrayList<NavBar>> navBars = BehaviorSubject.create();
 }
