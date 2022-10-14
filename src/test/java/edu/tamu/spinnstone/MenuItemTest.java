@@ -120,4 +120,9 @@ public class MenuItemTest {
             MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]));
         }
     }
+
+    @Test
+    void getSalesReport() throws SQLException {
+        // TODO: Test
+    }
 }

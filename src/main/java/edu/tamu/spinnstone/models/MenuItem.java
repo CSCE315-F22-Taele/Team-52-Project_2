@@ -4,6 +4,8 @@ import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +64,20 @@ public class MenuItem extends Table {
         menuItemPrice = price;
         update();
         return true;
+    }
+
+    public ResultSet getSalesReport(Date startDate, Date endDate) throws SQLException {
+        ResultSet rs = database.query(
+            "select menu_item.menu_item_id, sum(menu_item.menu_item_price) as sales" + 
+            "from \"order\"" +
+            "join order_item on order_item.order_id = \"order\".order_id"+
+            "join menu_item on menu_item.menu_item_id = order_item.menu_item_id"+
+            "where \"order\".order_date between 'start-date' and 'end-date'"+
+            "group by menu_item.menu_item_id"+
+            "order by menu_item.menu_item_id;"
+        );
+
+        return rs;
     }
 
     // endregion
