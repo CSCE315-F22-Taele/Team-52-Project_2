@@ -37,20 +37,17 @@ public class ManagerView {
         panel1.setForeground(new Color(-8355712));
         Container.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.add(navBar.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         ManagerViewCard = new JPanel();
         ManagerViewCard.setLayout(new CardLayout(0, 0));
         Container.add(ManagerViewCard, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-
-        final Shipments nestedForm2 = new Shipments();
-        ManagerViewCard.add(nestedForm2.$$$getRootComponent$$$(), "ShipmentsCard");
-        final Inventory nestedForm3 = new Inventory();
-        ManagerViewCard.add(nestedForm3.$$$getRootComponent$$$(), "InventoryCard");
-        final ManagerDashboard nestedForm4 = new ManagerDashboard();
-        ManagerViewCard.add(nestedForm4.$$$getRootComponent$$$(), "DashboardCard");
-
+        final Shipments nestedForm1 = new Shipments();
+        ManagerViewCard.add(nestedForm1.$$$getRootComponent$$$(), "ShipmentsCard");
+        final Inventory nestedForm2 = new Inventory();
+        ManagerViewCard.add(nestedForm2.$$$getRootComponent$$$(), "InventoryCard");
+        final ManagerDashboard nestedForm3 = new ManagerDashboard();
+        ManagerViewCard.add(nestedForm3.$$$getRootComponent$$$(), "DashboardCard");
     }
 
     /**

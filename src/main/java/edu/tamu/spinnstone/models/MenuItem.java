@@ -68,6 +68,8 @@ public class MenuItem extends Table {
 
     // region static declarations
 
+    public static String TableName = "menu_item";
+
     public enum ColumnIndexes {
         MENU_ITEM_ID(0),
         ITEM_NAME(1),
