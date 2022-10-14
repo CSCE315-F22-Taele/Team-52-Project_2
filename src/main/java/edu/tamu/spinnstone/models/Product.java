@@ -77,14 +77,24 @@ public class Product extends Table {
     }
 
     public void decrementQuantity(double by) throws SQLException {
-        sync();
-        if (quantityInStock > 0) {
-            quantityInStock--;
-        }
-        else {
-            throw new SQLException("Inventory is zero");
-        }
-        update();
+        database.update(tableName)
+                .set(
+                        String.format(
+                                "%s = %s - %.3f",
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                ColumnNames.QUANTITY_IN_STOCK.toString(),
+                                by
+                        )
+                )
+                .where(
+                        String.format(
+                                "%s = %s AND %s > 0",
+                                ColumnNames.PRODUCT_ID.toString(),
+                                prepareValue(productId),
+                                ColumnNames.QUANTITY_IN_STOCK.toString()
+                        )
+                ).execute();
+
     }
 
     // endregion
