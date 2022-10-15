@@ -248,6 +248,29 @@ public class Table {
         return findWhere(null, columnNames.get(0), -1);
     }
 
+    public enum Names {
+        PRODUCT("product"),
+        PRODUCT_TYPE("product_type"),
+        MENU_ITEM("menu_item"),
+        MENU_ITEM_CATEGORY("menu_item_category"),
+        MENU_ITEM_PRODUCT("menu_item_product"),
+        ORDER("order"),
+        ORDER_ITEM("order_item"),
+        ORDER_ITEM_PRODUCT("order_item_product"),
+        SHIPMENT("shipment"),
+        SHIPMENT_PRODUCT("shipment_product");
+
+        private final String name;
+
+        Names(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+    }
+
     // endregion
 
 }

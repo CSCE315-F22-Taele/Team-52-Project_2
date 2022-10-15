@@ -1,81 +1,137 @@
-create table "order"
+BEGIN;
+
+
+CREATE TABLE public.menu_item
 (
-    order_id    bigint generated always as identity
-        primary key,
-    order_date  date  not null,
-    order_total money not null
+    menu_item_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    item_name text NOT NULL,
+    menu_item_price money NOT NULL,
+    menu_item_category_id bigint,
+    configurable boolean NOT NULL,
+    PRIMARY KEY (menu_item_id)
 );
 
-
-grant ALL PRIVILEGES on "order" to public;
-
-create table product
+CREATE TABLE public.menu_item_category
 (
-    product_id        bigint generated always as identity
-        primary key,
-    product_name      text                       not null,
-    quantity_in_stock bigint                     not null,
-    conversion_factor double precision default 1 not null
+    menu_item_category_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    menu_item_category_name text,
+    PRIMARY KEY (menu_item_category_id)
 );
 
-
-grant ALL PRIVILEGES on product to public;
-
-create table shipment
+CREATE TABLE public."order"
 (
-    shipment_id   bigint generated always as identity
-        primary key,
-    shipment_date date    not null,
-    fulfilled     boolean not null
+    order_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    order_date date NOT NULL,
+    order_total money NOT NULL,
+    PRIMARY KEY (order_id)
 );
 
-
-grant ALL PRIVILEGES on shipment to public;
-
-create table shipment_product
+CREATE TABLE public.order_item
 (
-    shipment_shipment_id bigint                     not null
-        references shipment,
-    product_product_id   bigint                     not null
-        references product,
-    quantity_ordered     double precision default 0 not null
+    order_item_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    order_id bigint NOT NULL,
+    menu_item_id bigint,
+    PRIMARY KEY (order_item_id)
 );
 
-
-grant ALL PRIVILEGES on shipment_product to public;
-
-create table menu_item
+CREATE TABLE public.order_item_product
 (
-    menu_item_id    bigint generated always as identity
-        primary key,
-    item_name       text  not null,
-    menu_item_price money not null
+    order_item_order_item_id bigint NOT NULL,
+    product_product_id bigint NOT NULL
 );
 
-
-create table order_item
+CREATE TABLE public.product
 (
-    order_item_id bigint generated always as identity
-        primary key,
-    order_id      bigint not null
-        references "order",
-    menu_item_id  bigint
-        references menu_item
+    product_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    product_name text NOT NULL,
+    quantity_in_stock integer NOT NULL,
+    conversion_factor double precision NOT NULL,
+    product_type_id bigint NOT NULL,
+    PRIMARY KEY (product_id)
 );
 
-
-grant ALL PRIVILEGES on order_item to public;
-
-grant ALL PRIVILEGES on menu_item to public;
-
-create table order_item_product
+CREATE TABLE public.product_type
 (
-    order_item_order_item_id bigint not null
-        references order_item,
-    product_product_id       bigint not null
-        references product
+    product_type_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    product_type_name text,
+    PRIMARY KEY (product_type_id)
 );
 
+CREATE TABLE public.shipment
+(
+    shipment_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    shipment_date date NOT NULL,
+    fulfilled boolean NOT NULL,
+    PRIMARY KEY (shipment_id)
+);
 
-grant ALL PRIVILEGES on order_item_product to public;
+CREATE TABLE public.shipment_product
+(
+    shipment_shipment_id bigint NOT NULL,
+    product_product_id bigint NOT NULL,
+    quantity_ordered double precision NOT NULL
+);
 
+CREATE TABLE public.menu_item_product
+(
+    menu_item_menu_item_id bigint NOT NULL,
+    product_product_id bigint NOT NULL,
+    optional boolean NOT NULL
+);
+
+ALTER TABLE public.menu_item
+    ADD FOREIGN KEY (menu_item_category_id)
+        REFERENCES public.menu_item_category (menu_item_category_id)
+        NOT VALID;
+
+
+ALTER TABLE public.order_item
+    ADD FOREIGN KEY (order_id)
+        REFERENCES public."order" (order_id)
+        NOT VALID;
+
+
+ALTER TABLE public.order_item_product
+    ADD FOREIGN KEY (order_item_order_item_id)
+        REFERENCES public.order_item (order_item_id)
+        NOT VALID;
+
+
+ALTER TABLE public.order_item_product
+    ADD FOREIGN KEY (product_product_id)
+        REFERENCES public.product (product_id)
+        NOT VALID;
+
+
+ALTER TABLE public.shipment_product
+    ADD FOREIGN KEY (product_product_id)
+        REFERENCES public.product (product_id)
+        NOT VALID;
+
+
+ALTER TABLE public.shipment_product
+    ADD FOREIGN KEY (shipment_shipment_id)
+        REFERENCES public.shipment (shipment_id)
+        NOT VALID;
+
+
+ALTER TABLE public.product
+    ADD FOREIGN KEY (product_type_id)
+        REFERENCES public.product_type (product_type_id)
+        NOT VALID;
+
+
+ALTER TABLE public.menu_item_product
+    ADD FOREIGN KEY (menu_item_menu_item_id)
+        REFERENCES public.menu_item (menu_item_id)
+        NOT VALID;
+
+
+ALTER TABLE public.menu_item_product
+    ADD FOREIGN KEY (product_product_id)
+        REFERENCES public.product (product_id)
+        NOT VALID;
+
+GRANT ALL ON ALL TABLES IN SCHEMA public TO public;
+
+END;

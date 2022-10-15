@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -148,6 +149,14 @@ public class Query {
         return this.execute(this.database);
     }
 
+    public void forEach(Consumer<ResultSet> consumer) throws SQLException {
+        ResultSet resultSet = this.execute();
+        while (resultSet.next()) {
+            consumer.accept(resultSet);
+        }
+    }
+
+
     // region static methods
 
     public static Select select(String selectClause) {
@@ -262,11 +271,6 @@ public class Query {
 
     public Query values(List<String> values) {
         this.clauses.put(ClauseType.VALUES, String.join(", ", values));
-        return this;
-    }
-
-    public Query values(String valuesClause) {
-        this.clauses.put(ClauseType.VALUES, valuesClause);
         return this;
     }
 

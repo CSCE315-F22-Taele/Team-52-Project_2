@@ -93,7 +93,7 @@ public class MenuItemTest {
 
     @Test
     void create() throws SQLException {
-        menuItem = MenuItem.create(db, "MenuItemTest", new BigDecimal("0.01"));
+        menuItem = MenuItem.create(db, "MenuItemTest", new BigDecimal("0.01"), 0, false);
         menuItem.update();
         ResultSet rs = db.query("SELECT * FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\'");
         rs.next();
@@ -116,7 +116,7 @@ public class MenuItemTest {
            };
 
         for (String[] menuItem : menuItems) {
-            MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]));
+            MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]), 0, false);
         }
     }
 
