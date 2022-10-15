@@ -26,6 +26,23 @@ public class ServerScreen {
 
 
     public ServerScreen() {
+        /**
+         * to generate the menu from the database i need to know where to place the items. I need to
+         * know in which top level menu to place the item (pizza, drinks, something else?). Next I need to know whether
+         * the product is configurable. If it is configurable, I need to know what the options are. For a pizza in particular,
+         * the options need to be separated into crust, sauce, and toppings, drizzle. These options should be checked for
+         * inventory and if they are out of stock, they should be grayed out. If the menu item is not configurable, then
+         * I need to know which product it is represented by (soda, water, cookie, etc).
+         *
+         * To accomplish these tasks I need:
+         * - the menu item to have a category (pizza, drink, desserts etc)
+         * - the menu item to have a configurable flag
+         * - the menu item to list all the products it is made up of (options)
+         * - the product to have a type (crust, sauce, topping, drizzle, drink)
+         *
+         * it will get confusing if i try to combine the ideas of product category and
+         * which section of the menu an item should be placed. I will
+         */
 
 
         $$$setupUI$$$();
