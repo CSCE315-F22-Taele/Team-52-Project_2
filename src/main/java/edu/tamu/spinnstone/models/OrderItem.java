@@ -92,7 +92,6 @@ public class OrderItem extends Table {
 
     }
 
-
     public void addProduct(Product product) {
         // adds a product to the order item and returns true if successful
         products.add(product);
