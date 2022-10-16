@@ -31,8 +31,7 @@ public class NavBar {
             navbar.SHIPMENTSButton.setSelected(false);
 
 
-            java.util.List<JToggleButton> buttons =
-                    Arrays.asList(navbar.INVENTORYButton, navbar.SHIPMENTSButton, navbar.SERVERVIEWButton, navbar.MANAGERVIEWButton);
+            java.util.List<JToggleButton> buttons = Arrays.asList(navbar.INVENTORYButton, navbar.SHIPMENTSButton, navbar.SERVERVIEWButton, navbar.MANAGERVIEWButton);
 
             switch (activeButton) {
                 case inventory:
@@ -66,10 +65,7 @@ public class NavBar {
     }
 
     enum ActiveButton {
-        server,
-        manager,
-        inventory,
-        shipment
+        server, manager, inventory, shipment
     }
 
     public NavBar() {
@@ -171,7 +167,6 @@ public class NavBar {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         SHIPMENTSButton = new JToggleButton();
         INVENTORYButton = new JToggleButton();
 
