@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Actions {
-    public static PublishSubject<Order> orderUpdated = PublishSubject.create();
+//    public static PublishSubject<Order> orderUpdated = PublishSubject.create();
 
-    public static enum OptionCards {
+    public enum OptionCards {
 
-        PIZZA("pizzaType"), DRINKS("drinks");
+        PIZZA("pizza"),
+        OTHER("other"),
+        DRINKS("drinks");
 
         private final String name;
 
@@ -30,12 +32,12 @@ public class Actions {
 
     }
 
-    public static enum ViewNames {
-        SERVER("ServerCard"), MANAGER("ManagerCard"),
-
+    public enum ViewNames {
+        SERVER("ServerCard"),
+        MANAGER("ManagerCard"),
         INVENTORY("InventoryCard"),
-
-        SHIPMENTS("ShipmentsCard"), DASHBOARD("DashboardCard");
+        SHIPMENTS("ShipmentsCard"),
+        DASHBOARD("DashboardCard");
 
         private final String name;
 

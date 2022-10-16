@@ -19,12 +19,15 @@ public class MenuItem extends Table {
     public static String TableName = "menu_item";
     public boolean configurable;
 
+    public String categoryName;
+
 
     public MenuItem(Database db) {
         super(db);
         tableName = "menu_item";
         columnNames = new ArrayList<>(Arrays.asList("menu_item_id", "item_name", "menu_item_price", "menu_item_category_id", "configurable"));
         columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.MONEY, ColumnType.LONG, ColumnType.BOOLEAN));
+        categoryName = "";
     }
 
     // region overrides
