@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -155,6 +156,19 @@ public class Query {
             consumer.accept(resultSet);
         }
     }
+
+    public <T> ArrayList<T> map(Function<ResultSet, T> mapper) throws SQLException {
+        ArrayList<T> results = new ArrayList<T>();
+        ResultSet resultSet = this.execute();
+        if(!resultSet.next()) {
+            throw new SQLException("No results");
+        };
+        while (resultSet.next()) {
+            results.add(mapper.apply(resultSet));
+        }
+        return results;
+    }
+
 
 
     // region static methods

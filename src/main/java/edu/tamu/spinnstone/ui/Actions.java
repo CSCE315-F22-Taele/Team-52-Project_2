@@ -7,6 +7,7 @@ import edu.tamu.spinnstone.models.sql.Database;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,4 +55,6 @@ public class Actions {
     public static BehaviorSubject<Order> getOrder = BehaviorSubject.create();
     public static BehaviorSubject<OrderItem> activeOrderItem = BehaviorSubject.create();
     public static BehaviorSubject<ArrayList<NavBar>> navBars = BehaviorSubject.create();
+    public static BehaviorSubject<JFrame> getFrame = BehaviorSubject.create();
+    public static BehaviorSubject<JDialog> activeDialog = BehaviorSubject.create();
 }
