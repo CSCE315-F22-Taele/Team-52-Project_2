@@ -58,7 +58,15 @@ public class Database {
     public ResultSet query(String query) throws SQLException {
         Statement stm = connection.createStatement();
         boolean success = stm.execute(query);
-        return success ? stm.getResultSet() : null;
+        if(success == false) {
+            return null;
+        }
+
+        ResultSet rs = stm.getResultSet();
+        if(!rs.next()) {
+            return null;
+        }
+        return rs;
     }
 
     public Query.Insert insert(String tableName) {

@@ -72,3 +72,13 @@ update "order" set order_total = ? where order_id = 1
 
 insert into shipment_product (shipment_shipment_id, product_product_id, quantity_ordered) values ()
 update shipment_product set quantity_ordered =  69 where shipment_shipment_id = 1 and product_product_id = 1
+
+-- // Sales Report
+
+select menu_item.menu_item_id, sum(menu_item.menu_item_price) as sales 
+	from "order"
+		join order_item on order_item.order_id = "order".order_id
+		join menu_item on menu_item.menu_item_id = order_item.menu_item_id
+	where "order".order_date between 'start-date' and 'end-date'
+	group by menu_item.menu_item_id
+	order by menu_item.menu_item_id 

@@ -21,6 +21,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.SQLPermission;
 import java.sql.ResultSet;
 
 
@@ -94,19 +95,36 @@ public class MenuItemTest {
 
     @Test
     void create() throws SQLException {
-        menuItem = MenuItem.create(db, "MenuItemTest", new BigDecimal("0.01"));
+        menuItem = MenuItem.create(db, "MenuItemTest", new BigDecimal("0.01"), 0, false);
         menuItem.update();
         ResultSet rs = db.query("SELECT * FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\'");
         rs.next();
         Assert.assertEquals(rs.getBigDecimal("menu_item_price"), new BigDecimal("0.01"));
         db.query("DELETE FROM menu_item WHERE menu_item.item_name = \'MenuItemTest\';");
+
+    }  
+
+    @Test
+    void populate() throws SQLException {
+
+        db.query("delete from menu_item");
+
+        String[][] menuItems = {
+            {"1 Topping Pizza",        "7.79"},
+            {"2-4 Topping Pizza",      "8.99"},
+            {"Original Cheese Pizza",  "6.79"},
+            {"Bottled Beverage",       "2.39"},
+            {"Gatorade",               "2.39"},
+            {"Fountain Drink",         "1.99"}
+           };
+
+        for (String[] menuItem : menuItems) {
+            MenuItem.create(db, menuItem[0], new BigDecimal(menuItem[1]), 0, false);
+        }
     }
 
-//    @Test
-    //Can't test a private function-- Will update test after demo
-//    void addNewItem() throws SQLException {
-//        MenuItem add = new MenuItem(db);
-//
-//    }
-
+    @Test
+    void getSalesReport() throws SQLException {
+        // TODO: Test
+    }
 }
