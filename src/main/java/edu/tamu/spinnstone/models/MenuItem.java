@@ -39,7 +39,6 @@ public class MenuItem extends Table {
                 this.configurable
         ));
     }
-
     @Override
     public void setColumnValues(List<Object> values) {
         this.menuItemId = (long) values.get(0);

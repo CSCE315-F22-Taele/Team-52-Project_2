@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,9 +26,9 @@ public class ManagerDashboard {
     private JTable MenuItemsTable;
     private JPanel container;
     private JScrollPane DashboardTableContainer;
-    private JButton submitButton;
     private JButton addProductButton1;
     private DataTable dataTable;
+    private JDialog dialog;
 
     public ManagerDashboard() {
         $$$setupUI$$$();
@@ -36,21 +37,11 @@ public class ManagerDashboard {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                dataTable.supressEvents = true;
-                dataTable.addRow();
-
-            }
-        });
-        submitButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                ArrayList<ArrayList<String>> table = dataTable.getData();
-                ArrayList<String> newRow = table.get(table.size() - 1);
-                String itemName = newRow.get(0);
-                String price = newRow.get(1);
-                addNewItem(itemName, price);
-                dataTable.supressEvents = false;
+                dialog = new JDialog(Actions.getFrame.getValue(), "New Menu Item", Dialog.ModalityType.DOCUMENT_MODAL);
+                dialog.setContentPane(new AddProductDialog().$$$getRootComponent$$$());
+                dialog.pack();
+                Actions.activeDialog.onNext(dialog);
+                dialog.setVisible(true);
             }
         });
     }
@@ -81,12 +72,16 @@ public class ManagerDashboard {
         ArrayList<String[]> dataToDisplay = new ArrayList<>();
 
         try {
-            ResultSet product_data = menu_item.getView();
+            ResultSet product_data = database.query("select * from menu_item join menu_item_category on menu_item.menu_item_category_id = menu_item_category.menu_item_category_id");
+            if (product_data == null) {
+                return;
+            }
             do {
-                String[] dataRow = new String[2];
+                String[] dataRow = new String[3];
 
                 dataRow[0] = product_data.getString("item_name");
                 dataRow[1] = product_data.getString("menu_item_price");
+                dataRow[2] = product_data.getString("menu_item_category_name");
 
                 dataToDisplay.add(dataRow);
 
@@ -96,9 +91,9 @@ public class ManagerDashboard {
         }
 
         // Initializing the JTable
-        String[] columnNames = {"Menu Item", "Price"};
+        String[] columnNames = {"Menu Item", "Price", "Category"};
         String[][] dataToDisplayArray = dataToDisplay.toArray(new String[dataToDisplay.size()][]);
-        Integer[] editableCols = {1};
+        Integer[] editableCols = {1, 2};
 
         PublishSubject<TableModelEvent> changeListener = PublishSubject.create();
 
@@ -149,16 +144,13 @@ public class ManagerDashboard {
         MenuItemsTable = new JTable();
         DashboardTableContainer.setViewportView(MenuItemsTable);
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         container.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        submitButton = new JButton();
-        submitButton.setText("Submit");
-        panel1.add(submitButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         addProductButton1 = new JButton();
         addProductButton1.setText("Add Product");
-        panel1.add(addProductButton1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(addProductButton1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
