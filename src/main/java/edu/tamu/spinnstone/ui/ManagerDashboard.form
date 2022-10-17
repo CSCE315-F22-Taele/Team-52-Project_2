@@ -152,6 +152,9 @@
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <background color="-15066598"/>
+              <foreground color="-1"/>
+              <hideActionText value="true"/>
               <text value="Submit"/>
             </properties>
           </component>
@@ -173,7 +176,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="End Date ((YYYY-MM-DD)"/>
+              <text value="End Date (YYYY-MM-DD)"/>
             </properties>
           </component>
           <component id="b98d" class="javax.swing.JLabel" binding="SalesReportError">
