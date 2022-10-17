@@ -92,9 +92,10 @@ public class OrderItem extends Table {
 
     }
 
-
     public void addProduct(Product product) {
-        // adds a product to the order item and returns true if successful
+        if(products.stream().anyMatch(p -> p.productId == product.productId)) {
+            return;
+        }
         products.add(product);
     }
 
@@ -103,9 +104,9 @@ public class OrderItem extends Table {
         products.removeIf(product -> product.productName.equals(name.toString()));
     }
 
-    public void removeProduct(long productId) {
+    public void removeProduct(Product p) {
         // removes a product from the order item and returns true if successful
-        products.removeIf(product -> product.productId == productId);
+        products.removeIf(product -> product.productId == p.productId);
     }
 
 }

@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -148,6 +150,27 @@ public class Query {
         return this.execute(this.database);
     }
 
+    public void forEach(Consumer<ResultSet> consumer) throws SQLException {
+        ResultSet resultSet = this.execute();
+        while (resultSet.next()) {
+            consumer.accept(resultSet);
+        }
+    }
+
+    public <T> ArrayList<T> map(Function<ResultSet, T> mapper) throws SQLException {
+        ArrayList<T> results = new ArrayList<T>();
+        ResultSet resultSet = this.execute();
+        if(!resultSet.next()) {
+            throw new SQLException("No results");
+        };
+        while (resultSet.next()) {
+            results.add(mapper.apply(resultSet));
+        }
+        return results;
+    }
+
+
+
     // region static methods
 
     public static Select select(String selectClause) {
@@ -262,11 +285,6 @@ public class Query {
 
     public Query values(List<String> values) {
         this.clauses.put(ClauseType.VALUES, String.join(", ", values));
-        return this;
-    }
-
-    public Query values(String valuesClause) {
-        this.clauses.put(ClauseType.VALUES, valuesClause);
         return this;
     }
 

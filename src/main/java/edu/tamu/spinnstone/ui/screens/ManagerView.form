@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="Container" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="566" height="400"/>
+      <xy x="20" y="20" width="741" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -51,6 +51,11 @@
           <nested-form id="b07ba" form-file="edu/tamu/spinnstone/ui/ManagerDashboard.form">
             <constraints>
               <card name="DashboardCard"/>
+            </constraints>
+          </nested-form>
+          <nested-form id="eb311" form-file="edu/tamu/spinnstone/ui/Analytics.form">
+            <constraints>
+              <card name="AnalyticsCard"/>
             </constraints>
           </nested-form>
         </children>

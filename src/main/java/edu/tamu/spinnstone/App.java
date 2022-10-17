@@ -19,6 +19,7 @@ public final class App {
         db.connect();
 
         Actions.getDatabase.onNext(db);
+        Actions.getFrame.onNext(frame);
 
         // disable console output
         PrintStream ps = new PrintStream(new OutputStream() {
@@ -28,7 +29,7 @@ public final class App {
             }
         });
 
-        System.setOut(ps);
+//        System.setOut(ps);
 
         ScreenManager screenManager = new ScreenManager(db);
 

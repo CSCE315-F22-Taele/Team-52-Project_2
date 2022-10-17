@@ -85,7 +85,7 @@ public class Order extends Table {
             taxCharge = subTotal.multiply(new BigDecimal("0.0625")).setScale(2, RoundingMode.HALF_UP);
             orderTotal = subTotal.add(taxCharge);
         }
-        catch (SQLException e){
+        catch (Exception e){
             orderTotal = new BigDecimal("-1");
         }
         this.orderTotal = orderTotal;
@@ -94,12 +94,15 @@ public class Order extends Table {
     // endregion
 
     public void placeOrder() throws SQLException {
-        orderDate = Date.valueOf(LocalDate.now());
+        if(orderDate == null) {
+            orderDate = Date.valueOf(LocalDate.now());
+        }
         // create the order
         orderId = insert();
         for (OrderItem orderItem : orderItems) {
             // create the order items (associated to this order)
             orderItem.orderId = orderId;
+            orderItem.menuItemId = orderItem.menuItem.menuItemId;
             orderItem.orderItemId = orderItem.insert();
 
             // create the orderItem/product link
@@ -107,9 +110,12 @@ public class Order extends Table {
 
             // update product inventory
             for(Product product : orderItem.products) {
-                product.decrementQuantity(1);
+                product.decrementQuantity(orderItem.quantity);
             }
         }
+
+        // calculate the order total
+        calculateOrderTotal();
     }
 
     public boolean addOrderItem(OrderItem orderItem) {

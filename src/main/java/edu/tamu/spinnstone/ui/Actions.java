@@ -7,15 +7,18 @@ import edu.tamu.spinnstone.models.sql.Database;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Actions {
-    public static PublishSubject<Order> orderUpdated = PublishSubject.create();
+//    public static PublishSubject<Order> orderUpdated = PublishSubject.create();
 
-    public static enum OptionCards {
+    public enum OptionCards {
 
-        PIZZA("pizzaType"), DRINKS("drinks");
+        PIZZA("pizza"),
+        OTHER("other"),
+        DRINKS("drinks");
 
         private final String name;
 
@@ -29,12 +32,13 @@ public class Actions {
 
     }
 
-    public static enum ViewNames {
-        SERVER("ServerCard"), MANAGER("ManagerCard"),
-
+    public enum ViewNames {
+        SERVER("ServerCard"),
+        MANAGER("ManagerCard"),
         INVENTORY("InventoryCard"),
-
-        SHIPMENTS("ShipmentsCard"), DASHBOARD("DashboardCard");
+        SHIPMENTS("ShipmentsCard"),
+        DASHBOARD("DashboardCard"),
+        ANALYTICS("AnalyticsCard");
 
         private final String name;
 
@@ -49,9 +53,12 @@ public class Actions {
 
     public static PublishSubject<OptionCards> setOptionsCard = PublishSubject.create();
     public static PublishSubject<ViewNames> setViewCard = PublishSubject.create();
+    public static PublishSubject<Void> menuItemAdded = PublishSubject.create();
 
     public static BehaviorSubject<Database> getDatabase = BehaviorSubject.create();
     public static BehaviorSubject<Order> getOrder = BehaviorSubject.create();
     public static BehaviorSubject<OrderItem> activeOrderItem = BehaviorSubject.create();
     public static BehaviorSubject<ArrayList<NavBar>> navBars = BehaviorSubject.create();
+    public static BehaviorSubject<JFrame> getFrame = BehaviorSubject.create();
+    public static BehaviorSubject<JDialog> activeDialog = BehaviorSubject.create();
 }
