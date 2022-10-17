@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,6 +29,12 @@ public class ManagerDashboard {
     private JTable RestockReportTable;
     private JButton refreshButton;
     private JLabel restockLabel;
+    private JScrollPane SalesReportTableContainer;
+    private JTable SalesReportTable;
+    private JTextField SalesReportEndDate;
+    private JTextField SalesReportStartDate;
+    private JButton SalesReportSubmitButton;
+    private JLabel SalesReportError;
     private DataTable dataTable;
     private JDialog dialog;
     private final int RESTOCK_THRESHOLD;
@@ -54,6 +61,15 @@ public class ManagerDashboard {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 generateRestockReport();
+            }
+        });
+
+        generateSalesReport("2020-09-11", "2023-10-31");
+        SalesReportSubmitButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                generateSalesReport(SalesReportStartDate.getText(), SalesReportEndDate.getText());
             }
         });
     }
@@ -157,6 +173,36 @@ public class ManagerDashboard {
         RestockReportContainer.setViewportView(RestockReportTable);
     }
 
+    public void generateSalesReport(String startDate, String endDate) {
+        Database database = Actions.getDatabase.getValue();
+        MenuItem menuItem = new MenuItem(database);
+        ArrayList<String[]> salesReport = new ArrayList<>();
+        SalesReportError.setText("");
+
+        try {
+            ResultSet sales_report = menuItem.getSalesReport(startDate, endDate);
+            do {
+                String[] dataRow = new String[2];
+
+                dataRow[0] = sales_report.getString("item_name");
+                dataRow[1] = sales_report.getString("sales");
+
+                salesReport.add(dataRow);
+
+            } while (sales_report.next());
+        } catch (SQLException e) {
+            SalesReportError.setText("Invalid Date");
+            System.out.println("SQL exception: " + e);
+        }
+
+        String[] columnNames = {"Menu Item", "Sales"};
+        String[][] dataToDisplayArray = salesReport.toArray(new String[salesReport.size()][]);
+        SalesReportTable = new JTable(dataToDisplayArray, columnNames);
+        SalesReportTableContainer.setViewportView(SalesReportTable);
+
+    }
+
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
@@ -170,7 +216,7 @@ public class ManagerDashboard {
      */
     private void $$$setupUI$$$() {
         container = new JPanel();
-        container.setLayout(new GridLayoutManager(6, 1, new Insets(8, 8, 8, 8), -1, -1));
+        container.setLayout(new GridLayoutManager(9, 1, new Insets(8, 8, 8, 8), -1, -1));
         DashboardTableContainer = new JScrollPane();
         container.add(DashboardTableContainer, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         MenuItemsTable = new JTable();
@@ -205,6 +251,35 @@ public class ManagerDashboard {
         panel2.add(refreshButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panel2.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Sales Report");
+        container.add(label2, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        SalesReportTableContainer = new JScrollPane();
+        container.add(SalesReportTableContainer, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        SalesReportTable = new JTable();
+        SalesReportTableContainer.setViewportView(SalesReportTable);
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
+        container.add(panel3, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        SalesReportEndDate = new JTextField();
+        SalesReportEndDate.setText("");
+        panel3.add(SalesReportEndDate, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        SalesReportStartDate = new JTextField();
+        panel3.add(SalesReportStartDate, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        SalesReportSubmitButton = new JButton();
+        SalesReportSubmitButton.setText("Submit");
+        panel3.add(SalesReportSubmitButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        panel3.add(spacer3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 1, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Start Date (YYYY-MM-DD)");
+        panel3.add(label3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("End Date ((YYYY-MM-DD)");
+        panel3.add(label4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        SalesReportError = new JLabel();
+        SalesReportError.setText("Label");
+        panel3.add(SalesReportError, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
