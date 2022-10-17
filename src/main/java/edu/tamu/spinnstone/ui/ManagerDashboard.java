@@ -174,7 +174,7 @@ public class ManagerDashboard {
         LocalDate currDate = LocalDate.now(ZoneId.systemDefault());
 
         for(LocalDate date = timeStamp; date.equals(currDate); date.plusDays(1)){
-            
+
         }
     }
 
