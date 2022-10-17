@@ -7,72 +7,50 @@ import edu.tamu.spinnstone.models.Order;
 import edu.tamu.spinnstone.models.OrderItem;
 import edu.tamu.spinnstone.models.Product;
 import edu.tamu.spinnstone.models.sql.Database;
+import edu.tamu.spinnstone.models.sql.Table;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MenuOptions {
     private JPanel MenuOptionCards;
-    private JPanel pizzaTypeMenu;
-    private JButton cheeseButton;
-    private JButton a1ToppingButton;
-    private JButton buildYourOwnButton;
-    private JPanel pizzaCustomizationMenu;
-    private JToggleButton STANDARDButton;
-    private JToggleButton CAULIFLOWERButton;
-    private JToggleButton ALFREDOButton;
-    private JToggleButton TRADITIONALREDButton;
-    private JToggleButton ZESTYREDButton;
-    private JToggleButton NOSAUCEButton;
-    private JToggleButton HOUSEBLENDButton;
-    private JToggleButton PARMESANButton;
-    private JToggleButton BBQSAUCEButton;
-    private JToggleButton OLIVEOILButton;
-    private JToggleButton DICEDHAMButton;
-    private JToggleButton ITALIANSAUSAGEButton;
-    private JToggleButton MEATBALLButton;
-    private JToggleButton PEPPERONIButton;
-    private JToggleButton SALAMIButton;
-    private JToggleButton SMOKEDCHICKENButton;
-    private JToggleButton BANANAPEPPERSButton;
-    private JToggleButton BLACKOLIVESButton;
-    private JToggleButton GREENPEPPERSButton;
-    private JToggleButton JALAPENOSButton;
-    private JToggleButton MUSHROOMSButton;
-    private JToggleButton ONIONSButton;
-    private JToggleButton PINEAPPLEButton;
-    private JToggleButton ROASTEDGARLICButton;
-    private JToggleButton SPINACHButton;
-    private JToggleButton TOMATOESButton;
+    private JPanel orderOptionsCard;
+    private JPanel pizzaOptionsCard;
 
-    private JPanel drinkMenu;
-    private JButton BOTTLEDButton;
-    private JButton WATERButton;
-    private JButton GATORADEButton;
-    private JButton FOUNTAINButton;
+    private JPanel sauceButtonGroup;
+    private JPanel cheeseButtonGroup;
+    private JPanel crustButtonGroup;
+    private JPanel meatButtonGroup1;
+    private JPanel meatButtonGroup2;
+    private JPanel veggieButtonGroup1;
+    private JPanel veggieButtonGroup2;
+    private JPanel veggieButtonGroup3;
+    private JPanel drizzleButtonGroup;
+    private JPanel orderOptionsCardRow1;
+    private JPanel orderOptionsCardRow2;
+    private JPanel orderOptionsCardRow3;
+    private JPanel orderOptionsCardRow4;
 
     private List<JToggleButton> pizzaButtons;
     private List<JToggleButton> sauceButtons;
     private List<JToggleButton> crustButtons;
     private List<JToggleButton> drizzleButtons;
     private List<JToggleButton> cheeseButtons;
-    private List<JToggleButton> toppingButtons;
+    private List<JToggleButton> meatButtons;
+    private List<JToggleButton> veggieButtons;
     private List<JButton> drinkButtons;
 
-    private List<Product.Name> pizzaToppings;
-    private List<Product.Name> pizzaSauces;
-    private List<Product.Name> pizzaCrusts;
-
-    private HashMap<Product.Name, JToggleButton> pizzaToppingMap;
-    private HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> drinkMap;
-    private HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> pizzaMap;
+    private Database db;
+    private HashMap<String, ArrayList<edu.tamu.spinnstone.models.MenuItem>> menuItemByCategory;
+    private HashMap<String, ArrayList<Product>> productByType;
+    private PizzaType pizzaType;
 
     // @formatter:off
 
@@ -94,33 +72,36 @@ public class MenuOptions {
         MenuOptionCards = new JPanel();
         MenuOptionCards.setLayout(new CardLayout(0, 0));
         MenuOptionCards.setBackground(new Color(-1644826));
-        pizzaTypeMenu = new JPanel();
-        pizzaTypeMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        pizzaTypeMenu.setBackground(new Color(-1644826));
-        MenuOptionCards.add(pizzaTypeMenu, "pizzaType");
-        cheeseButton = new JButton();
-        cheeseButton.setBackground(new Color(-15066598));
-        cheeseButton.setForeground(new Color(-1));
-        cheeseButton.setText("CHEESE");
-        pizzaTypeMenu.add(cheeseButton);
-        a1ToppingButton = new JButton();
-        a1ToppingButton.setBackground(new Color(-15066598));
-        a1ToppingButton.setForeground(new Color(-1));
-        a1ToppingButton.setText("1 TOPPING");
-        pizzaTypeMenu.add(a1ToppingButton);
-        buildYourOwnButton = new JButton();
-        buildYourOwnButton.setBackground(new Color(-15066598));
-        buildYourOwnButton.setForeground(new Color(-1));
-        buildYourOwnButton.setText("BUILD YOUR OWN");
-        pizzaTypeMenu.add(buildYourOwnButton);
-        pizzaCustomizationMenu = new JPanel();
-        pizzaCustomizationMenu.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
-        pizzaCustomizationMenu.setBackground(new Color(-1644826));
-        MenuOptionCards.add(pizzaCustomizationMenu, "toppings");
+        orderOptionsCard = new JPanel();
+        orderOptionsCard.setLayout(new GridLayoutManager(5, 2, new Insets(0, 0, 0, 0), -1, -1));
+        orderOptionsCard.setBackground(new Color(-1644826));
+        MenuOptionCards.add(orderOptionsCard, "orderOptionsCard");
+        orderOptionsCardRow1 = new JPanel();
+        orderOptionsCardRow1.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+        orderOptionsCardRow1.setBackground(new Color(-1644826));
+        orderOptionsCard.add(orderOptionsCardRow1, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        orderOptionsCard.add(spacer1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        orderOptionsCardRow2 = new JPanel();
+        orderOptionsCardRow2.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+        orderOptionsCardRow2.setBackground(new Color(-1644826));
+        orderOptionsCard.add(orderOptionsCardRow2, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        orderOptionsCardRow3 = new JPanel();
+        orderOptionsCardRow3.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+        orderOptionsCardRow3.setBackground(new Color(-1644826));
+        orderOptionsCard.add(orderOptionsCardRow3, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        orderOptionsCardRow4 = new JPanel();
+        orderOptionsCardRow4.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+        orderOptionsCardRow4.setBackground(new Color(-1644826));
+        orderOptionsCard.add(orderOptionsCardRow4, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        pizzaOptionsCard = new JPanel();
+        pizzaOptionsCard.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
+        pizzaOptionsCard.setBackground(new Color(-1644826));
+        MenuOptionCards.add(pizzaOptionsCard, "pizzaOptionsCard");
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        pizzaOptionsCard.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new CardLayout(0, 0));
         panel2.setBackground(new Color(-1644826));
@@ -130,284 +111,109 @@ public class MenuOptions {
         label1.setHorizontalAlignment(0);
         label1.setText("CRUST");
         panel2.add(label1, "Card1");
+        crustButtonGroup = new JPanel();
+        crustButtonGroup.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        crustButtonGroup.setBackground(new Color(-1644826));
+        panel1.add(crustButtonGroup, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        pizzaOptionsCard.add(spacer2, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panel3.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel3.setBackground(new Color(-1644826));
-        panel1.add(panel3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        STANDARDButton = new JToggleButton();
-        STANDARDButton.setBackground(new Color(-15066598));
-        STANDARDButton.setForeground(new Color(-1));
-        STANDARDButton.setSelected(true);
-        STANDARDButton.setText("STANDARD");
-        panel3.add(STANDARDButton);
-        CAULIFLOWERButton = new JToggleButton();
-        CAULIFLOWERButton.setBackground(new Color(-15066598));
-        CAULIFLOWERButton.setForeground(new Color(-1));
-        CAULIFLOWERButton.setText("CAULIFLOWER");
-        panel3.add(CAULIFLOWERButton);
-        final Spacer spacer1 = new Spacer();
-        pizzaCustomizationMenu.add(spacer1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        pizzaOptionsCard.add(panel3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new CardLayout(0, 0));
         panel4.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel5 = new JPanel();
-        panel5.setLayout(new CardLayout(0, 0));
-        panel5.setBackground(new Color(-1644826));
-        panel4.add(panel5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
+        panel3.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setForeground(new Color(-16777216));
         label2.setHorizontalAlignment(0);
         label2.setText("SAUCE");
-        panel5.add(label2, "Card1");
+        panel4.add(label2, "Card1");
+        sauceButtonGroup = new JPanel();
+        sauceButtonGroup.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        sauceButtonGroup.setBackground(new Color(-1644826));
+        panel3.add(sauceButtonGroup, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel5.setBackground(new Color(-1644826));
+        pizzaOptionsCard.add(panel5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panel6.setLayout(new CardLayout(0, 0));
         panel6.setBackground(new Color(-1644826));
-        panel4.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        ALFREDOButton = new JToggleButton();
-        ALFREDOButton.setBackground(new Color(-15066598));
-        ALFREDOButton.setForeground(new Color(-1));
-        ALFREDOButton.setSelected(true);
-        ALFREDOButton.setText("ALFREDO");
-        panel6.add(ALFREDOButton);
-        TRADITIONALREDButton = new JToggleButton();
-        TRADITIONALREDButton.setBackground(new Color(-15066598));
-        TRADITIONALREDButton.setForeground(new Color(-1));
-        TRADITIONALREDButton.setText("TRADITIONAL RED");
-        panel6.add(TRADITIONALREDButton);
-        ZESTYREDButton = new JToggleButton();
-        ZESTYREDButton.setBackground(new Color(-15066598));
-        ZESTYREDButton.setForeground(new Color(-1));
-        ZESTYREDButton.setText("ZESTY RED");
-        panel6.add(ZESTYREDButton);
-        NOSAUCEButton = new JToggleButton();
-        NOSAUCEButton.setBackground(new Color(-15066598));
-        NOSAUCEButton.setForeground(new Color(-1));
-        NOSAUCEButton.setText("NO SAUCE");
-        panel6.add(NOSAUCEButton);
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel7.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel7, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new CardLayout(0, 0));
-        panel8.setBackground(new Color(-1644826));
-        panel7.add(panel8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
+        panel5.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setForeground(new Color(-16777216));
         label3.setHorizontalAlignment(0);
         label3.setText("CHEESE");
-        panel8.add(label3, "Card1");
-        final JPanel panel9 = new JPanel();
-        panel9.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel9.setBackground(new Color(-1644826));
-        panel7.add(panel9, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        HOUSEBLENDButton = new JToggleButton();
-        HOUSEBLENDButton.setBackground(new Color(-15066598));
-        HOUSEBLENDButton.setForeground(new Color(-1));
-        HOUSEBLENDButton.setText("HOUSE BLEND");
-        panel9.add(HOUSEBLENDButton);
-        PARMESANButton = new JToggleButton();
-        PARMESANButton.setBackground(new Color(-15066598));
-        PARMESANButton.setForeground(new Color(-1));
-        PARMESANButton.setText("PARMESAN");
-        panel9.add(PARMESANButton);
-        final JPanel panel10 = new JPanel();
-        panel10.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel10.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel10, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel11 = new JPanel();
-        panel11.setLayout(new CardLayout(0, 0));
-        panel11.setBackground(new Color(-1644826));
-        panel10.add(panel11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
+        panel6.add(label3, "Card1");
+        cheeseButtonGroup = new JPanel();
+        cheeseButtonGroup.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        cheeseButtonGroup.setBackground(new Color(-1644826));
+        panel5.add(cheeseButtonGroup, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel7.setBackground(new Color(-1644826));
+        pizzaOptionsCard.add(panel7, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel8 = new JPanel();
+        panel8.setLayout(new CardLayout(0, 0));
+        panel8.setBackground(new Color(-1644826));
+        panel7.add(panel8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
         final JLabel label4 = new JLabel();
         label4.setForeground(new Color(-16777216));
         label4.setHorizontalAlignment(0);
         label4.setText("DRIZZLE");
-        panel11.add(label4, "Card1");
-        final JPanel panel12 = new JPanel();
-        panel12.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel12.setBackground(new Color(-1644826));
-        panel10.add(panel12, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        BBQSAUCEButton = new JToggleButton();
-        BBQSAUCEButton.setBackground(new Color(-15066598));
-        BBQSAUCEButton.setForeground(new Color(-1));
-        BBQSAUCEButton.setText("BBQ SAUCE");
-        panel12.add(BBQSAUCEButton);
-        OLIVEOILButton = new JToggleButton();
-        OLIVEOILButton.setBackground(new Color(-15066598));
-        OLIVEOILButton.setForeground(new Color(-1));
-        OLIVEOILButton.setText("OLIVE OIL");
-        panel12.add(OLIVEOILButton);
-        final JPanel panel13 = new JPanel();
-        panel13.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel13.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel13, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel14 = new JPanel();
-        panel14.setLayout(new CardLayout(0, 0));
-        panel14.setBackground(new Color(-1644826));
-        panel13.add(panel14, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
+        panel8.add(label4, "Card1");
+        drizzleButtonGroup = new JPanel();
+        drizzleButtonGroup.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        drizzleButtonGroup.setBackground(new Color(-1644826));
+        panel7.add(drizzleButtonGroup, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel9 = new JPanel();
+        panel9.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel9.setBackground(new Color(-1644826));
+        pizzaOptionsCard.add(panel9, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new CardLayout(0, 0));
+        panel10.setBackground(new Color(-1644826));
+        panel9.add(panel10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setForeground(new Color(-16777216));
         label5.setHorizontalAlignment(0);
         label5.setText("MEAT");
-        panel14.add(label5, "Card1");
-        final JPanel panel15 = new JPanel();
-        panel15.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel15.setBackground(new Color(-1644826));
-        panel13.add(panel15, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        DICEDHAMButton = new JToggleButton();
-        DICEDHAMButton.setBackground(new Color(-15066598));
-        DICEDHAMButton.setForeground(new Color(-1));
-        DICEDHAMButton.setSelected(true);
-        DICEDHAMButton.setText("DICED HAM");
-        panel15.add(DICEDHAMButton);
-        ITALIANSAUSAGEButton = new JToggleButton();
-        ITALIANSAUSAGEButton.setBackground(new Color(-15066598));
-        ITALIANSAUSAGEButton.setForeground(new Color(-1));
-        ITALIANSAUSAGEButton.setText("ITALIAN SAUSAGE");
-        panel15.add(ITALIANSAUSAGEButton);
-        MEATBALLButton = new JToggleButton();
-        MEATBALLButton.setBackground(new Color(-15066598));
-        MEATBALLButton.setForeground(new Color(-1));
-        MEATBALLButton.setSelected(true);
-        MEATBALLButton.setText("MEATBALL");
-        panel15.add(MEATBALLButton);
-        PEPPERONIButton = new JToggleButton();
-        PEPPERONIButton.setBackground(new Color(-15066598));
-        PEPPERONIButton.setForeground(new Color(-1));
-        PEPPERONIButton.setText("PEPPERONI");
-        panel15.add(PEPPERONIButton);
-        final JPanel panel16 = new JPanel();
-        panel16.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel16.setBackground(new Color(-1644826));
-        panel13.add(panel16, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        SALAMIButton = new JToggleButton();
-        SALAMIButton.setBackground(new Color(-15066598));
-        SALAMIButton.setForeground(new Color(-1));
-        SALAMIButton.setText("SALAMI");
-        panel16.add(SALAMIButton);
-        SMOKEDCHICKENButton = new JToggleButton();
-        SMOKEDCHICKENButton.setBackground(new Color(-15066598));
-        SMOKEDCHICKENButton.setForeground(new Color(-1));
-        SMOKEDCHICKENButton.setSelected(true);
-        SMOKEDCHICKENButton.setText("SMOKED CHICKEN");
-        panel16.add(SMOKEDCHICKENButton);
-        final JPanel panel17 = new JPanel();
-        panel17.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel17.setBackground(new Color(-1644826));
-        pizzaCustomizationMenu.add(panel17, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel18 = new JPanel();
-        panel18.setLayout(new CardLayout(0, 0));
-        panel18.setBackground(new Color(-1644826));
-        panel17.add(panel18, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
+        panel10.add(label5, "Card1");
+        meatButtonGroup1 = new JPanel();
+        meatButtonGroup1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        meatButtonGroup1.setBackground(new Color(-1644826));
+        panel9.add(meatButtonGroup1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        meatButtonGroup2 = new JPanel();
+        meatButtonGroup2.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        meatButtonGroup2.setBackground(new Color(-1644826));
+        panel9.add(meatButtonGroup2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel11 = new JPanel();
+        panel11.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel11.setBackground(new Color(-1644826));
+        pizzaOptionsCard.add(panel11, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new CardLayout(0, 0));
+        panel12.setBackground(new Color(-1644826));
+        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(80, -1), null, null, 0, false));
         final JLabel label6 = new JLabel();
         label6.setForeground(new Color(-16777216));
         label6.setHorizontalAlignment(0);
         label6.setText("VEGGIES");
-        panel18.add(label6, "Card1");
-        final JPanel panel19 = new JPanel();
-        panel19.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel19.setBackground(new Color(-1644826));
-        panel17.add(panel19, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        BANANAPEPPERSButton = new JToggleButton();
-        BANANAPEPPERSButton.setBackground(new Color(-15066598));
-        BANANAPEPPERSButton.setForeground(new Color(-1));
-        BANANAPEPPERSButton.setText("BANANA PEPPERS");
-        panel19.add(BANANAPEPPERSButton);
-        BLACKOLIVESButton = new JToggleButton();
-        BLACKOLIVESButton.setBackground(new Color(-15066598));
-        BLACKOLIVESButton.setForeground(new Color(-1));
-        BLACKOLIVESButton.setText("BLACK OLIVES");
-        panel19.add(BLACKOLIVESButton);
-        GREENPEPPERSButton = new JToggleButton();
-        GREENPEPPERSButton.setBackground(new Color(-15066598));
-        GREENPEPPERSButton.setForeground(new Color(-1));
-        GREENPEPPERSButton.setText("GREEN PEPPERS");
-        panel19.add(GREENPEPPERSButton);
-        JALAPENOSButton = new JToggleButton();
-        JALAPENOSButton.setBackground(new Color(-15066598));
-        JALAPENOSButton.setForeground(new Color(-1));
-        JALAPENOSButton.setText("JALAPENOS");
-        panel19.add(JALAPENOSButton);
-        final JPanel panel20 = new JPanel();
-        panel20.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel20.setBackground(new Color(-1644826));
-        panel17.add(panel20, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        MUSHROOMSButton = new JToggleButton();
-        MUSHROOMSButton.setBackground(new Color(-15066598));
-        MUSHROOMSButton.setForeground(new Color(-1));
-        MUSHROOMSButton.setText("MUSHROOMS");
-        panel20.add(MUSHROOMSButton);
-        ONIONSButton = new JToggleButton();
-        ONIONSButton.setBackground(new Color(-15066598));
-        ONIONSButton.setForeground(new Color(-1));
-        ONIONSButton.setText("ONIONS");
-        panel20.add(ONIONSButton);
-        PINEAPPLEButton = new JToggleButton();
-        PINEAPPLEButton.setBackground(new Color(-15066598));
-        PINEAPPLEButton.setForeground(new Color(-1));
-        PINEAPPLEButton.setText("PINEAPPLE");
-        panel20.add(PINEAPPLEButton);
-        ROASTEDGARLICButton = new JToggleButton();
-        ROASTEDGARLICButton.setBackground(new Color(-15066598));
-        ROASTEDGARLICButton.setForeground(new Color(-1));
-        ROASTEDGARLICButton.setText("ROASTED GARLIC");
-        panel20.add(ROASTEDGARLICButton);
-        final JPanel panel21 = new JPanel();
-        panel21.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        panel21.setBackground(new Color(-1644826));
-        panel17.add(panel21, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        SPINACHButton = new JToggleButton();
-        SPINACHButton.setBackground(new Color(-15066598));
-        SPINACHButton.setForeground(new Color(-1));
-        SPINACHButton.setText("SPINACH");
-        panel21.add(SPINACHButton);
-        TOMATOESButton = new JToggleButton();
-        TOMATOESButton.setBackground(new Color(-15066598));
-        TOMATOESButton.setForeground(new Color(-1));
-        TOMATOESButton.setText("TOMATOES");
-        panel21.add(TOMATOESButton);
-        drinkMenu = new JPanel();
-        drinkMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        drinkMenu.setBackground(new Color(-1644826));
-        MenuOptionCards.add(drinkMenu, "drinks");
-        BOTTLEDButton = new JButton();
-        BOTTLEDButton.setBackground(new Color(-15066598));
-        BOTTLEDButton.setForeground(new Color(-1));
-        BOTTLEDButton.setMinimumSize(new Dimension(0, 30));
-        BOTTLEDButton.setText("BOTTLED");
-        drinkMenu.add(BOTTLEDButton);
-        WATERButton = new JButton();
-        WATERButton.setBackground(new Color(-15066598));
-        WATERButton.setForeground(new Color(-1));
-        WATERButton.setMinimumSize(new Dimension(0, 30));
-        WATERButton.setText("WATER");
-        drinkMenu.add(WATERButton);
-        GATORADEButton = new JButton();
-        GATORADEButton.setBackground(new Color(-15066598));
-        GATORADEButton.setForeground(new Color(-1));
-        GATORADEButton.setMinimumSize(new Dimension(0, 30));
-        GATORADEButton.setText("GATORADE");
-        drinkMenu.add(GATORADEButton);
-        FOUNTAINButton = new JButton();
-        FOUNTAINButton.setBackground(new Color(-15066598));
-        FOUNTAINButton.setForeground(new Color(-1));
-        FOUNTAINButton.setMinimumSize(new Dimension(0, 30));
-        FOUNTAINButton.setText("FOUNTAIN");
-        drinkMenu.add(FOUNTAINButton);
-        ButtonGroup buttonGroup;
-        buttonGroup = new ButtonGroup();
-        buttonGroup.add(STANDARDButton);
-        buttonGroup.add(CAULIFLOWERButton);
-        buttonGroup = new ButtonGroup();
-        buttonGroup.add(ALFREDOButton);
-        buttonGroup.add(TRADITIONALREDButton);
-        buttonGroup.add(ZESTYREDButton);
-        buttonGroup.add(NOSAUCEButton);
-        buttonGroup = new ButtonGroup();
-        buttonGroup.add(HOUSEBLENDButton);
-        buttonGroup.add(PARMESANButton);
+        panel12.add(label6, "Card1");
+        veggieButtonGroup1 = new JPanel();
+        veggieButtonGroup1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        veggieButtonGroup1.setBackground(new Color(-1644826));
+        panel11.add(veggieButtonGroup1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        veggieButtonGroup2 = new JPanel();
+        veggieButtonGroup2.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        veggieButtonGroup2.setBackground(new Color(-1644826));
+        panel11.add(veggieButtonGroup2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        veggieButtonGroup3 = new JPanel();
+        veggieButtonGroup3.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        veggieButtonGroup3.setBackground(new Color(-1644826));
+        panel11.add(veggieButtonGroup3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -417,10 +223,6 @@ public class MenuOptions {
         return MenuOptionCards;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-
-    }
 
     // @formatter:on
     private enum PizzaType {
@@ -429,477 +231,368 @@ public class MenuOptions {
         BYO
     }
 
-    private PizzaType pizzaType;
-    private MenuItem currentPizza;
+    public boolean checkToppingCount(OrderItem item) {
+        int count = item.products.stream()
+                .map(p -> p.productTypeName)
+                .filter(name -> name.equals("Meat") || name.equals("Veggies"))
+                .collect(Collectors.toList()).size();
 
-    public void nextCard() {
-        ((CardLayout) MenuOptionCards.getLayout()).next(MenuOptionCards);
+        if (count >= 4 && pizzaType == PizzaType.BYO) {
+            return false;
+        }
+        if (count >= 1 && pizzaType == PizzaType.one_topping) {
+            return false;
+        }
+        if (count >= 0 && pizzaType == PizzaType.cheese) {
+            return false;
+        }
+        return true;
     }
 
-    private void resetPizzaOptions() {
-        for (JToggleButton option : pizzaButtons) {
-            option.setSelected(false);
-            ButtonModel model = option.getModel();
-            ButtonGroup group = ((DefaultButtonModel) model).getGroup();
-            if (group != null) {
-                group.clearSelection();
+
+    private void buildPizzaOptions() {
+        crustButtonGroup.removeAll();
+        ButtonGroup crustGroup = new ButtonGroup();
+        for (Product product : productByType.get(Product.ProductType.CRUST.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            crustButtons.add(button);
+            crustButtonGroup.add(button);
+            crustGroup.add(button);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
+            });
+        }
+        sauceButtonGroup.removeAll();
+        ButtonGroup sauceGroup = new ButtonGroup();
+        for (Product product : productByType.get(Product.ProductType.SAUCE.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            sauceButtons.add(button);
+            sauceButtonGroup.add(button);
+            sauceGroup.add(button);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
+            });
+        }
+        cheeseButtonGroup.removeAll();
+        ButtonGroup cheeseGroup = new ButtonGroup();
+        for (Product product : productByType.get(Product.ProductType.CHEESE.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            cheeseButtons.add(button);
+            cheeseButtonGroup.add(button);
+            cheeseGroup.add(button);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
+            });
+        }
+        drizzleButtonGroup.removeAll();
+        for (Product product : productByType.get(Product.ProductType.DRIZZLE.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            drizzleButtons.add(button);
+            drizzleButtonGroup.add(button);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
+            });
+        }
+        meatButtonGroup1.removeAll();
+        meatButtonGroup2.removeAll();
+        for (Product product : productByType.get(Product.ProductType.MEAT.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            crustButtons.add(button);
+            if (meatButtonGroup1.getComponentCount() < 4) {
+                meatButtonGroup1.add(button);
+            } else {
+                meatButtonGroup2.add(button);
             }
-            option.repaint();
-        }
-    }
-
-    private void enablePizzaOptions(List<JToggleButton> options) {
-        for (JToggleButton option : options) {
-            option.setEnabled(true);
-            option.repaint();
-        }
-    }
-
-    private void enablePizzaOptions() {
-        enablePizzaOptions(pizzaButtons);
-    }
-
-    private void disablePizzaOptions(List<JToggleButton> options) {
-        for (JToggleButton option : options) {
-            option.setEnabled(false);
-            option.repaint();
-        }
-    }
-
-    private void disablePizzaOptions() {
-        disablePizzaOptions(pizzaButtons);
-    }
-
-    private void bindActionListeners() {
-        Actions.setOptionsCard.subscribe(
-                card -> ((CardLayout) MenuOptionCards.getLayout()).show(MenuOptionCards, card.toString()));
-    }
-
-    private void bindPizzaButtons() {
-        for (Map.Entry<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> entry : pizzaMap.entrySet()) {
-            entry.getValue().addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Database db = Actions.getDatabase.getValue();
-                    if (db == null) {
-                        System.out.println("database is null");
-                        return;
-                    }
-
-                    edu.tamu.spinnstone.models.MenuItem menuItem = new edu.tamu.spinnstone.models.MenuItem(db);
-
-                    // fetch the menuitem from the database
-                    try {
-                        ResultSet rs = db.select("*").from(menuItem.tableName)
-                                .where(
-                                        edu.tamu.spinnstone.models.MenuItem.ColumnNames.ITEM_NAME.toString(),
-                                        entry.getKey().toString())
-                                .execute();
-
-                        if (rs.next()) {
-                            menuItem.updateFromResultSet(rs);
-                        } else {
-                            System.out.println("unknown pizza type:");
-                            return;
-                        }
-
-                    } catch (Exception ex) {
-                        System.out.println("Error trying to get pizza menu item: " + ex.getMessage());
-                        return;
-                    }
-
-                    // create a new pizza order item with the appropriate menu item link
-                    OrderItem orderItem = new OrderItem(db);
-                    orderItem.menuItemId = menuItem.menuItemId;
-                    orderItem.menuItem = menuItem;
-                    orderItem.quantity = 1;
-                    // no orderid yet (until it is finalized)
-
-                    Order activeOrder = Actions.getOrder.getValue();
-                    if (activeOrder == null) {
-                        System.out.println("no active order");
-                        return;
-                    }
-
-                    activeOrder.addOrderItem(orderItem);
-                    Actions.activeOrderItem.onNext(orderItem);
-                    Actions.orderUpdated.onNext(activeOrder);
-
-                    // set which toppings are available
-                    resetPizzaOptions();
-                    disablePizzaOptions();
-
-                    edu.tamu.spinnstone.models.MenuItem.ItemNames key = entry.getKey();
-                    if (key == edu.tamu.spinnstone.models.MenuItem.ItemNames.ORIGINAL_CHEESE_PIZZA) {
-                        pizzaType = PizzaType.cheese;
-                        enablePizzaOptions(cheeseButtons);
-                        enablePizzaOptions(sauceButtons);
-                        enablePizzaOptions(crustButtons);
-                        enablePizzaOptions(drizzleButtons);
-                    } else if (key == edu.tamu.spinnstone.models.MenuItem.ItemNames.ONE_TOPPING_PIZZA) {
-                        pizzaType = PizzaType.one_topping;
-                        enablePizzaOptions();
-                    } else if (key == edu.tamu.spinnstone.models.MenuItem.ItemNames.TWO_TO_FOUR_TOPPING_PIZZA) {
-                        pizzaType = PizzaType.BYO;
-                        enablePizzaOptions();
-                    }
-
-                    nextCard();
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected() && !checkToppingCount(item)) {
+                    button.setSelected(false);
+                    return;
                 }
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
             });
         }
-    }
-
-    private void bindToppingButtons() {
-        for (Map.Entry<Product.Name, JToggleButton> entry : pizzaToppingMap.entrySet()) {
-            entry.getValue().addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem orderItem = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (orderItem == null || order == null) {
-                        System.out.println("no active order item or order");
-                        return;
-                    }
-                    // edge cases first
-                    if (event.getStateChange() == ItemEvent.DESELECTED) {
-                        // if the item is being deselected, remove it from the order item
-                        orderItem.removeProductByName(entry.getKey());
-                        Actions.orderUpdated.onNext(order);
-                        return;
-                    }
-
-                    List<String> pizzaToppingNames = pizzaToppings.stream()
-                            .map(Product.Name::toString)
-                            .collect(Collectors.toList());
-
-                    // if the current item is an ingredient
-                    if (pizzaToppingNames.contains(entry.getKey().toString())) {
-                        // count the number of pizza menuitem products that are ingredients (including
-                        // this new one)
-                        int toppingCount = orderItem.products.stream().map(product -> product.productName)
-                                .filter(pizzaToppingNames::contains)
-                                .collect(Collectors.toSet())
-                                .size() + 1;
-
-                        // if the amount of toppings is too high, deselect the item
-                        switch (pizzaType) {
-                            case cheese:
-                                if (toppingCount > 0) {
-                                    entry.getValue().setSelected(false);
-                                    return;
-                                }
-                                break;
-                            case one_topping:
-                                if (toppingCount > 1) {
-                                    entry.getValue().setSelected(false);
-                                    return;
-                                }
-                                break;
-                            case BYO:
-                                if (toppingCount > 4) {
-                                    entry.getValue().setSelected(false);
-                                    return;
-                                }
-                                break;
-                        }
-                    }
-
-                    // now do the actual addition
-                    Database db = Actions.getDatabase.getValue();
-                    if (db == null) {
-                        System.out.println("database is null");
-                        return;
-                    }
-
-                    Product product = new Product(db);
-                    try {
-                        // fetch the product from the database
-                        ResultSet rs = db.select("*").from(product.tableName)
-                                .where(
-                                        Product.ColumnNames.PRODUCT_NAME.toString(),
-                                        entry.getKey().toString())
-                                .execute();
-                        if (rs.next()) {
-                            product.updateFromResultSet(rs);
-                            if (product.quantityInStock <= 0) {
-                                System.out.println("out of stock");
-                                entry.getValue().setSelected(false);
-                                entry.getValue().setEnabled(false);
-                                return;
-                            }
-                        } else {
-                            System.out.println("unknown topping type:");
-                            return;
-                        }
-
-                    } catch (Exception ex) {
-                        System.out.println("Error trying to get topping product: " + ex.getMessage());
-                        return;
-                    }
-
-                    // add the product to the order item
-                    orderItem.addProduct(product);
-                    Actions.orderUpdated.onNext(order);
-
+        veggieButtonGroup1.removeAll();
+        veggieButtonGroup2.removeAll();
+        veggieButtonGroup3.removeAll();
+        for (Product product : productByType.get(Product.ProductType.VEGGIES.toString())) {
+            JToggleButton button = new JToggleButton(product.productName);
+            Theme.button(button);
+            veggieButtons.add(button);
+            if (veggieButtonGroup1.getComponentCount() < 4) {
+                veggieButtonGroup1.add(button);
+            } else if (veggieButtonGroup2.getComponentCount() < 4) {
+                veggieButtonGroup2.add(button);
+            } else {
+                veggieButtonGroup3.add(button);
+            }
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected() && !checkToppingCount(item)) {
+                    button.setSelected(false);
+                    return;
                 }
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
             });
         }
+
     }
 
-    private void bindDrinkButtons() {
-        for (Map.Entry<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton> entry : drinkMap.entrySet()) {
-            entry.getValue().addMouseListener(new MouseAdapter() {
+
+    private void setOptionCardListener(Actions.OptionCards optionCard) {
+        String categoryName;
+        switch (optionCard) {
+            case PIZZA:
+                categoryName = edu.tamu.spinnstone.models.MenuItem.Categories.PIZZA.toString();
+                break;
+            case DRINKS:
+                categoryName = edu.tamu.spinnstone.models.MenuItem.Categories.BEVERAGE.toString();
+                break;
+            default:
+                categoryName = edu.tamu.spinnstone.models.MenuItem.Categories.OTHER.toString();
+        }
+
+        // get the relevant menu items
+        if (!menuItemByCategory.containsKey(categoryName)) {
+            return;
+        }
+        ArrayList<edu.tamu.spinnstone.models.MenuItem> menuItems = menuItemByCategory.get(categoryName);
+
+        // generate the menu item buttons
+        orderOptionsCardRow1.removeAll();
+        orderOptionsCardRow2.removeAll();
+        orderOptionsCardRow3.removeAll();
+        orderOptionsCardRow4.removeAll();
+
+
+        for (edu.tamu.spinnstone.models.MenuItem menuItem : menuItems) {
+            JButton button = new JButton(menuItem.itemName);
+            Theme.button(button);
+
+
+            if (orderOptionsCardRow1.getComponentCount() < 4) {
+                orderOptionsCardRow1.add(button);
+            } else if (orderOptionsCardRow2.getComponentCount() < 4) {
+                orderOptionsCardRow2.add(button);
+            } else if (orderOptionsCardRow3.getComponentCount() < 4) {
+                orderOptionsCardRow3.add(button);
+            } else {
+                orderOptionsCardRow4.add(button);
+            }
+            button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent event) {
-                    Database db = Actions.getDatabase.getValue();
-                    if (db == null) {
-                        System.out.println("database is null");
-                        return;
-                    }
-                    Order activeOrder = Actions.getOrder.getValue();
-                    if (activeOrder == null) {
-                        System.out.println("no active order");
-                        return;
-                    }
+                    // add menu item to order (as an order item)
+                    addOrderItem(menuItem);
 
-                    // check if there is already a menuitem matching this one
+                    // if it's a pizza, head to the configuration screen
+                    if (categoryName == edu.tamu.spinnstone.models.MenuItem.Categories.PIZZA.toString()) {
+                        switch (menuItem.itemName) {
+                            case "2-4 Topping Pizza":
+                                pizzaType = PizzaType.BYO;
+                                break;
+                            case "Original Cheese Pizza":
+                                pizzaType = PizzaType.cheese;
+                                break;
+                            case "1 Topping Pizza":
+                                pizzaType = PizzaType.one_topping;
+                                break;
 
-                    OrderItem matchingItem = activeOrder.orderItems.stream()
-                            .filter(item -> item.menuItem.itemName.equals(entry.getKey().toString())).findFirst().orElse(null);
-
-                    if (matchingItem != null) {
-                        // increase this order item quantity instead
-                        matchingItem.quantity++;
-                        Actions.orderUpdated.onNext(activeOrder);
-                        return;
-                    }
-
-                    edu.tamu.spinnstone.models.MenuItem menuItem = new edu.tamu.spinnstone.models.MenuItem(db);
-
-                    // fetch the menuitem from the database
-                    // this and the pizza topping buttons assume that the product name matches the menuitem name
-                    // this is not necessarily true, something to consider
-                    try {
-                        ResultSet rs = db.select("*").from(menuItem.tableName)
-                                .where(
-                                        edu.tamu.spinnstone.models.MenuItem.ColumnNames.ITEM_NAME.toString(),
-                                        entry.getKey().toString())
-                                .execute();
-
-                        if (rs.next()) {
-                            menuItem.updateFromResultSet(rs);
-                        } else {
-                            System.out.println("unknown drink type:");
-                            return;
                         }
-
-                    } catch (Exception ex) {
-                        System.out.println("Error trying to get drink menu item: " + ex.getMessage());
-                        return;
+                        CardLayout cl = (CardLayout) (MenuOptionCards.getLayout());
+                        cl.show(MenuOptionCards, "pizzaOptionsCard");
                     }
-
-
-                    // get the associated product
-                    Product product = new Product(db);
-                    try {
-                        ResultSet rs = db.select("*").from(product.tableName)
-                                .where(
-                                        Product.ColumnNames.PRODUCT_NAME.toString(),
-                                        entry.getKey().toString())
-                                .execute();
-                        if (rs.next()) {
-                            product.updateFromResultSet(rs);
-                            if (product.quantityInStock <= 0) {
-                                System.out.println("out of stock");
-                                entry.getValue().setEnabled(false);
-                                return;
-                            }
-                        } else {
-                            System.out.println("unknown drink type:");
-                            return;
-                        }
-
-                    } catch (Exception ex) {
-                        System.out.println("Error trying to get drink product: " + ex.getMessage());
-                        return;
-                    }
-
-                    // create a new drink order item with the appropriate menu item link
-                    OrderItem orderItem = new OrderItem(db);
-                    orderItem.menuItemId = menuItem.menuItemId;
-                    orderItem.menuItem = menuItem;
-                    orderItem.quantity = 1;
-
-                    orderItem.addProduct(product);
-                    orderItem.isDrink = true;
-
-                    activeOrder.addOrderItem(orderItem);
-                    Actions.orderUpdated.onNext(activeOrder);
                 }
             });
         }
+
+
+        CardLayout cl = (CardLayout) (MenuOptionCards.getLayout());
+        cl.show(MenuOptionCards, "orderOptionsCard");
+        orderOptionsCard.revalidate();
+        orderOptionsCard.repaint();
+
+    }
+
+    private void addOrderItem(edu.tamu.spinnstone.models.MenuItem menuItem) {
+        Order activeOrder = Actions.getOrder.getValue();
+        if (activeOrder == null) {
+            System.out.println("no active order");
+            return;
+        }
+
+        // check if there is already a menuitem matching this one (excluding pizzas)
+
+        if (menuItem.categoryName != "Pizza") {
+            OrderItem matchingItem = activeOrder.orderItems.stream()
+                    .filter(item -> item.menuItem.itemName.equals(menuItem.itemName)).findFirst().orElse(null);
+
+            if (matchingItem != null) {
+                // increase this order item quantity instead
+                matchingItem.quantity++;
+                Actions.getOrder.onNext(activeOrder);
+                return;
+            }
+
+
+        }
+
+
+        // create a new order item with the appropriate menu item link
+        OrderItem orderItem = new OrderItem(db);
+        orderItem.menuItemId = menuItem.menuItemId;
+        orderItem.menuItem = menuItem;
+        orderItem.quantity = 1;
+
+        if (!menuItem.configurable) {
+            try {
+                // other items will have 1 associated product, add it to the menu item here
+                PreparedStatement statement =
+                        db.connection.prepareStatement(
+                        "select * from menu_item "
+                                + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id "
+                                + "where menu_item.menu_item_id = ? "
+                                + "limit 1"
+                        );
+                statement.setLong(1, menuItem.menuItemId);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    Product product = new Product(db);
+                    product.productId = rs.getLong("product_product_id");
+                    product.sync();
+                    orderItem.addProduct(product);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        activeOrder.orderItems.add(orderItem);
+        Actions.activeOrderItem.onNext(orderItem);
+        Actions.getOrder.onNext(activeOrder);
+    }
+
+    public void buildItemMaps() {
+        pizzaButtons = new ArrayList<>();
+        sauceButtons = new ArrayList<>();
+        crustButtons = new ArrayList<>();
+        drizzleButtons = new ArrayList<>();
+        cheeseButtons = new ArrayList<>();
+        meatButtons = new ArrayList<>();
+        veggieButtons = new ArrayList<>();
+        menuItemByCategory = new HashMap<>();
+        productByType = new HashMap<>();
+        try {
+            ResultSet rs = db.query("select * from menu_item join menu_item_category mic on menu_item.menu_item_category_id = mic.menu_item_category_id");
+            while (rs.next()) {
+                edu.tamu.spinnstone.models.MenuItem menuItem = new edu.tamu.spinnstone.models.MenuItem(db);
+                menuItem.updateFromResultSet(rs);
+                menuItem.categoryName = rs.getString("menu_item_category_name");
+                if (!menuItemByCategory.containsKey(menuItem.categoryName)) {
+                    menuItemByCategory.put(menuItem.categoryName, new ArrayList<>());
+                }
+                menuItemByCategory.get(menuItem.categoryName).add(menuItem);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error trying to get menu items: " + ex.getMessage());
+            return;
+        }
+
+        // fetch products and group by type
+
+        try {
+            ResultSet rs = db.query("select * from product join product_type pt on product.product_type_id = pt.product_type_id");
+
+            while (rs.next()) {
+                Product product = new Product(db);
+                product.updateFromResultSet(rs);
+                product.productTypeName = rs.getString("product_type_name");
+                if (!productByType.containsKey(product.productTypeName)) {
+                    productByType.put(product.productTypeName, new ArrayList<>());
+                }
+                productByType.get(product.productTypeName).add(product);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error trying to get products: " + ex.getMessage());
+            return;
+        }
+
+        // build the pizza options
+
     }
 
     public MenuOptions() {
+        sauceButtonGroup.removeAll();
+        cheeseButtonGroup.removeAll();
+        crustButtonGroup.removeAll();
+        meatButtonGroup1.removeAll();
+        meatButtonGroup2.removeAll();
+        veggieButtonGroup1.removeAll();
+        veggieButtonGroup2.removeAll();
+        veggieButtonGroup3.removeAll();
 
-        // region buttonmaps
 
-        sauceButtons = Arrays.asList(
-                ALFREDOButton,
-                TRADITIONALREDButton,
-                ZESTYREDButton,
-                NOSAUCEButton,
-                HOUSEBLENDButton,
-                PARMESANButton);
+        // initialize
+        db = Actions.getDatabase.getValue();
 
-        drizzleButtons = Arrays.asList(
-                BBQSAUCEButton,
-                OLIVEOILButton
+        if (db == null) {
+            System.out.println("database is null");
+            return;
+        }
 
-        );
+        buildItemMaps();
+        buildPizzaOptions();
 
-        crustButtons = Arrays.asList(
-                STANDARDButton,
-                CAULIFLOWERButton);
+        Actions.menuItemAdded.subscribe(a -> buildItemMaps());
 
-        cheeseButtons = Arrays.asList(
-                HOUSEBLENDButton,
-                PARMESANButton);
+        // listen for card change actions
+        Actions.setOptionsCard.subscribe(card -> setOptionCardListener(card));
 
-        pizzaButtons = Arrays.asList(
-                STANDARDButton,
-                CAULIFLOWERButton,
-                ALFREDOButton,
-                TRADITIONALREDButton,
-                ZESTYREDButton,
-                NOSAUCEButton,
-                HOUSEBLENDButton,
-                PARMESANButton,
-                BBQSAUCEButton,
-                OLIVEOILButton,
-                DICEDHAMButton,
-                ITALIANSAUSAGEButton,
-                MEATBALLButton,
-                PEPPERONIButton,
-                SALAMIButton,
-                SMOKEDCHICKENButton,
-                BANANAPEPPERSButton,
-                BLACKOLIVESButton,
-                GREENPEPPERSButton,
-                JALAPENOSButton,
-                MUSHROOMSButton,
-                ONIONSButton,
-                PINEAPPLEButton,
-                ROASTEDGARLICButton,
-                SPINACHButton,
-                TOMATOESButton);
-
-        toppingButtons = Arrays.asList(
-                DICEDHAMButton,
-                ITALIANSAUSAGEButton,
-                MEATBALLButton,
-                PEPPERONIButton,
-                SALAMIButton,
-                SMOKEDCHICKENButton,
-                BANANAPEPPERSButton,
-                BLACKOLIVESButton,
-                GREENPEPPERSButton,
-                JALAPENOSButton,
-                MUSHROOMSButton,
-                ONIONSButton,
-                PINEAPPLEButton,
-                ROASTEDGARLICButton,
-                SPINACHButton,
-                TOMATOESButton);
-
-        drinkButtons = Arrays.asList(
-                BOTTLEDButton,
-                WATERButton,
-                GATORADEButton,
-                FOUNTAINButton);
-
-        drinkMap = new HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton>() {
-            {
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.BOTTLED_BEVERAGE, BOTTLEDButton);
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.GATORADE, GATORADEButton);
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.FOUNTAIN_DRINK, FOUNTAINButton);
-            }
-        };
-
-        pizzaSauces = Arrays.asList(
-                Product.Name.ALFREDO,
-                Product.Name.TRADITIONAL_RED,
-                Product.Name.ZESTY_RED);
-
-        pizzaCrusts = Arrays.asList(
-                Product.Name.STANDARD,
-                Product.Name.CAULIFLOWER);
-
-        pizzaToppings = Arrays.asList(
-                Product.Name.DICED_HAM,
-                Product.Name.ITALIAN_SAUSAGE,
-                Product.Name.MEATBALL,
-                Product.Name.PEPPERONI,
-                Product.Name.SALAMI,
-                Product.Name.SMOKED_CHICKEN,
-                Product.Name.BANANA_PEPPERS,
-                Product.Name.BLACK_OLIVES,
-                Product.Name.GREEN_PEPPERS,
-                Product.Name.JALAPENOS,
-                Product.Name.MUSHROOMS,
-                Product.Name.ONIONS,
-                Product.Name.PINEAPPLE,
-                Product.Name.ROASTED_GARLIC,
-                Product.Name.SPINACH,
-                Product.Name.TOMATOES);
-
-        pizzaMap = new HashMap<edu.tamu.spinnstone.models.MenuItem.ItemNames, JButton>() {
-            {
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.ORIGINAL_CHEESE_PIZZA, cheeseButton);
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.ONE_TOPPING_PIZZA, a1ToppingButton);
-                put(edu.tamu.spinnstone.models.MenuItem.ItemNames.TWO_TO_FOUR_TOPPING_PIZZA, buildYourOwnButton);
-            }
-        };
-
-        pizzaToppingMap = new HashMap<Product.Name, JToggleButton>() {
-            {
-                put(Product.Name.STANDARD, STANDARDButton);
-                put(Product.Name.CAULIFLOWER, CAULIFLOWERButton);
-                put(Product.Name.ALFREDO, ALFREDOButton);
-                put(Product.Name.TRADITIONAL_RED, TRADITIONALREDButton);
-                put(Product.Name.ZESTY_RED, ZESTYREDButton);
-                put(Product.Name.HOUSE_BLEND, HOUSEBLENDButton);
-                put(Product.Name.PARMESAN, PARMESANButton);
-                put(Product.Name.BBQ_SAUCE, BBQSAUCEButton);
-                put(Product.Name.OLIVE_OIL, OLIVEOILButton);
-                put(Product.Name.DICED_HAM, DICEDHAMButton);
-                put(Product.Name.ITALIAN_SAUSAGE, ITALIANSAUSAGEButton);
-                put(Product.Name.MEATBALL, MEATBALLButton);
-                put(Product.Name.PEPPERONI, PEPPERONIButton);
-                put(Product.Name.SALAMI, SALAMIButton);
-                put(Product.Name.SMOKED_CHICKEN, SMOKEDCHICKENButton);
-                put(Product.Name.BANANA_PEPPERS, BANANAPEPPERSButton);
-                put(Product.Name.BLACK_OLIVES, BLACKOLIVESButton);
-                put(Product.Name.GREEN_PEPPERS, GREENPEPPERSButton);
-                put(Product.Name.JALAPENOS, JALAPENOSButton);
-                put(Product.Name.MUSHROOMS, MUSHROOMSButton);
-                put(Product.Name.ONIONS, ONIONSButton);
-                put(Product.Name.PINEAPPLE, PINEAPPLEButton);
-                put(Product.Name.ROASTED_GARLIC, ROASTEDGARLICButton);
-                put(Product.Name.SPINACH, SPINACHButton);
-                put(Product.Name.TOMATOES, TOMATOESButton);
-            }
-        };
-
-        // endregion
-
-        // region setup
-        bindPizzaButtons();
-        bindToppingButtons();
-        bindActionListeners();
-        bindDrinkButtons();
-        // endregion
 
     }
 

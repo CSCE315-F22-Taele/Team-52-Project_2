@@ -29,7 +29,7 @@ public final class App {
             }
         });
 
-        System.setOut(ps);
+//        System.setOut(ps);
 
         ScreenManager screenManager = new ScreenManager(db);
 
