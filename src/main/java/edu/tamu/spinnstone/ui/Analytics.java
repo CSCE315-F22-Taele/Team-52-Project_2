@@ -129,13 +129,8 @@ public class Analytics {
 
                     items.add(currentItem);
 
-                    System.out.println(rs_order_items.getString(1));
                 } while (rs_order_items.next());
-
-                System.out.println();
             } while (rs_orders.next());
-
-            System.out.println(pairOccurrences);
 
             // order pairs by occurrences
             PriorityQueue<ArrayList<String>> pairsOrdered = new PriorityQueue<>(pairOccurrences.size(), new pairComparator());
