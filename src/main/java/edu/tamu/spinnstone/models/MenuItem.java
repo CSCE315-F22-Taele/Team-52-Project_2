@@ -78,17 +78,14 @@ public class MenuItem extends Table {
     }
 
     public ResultSet getSalesReport(Date startDate, Date endDate) throws SQLException {
-        ResultSet rs = database.query(
-            "select menu_item.menu_item_id, sum(menu_item.menu_item_price) as sales" + 
-            "from \"order\"" +
+        return database.query(
+            "select menu_item.menu_item_id, sum(menu_item.menu_item_price) as sales from \"order\""+
             "join order_item on order_item.order_id = \"order\".order_id"+
             "join menu_item on menu_item.menu_item_id = order_item.menu_item_id"+
-            "where \"order\".order_date between 'start-date' and 'end-date'"+
+            "where \"order\".order_date between '" + startDate + "' and '" + endDate + "'"+
             "group by menu_item.menu_item_id"+
             "order by menu_item.menu_item_id;"
         );
-
-        return rs;
     }
 
     // endregion
