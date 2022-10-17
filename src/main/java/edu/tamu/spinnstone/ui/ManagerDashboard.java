@@ -16,6 +16,9 @@ import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -155,6 +158,24 @@ public class ManagerDashboard {
         RestockReportTable = new JTable(dataToDisplayArray, columnNames);
 
         RestockReportContainer.setViewportView(RestockReportTable);
+    }
+
+    /*Given a timestamp, display the list of items that only sold less than 10% of their inventory between the timestamp
+     and the current time, assuming no restocks have happened during the window.
+     */
+    /*
+     *@param timeStamp for the given timestamp
+     */
+    private void exceessReport(LocalDate timeStamp) {
+        //getting the database and products
+        Database database = Actions.getDatabase.getValue();
+        Product products = new Product(database);
+
+        LocalDate currDate = LocalDate.now(ZoneId.systemDefault());
+
+        for(LocalDate date = timeStamp; date.equals(currDate); date.plusDays(1)){
+            
+        }
     }
 
     private void createUIComponents() {
