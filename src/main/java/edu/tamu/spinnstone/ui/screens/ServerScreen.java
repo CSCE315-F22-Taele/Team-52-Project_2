@@ -178,6 +178,7 @@ public class ServerScreen {
 
         navBar.SHIPMENTSButton.setVisible(false);
         navBar.INVENTORYButton.setVisible(false);
+        navBar.ANALYTICSButton.setVisible(false);
         navBar.SERVERVIEWButton.setSelected(true);
     }
 

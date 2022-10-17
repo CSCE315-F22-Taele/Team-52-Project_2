@@ -92,7 +92,6 @@ public class OrderItem extends Table {
 
     }
 
-
     public void addProduct(Product product) {
         if(products.stream().anyMatch(p -> p.productId == product.productId)) {
             return;
