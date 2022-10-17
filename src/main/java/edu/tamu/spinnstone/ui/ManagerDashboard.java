@@ -42,6 +42,17 @@ public class ManagerDashboard {
     private JDialog dialog;
     private final int RESTOCK_THRESHOLD;
 
+    private JScrollPane ExcessReportContainer;
+    private JTable ExcessReportTable;
+
+    private JLabel excessLabel;
+
+    private JTextField ExcessReportEndDate;
+
+    private JTextField ExcessReportStartDate;
+
+    private JButton ExcessReportSubmitButton;
+
     public ManagerDashboard() {
         RESTOCK_THRESHOLD = 10;
         $$$setupUI$$$();
@@ -73,6 +84,16 @@ public class ManagerDashboard {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 generateSalesReport(SalesReportStartDate.getText(), SalesReportEndDate.getText());
+            }
+        });
+
+        generateExcessReport("2022-10-15", "2022-10-17");
+        excessLabel.setText("Products that sold < 10% of Inventory: ");
+        ExcessReportSubmitButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                generateExcessReport(ExcessReportStartDate.getText(), ExcessReportEndDate.getText());
             }
         });
     }
@@ -205,6 +226,76 @@ public class ManagerDashboard {
 
     }
 
+    /*
+     * @param
+     * @param
+     */
+    private void generateExcessReport(String timeStampStart, String timeStampEnd) {
+        Database database = Actions.getDatabase.getValue();
+        Product product = new Product(database);
+
+        //the time stamp ending date is the current date
+        timeStampEnd = (LocalDate.now(ZoneId.systemDefault())).toString();
+
+        ArrayList<String[]> excessReport = new ArrayList<>();
+        ArrayList<String[]> inventoryOfProduct = new ArrayList<>();
+        ArrayList<String[]> excessReportRemaining = new ArrayList<>();
+
+        try {
+            //This query tells how much of each product has been sold between a specific start and end date
+            ResultSet productItems = product.getProductReport(timeStampStart, timeStampEnd);
+            do {
+                String[] dataRow = new String[2];
+
+                dataRow[0] = productItems.getString("product_id");
+                dataRow[1] = productItems.getString("?column?");
+
+                excessReport.add(dataRow);
+
+                //This holds product_id of each product
+                ResultSet productId = product.totalInventoryOfProduct(Integer.parseInt(dataRow[0]));
+
+                String[] productRow = new String[1];
+
+                productRow[0] = productId.getString("product_id");
+
+                inventoryOfProduct.add(productRow);
+            }
+            while (productItems.next());
+        } catch (SQLException e) {
+            SalesReportError.setText("Invalid Date");
+            System.out.println("SQL exception: " + e);
+        }
+
+//        for(int i = 0; i < excessReport.size(); ++i) {
+//            //if the amount sold / total inventory of item < 10%, then add to table
+//            double percent = Double(Integer.parseInt(excessReport.get(i))/inventoryOfProduct.get(i))
+//            if(percent < .10) {
+//                excessReportRemaining.add(excessReport.get(i));
+//            }
+//        }
+
+        String[][] excessReportArray = excessReport.toArray(new String[excessReport.size()][]);
+        String[][] inventoryArray = inventoryOfProduct.toArray(new String[inventoryOfProduct.size()][]);
+
+        for (int i = 0; i < excessReport.size(); ++i) {
+            for (int j = 0; j < 2; j++) {
+                //if the amount sold / total inventory of item < 10%, then add to table
+                //int division = Integer.parseInt(excessReport.get(i)[j]) / Integer.parseInt(inventoryOfProduct.get(i)[0]);
+                double percent = Integer.parseInt(excessReport.get(i)[j]) / Integer.parseInt(inventoryOfProduct.get(i)[0]);
+                if (percent < .10) {
+                    excessReportRemaining.add(excessReport.get(i));
+                }
+            }
+        }
+
+
+        String[] columnNames = {"Product Sold Less Than 10%"};
+        String[][] dataToDisplayArray = excessReportRemaining.toArray(new String[excessReportRemaining.size()][]);
+        ExcessReportTable = new JTable(dataToDisplayArray, columnNames);
+        SalesReportTableContainer.setViewportView(ExcessReportTable);
+    }
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
@@ -282,6 +373,13 @@ public class ManagerDashboard {
         SalesReportError = new JLabel();
         SalesReportError.setText("Label");
         panel3.add(SalesReportError, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+
+        container.add(ExcessReportContainer, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        ExcessReportTable = new JTable();
+        ExcessReportContainer.setViewportView(ExcessReportTable);
+        excessLabel = new JLabel();
+        excessLabel.setText("Excess Report");
+        container.add(excessLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
