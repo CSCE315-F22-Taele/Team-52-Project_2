@@ -48,6 +48,8 @@ public class ManagerView {
         ManagerViewCard.add(nestedForm2.$$$getRootComponent$$$(), "InventoryCard");
         final ManagerDashboard nestedForm3 = new ManagerDashboard();
         ManagerViewCard.add(nestedForm3.$$$getRootComponent$$$(), "DashboardCard");
+        final Analytics nestedForm4 = new Analytics();
+        ManagerViewCard.add(nestedForm4.$$$getRootComponent$$$(), "AnalyticsCard");
     }
 
     /**

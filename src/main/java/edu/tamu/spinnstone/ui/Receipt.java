@@ -29,7 +29,7 @@ public class Receipt {
     public Receipt() {
         receiptLines = new ArrayList<>();
 
-        Actions.orderUpdated.subscribe(order -> {
+        Actions.getOrder.subscribe(order -> {
             // update total
             order.subTotal = order.orderItems.stream()
                     .map(item -> item.menuItem.menuItemPrice.multiply(new BigDecimal(item.quantity)))

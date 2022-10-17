@@ -84,9 +84,13 @@ public class Inventory {
         InventoryTable = new JTable();
         InventoryTableContainer.setViewportView(InventoryTable);
         refreshButton = new JButton();
+        refreshButton.setBackground(new Color(-15066598));
+        refreshButton.setForeground(new Color(-1));
         refreshButton.setText("Refresh");
         panel1.add(refreshButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         commitChangeSButton = new JButton();
+        commitChangeSButton.setBackground(new Color(-15066598));
+        commitChangeSButton.setForeground(new Color(-1));
         commitChangeSButton.setText("Commit Change(s)");
         panel1.add(commitChangeSButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }

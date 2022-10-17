@@ -16,10 +16,12 @@ public class NavBar {
     public JToggleButton SERVERVIEWButton;
     public JToggleButton INVENTORYButton;
     public JToggleButton SHIPMENTSButton;
+    public JToggleButton ANALYTICSButton;
     private JPanel col1;
     private JPanel col2;
     private JPanel col3;
     private JPanel col4;
+    private JPanel col5;
 
     private void toggleButtons(ActiveButton activeButton, boolean showManagerButtons) {
 
@@ -29,9 +31,10 @@ public class NavBar {
             navbar.MANAGERVIEWButton.setSelected(false);
             navbar.INVENTORYButton.setSelected(false);
             navbar.SHIPMENTSButton.setSelected(false);
+            navbar.ANALYTICSButton.setSelected(false);
 
 
-            java.util.List<JToggleButton> buttons = Arrays.asList(navbar.INVENTORYButton, navbar.SHIPMENTSButton, navbar.SERVERVIEWButton, navbar.MANAGERVIEWButton);
+            java.util.List<JToggleButton> buttons = Arrays.asList(navbar.INVENTORYButton, navbar.SHIPMENTSButton, navbar.SERVERVIEWButton, navbar.MANAGERVIEWButton, navbar.ANALYTICSButton);
 
             switch (activeButton) {
                 case inventory:
@@ -46,15 +49,20 @@ public class NavBar {
                 case shipment:
                     navbar.SHIPMENTSButton.setSelected(true);
                     break;
+                case analytics:
+                    navbar.ANALYTICSButton.setSelected(true);
+                    break;
             }
 
             if (showManagerButtons) {
                 navbar.INVENTORYButton.setVisible(true);
                 navbar.SHIPMENTSButton.setVisible(true);
+                navbar.ANALYTICSButton.setVisible(true);
                 navbar.MANAGERVIEWButton.setSelected(true);
             } else {
                 navbar.INVENTORYButton.setVisible(false);
                 navbar.SHIPMENTSButton.setVisible(false);
+                navbar.ANALYTICSButton.setVisible(false);
                 navbar.SERVERVIEWButton.setSelected(true);
             }
 
@@ -65,7 +73,7 @@ public class NavBar {
     }
 
     enum ActiveButton {
-        server, manager, inventory, shipment
+        server, manager, inventory, shipment, analytics
     }
 
     public NavBar() {
@@ -105,6 +113,14 @@ public class NavBar {
                 toggleButtons(ActiveButton.shipment, true);
             }
         });
+        ANALYTICSButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Actions.setViewCard.onNext(Actions.ViewNames.ANALYTICS);
+                toggleButtons(ActiveButton.analytics, true);
+            }
+        });
     }
     // @formatter:off
 
@@ -117,7 +133,7 @@ public class NavBar {
      */
     private void $$$setupUI$$$() {
         navContainer = new JPanel();
-        navContainer.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 0, 0));
+        navContainer.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), 0, 0));
         navContainer.setBackground(new Color(-8355712));
         col1 = new JPanel();
         col1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 8, 0, 8), 0, 0));
@@ -129,7 +145,7 @@ public class NavBar {
         SERVERVIEWButton.setText("SERVER VIEW");
         col1.add(SERVERVIEWButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        navContainer.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        navContainer.add(spacer1, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         col2 = new JPanel();
         col2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 8, 0, 8), 0, 0));
         col2.setBackground(new Color(-8355712));
@@ -157,6 +173,15 @@ public class NavBar {
         SHIPMENTSButton.setForeground(new Color(-1));
         SHIPMENTSButton.setText("SHIPMENTS");
         col4.add(SHIPMENTSButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        col5 = new JPanel();
+        col5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 8, 0, 8), -1, -1));
+        col5.setBackground(new Color(-8355712));
+        navContainer.add(col5, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ANALYTICSButton = new JToggleButton();
+        ANALYTICSButton.setBackground(new Color(-15066598));
+        ANALYTICSButton.setForeground(new Color(-1));
+        ANALYTICSButton.setText("PAIR ANALYTICS");
+        col5.add(ANALYTICSButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -169,9 +194,11 @@ public class NavBar {
     private void createUIComponents() {
         SHIPMENTSButton = new JToggleButton();
         INVENTORYButton = new JToggleButton();
+        ANALYTICSButton = new JToggleButton();
 
         SHIPMENTSButton.setVisible(false);
         INVENTORYButton.setVisible(false);
+        ANALYTICSButton.setVisible(false);
     }
 
     // @formatter:on

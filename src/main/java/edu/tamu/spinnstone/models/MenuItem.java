@@ -19,12 +19,15 @@ public class MenuItem extends Table {
     public static String TableName = "menu_item";
     public boolean configurable;
 
+    public String categoryName;
+
 
     public MenuItem(Database db) {
         super(db);
         tableName = "menu_item";
         columnNames = new ArrayList<>(Arrays.asList("menu_item_id", "item_name", "menu_item_price", "menu_item_category_id", "configurable"));
         columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.MONEY, ColumnType.LONG, ColumnType.BOOLEAN));
+        categoryName = "";
     }
 
     // region overrides
@@ -74,18 +77,15 @@ public class MenuItem extends Table {
         return true;
     }
 
-    public ResultSet getSalesReport(Date startDate, Date endDate) throws SQLException {
-        ResultSet rs = database.query(
-            "select menu_item.menu_item_id, sum(menu_item.menu_item_price) as sales" + 
-            "from \"order\"" +
-            "join order_item on order_item.order_id = \"order\".order_id"+
-            "join menu_item on menu_item.menu_item_id = order_item.menu_item_id"+
-            "where \"order\".order_date between 'start-date' and 'end-date'"+
-            "group by menu_item.menu_item_id"+
+    public ResultSet getSalesReport(String startDate, String endDate) throws SQLException {
+        return database.query(
+            "select menu_item.item_name, sum(menu_item.menu_item_price) as sales from \"order\" "+
+            "join order_item on order_item.order_id = \"order\".order_id "+
+            "join menu_item on menu_item.menu_item_id = order_item.menu_item_id "+
+            "where \"order\".order_date between '" + startDate + "' and '" + endDate + "' "+
+            "group by menu_item.menu_item_id "+
             "order by menu_item.menu_item_id;"
         );
-
-        return rs;
     }
 
     // endregion

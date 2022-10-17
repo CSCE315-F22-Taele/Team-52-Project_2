@@ -23,7 +23,10 @@ public class Product extends Table {
   public double conversionFactor;
   public long productTypeId;
   public static String TableName = "product";
+
+  public String productTypeName;
   // endregion
+
 
   public Product(Database db) {
     super(db);
@@ -38,6 +41,7 @@ public class Product extends Table {
     this.columnTypes =
         Arrays.asList(
             ColumnType.LONG, ColumnType.STRING, ColumnType.INT, ColumnType.DOUBLE, ColumnType.LONG);
+    this.productTypeName = "";
   }
 
   // region overrides
