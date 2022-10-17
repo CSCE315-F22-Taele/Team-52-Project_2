@@ -494,10 +494,10 @@ public class MenuOptions {
                 // other items will have 1 associated product, add it to the menu item here
                 PreparedStatement statement =
                         db.connection.prepareStatement(
-                        "select * from menu_item "
-                                + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id "
-                                + "where menu_item.menu_item_id = ? "
-                                + "limit 1"
+                                "select * from menu_item "
+                                        + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id "
+                                        + "where menu_item.menu_item_id = ? "
+                                        + "limit 1"
                         );
                 statement.setLong(1, menuItem.menuItemId);
                 ResultSet rs = statement.executeQuery();
@@ -529,7 +529,7 @@ public class MenuOptions {
         productByType = new HashMap<>();
         try {
             ResultSet rs = db.query("select * from menu_item join menu_item_category mic on menu_item.menu_item_category_id = mic.menu_item_category_id");
-            while (rs.next()) {
+            do {
                 edu.tamu.spinnstone.models.MenuItem menuItem = new edu.tamu.spinnstone.models.MenuItem(db);
                 menuItem.updateFromResultSet(rs);
                 menuItem.categoryName = rs.getString("menu_item_category_name");
@@ -537,7 +537,7 @@ public class MenuOptions {
                     menuItemByCategory.put(menuItem.categoryName, new ArrayList<>());
                 }
                 menuItemByCategory.get(menuItem.categoryName).add(menuItem);
-            }
+            } while (rs.next());
         } catch (Exception ex) {
             System.out.println("Error trying to get menu items: " + ex.getMessage());
             return;
