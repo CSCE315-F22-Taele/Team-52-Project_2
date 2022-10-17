@@ -35,7 +35,7 @@ public class Actions {
 
         INVENTORY("InventoryCard"),
 
-        SHIPMENTS("ShipmentsCard"), DASHBOARD("DashboardCard");
+        SHIPMENTS("ShipmentsCard"), ANALYTICS("AnalyticsCard"), DASHBOARD("DashboardCard");
 
         private final String name;
 
