@@ -54,11 +54,11 @@ public class ManagerDashboard {
     private JButton ExcessReportSubmitButton;
 
     public ManagerDashboard() {
-        RESTOCK_THRESHOLD = 10;
+        RESTOCK_THRESHOLD = 500;
         $$$setupUI$$$();
         populateMenuItemsTable();
         generateRestockReport();
-        restockLabel.setText("Restock Report (Threshold = " + RESTOCK_THRESHOLD + ")");
+        restockLabel.setText("Restock Report");
         addProductButton1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -360,6 +360,9 @@ public class ManagerDashboard {
         SalesReportStartDate = new JTextField();
         panel3.add(SalesReportStartDate, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         SalesReportSubmitButton = new JButton();
+        SalesReportSubmitButton.setBackground(new Color(-15066598));
+        SalesReportSubmitButton.setForeground(new Color(-1));
+        SalesReportSubmitButton.setHideActionText(true);
         SalesReportSubmitButton.setText("Submit");
         panel3.add(SalesReportSubmitButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
@@ -368,7 +371,7 @@ public class ManagerDashboard {
         label3.setText("Start Date (YYYY-MM-DD)");
         panel3.add(label3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("End Date ((YYYY-MM-DD)");
+        label4.setText("End Date (YYYY-MM-DD)");
         panel3.add(label4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         SalesReportError = new JLabel();
         SalesReportError.setText("Label");

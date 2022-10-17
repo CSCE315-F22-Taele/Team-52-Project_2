@@ -95,8 +95,7 @@ public class Analytics {
 
         try {
             // get orders between start date and end date (inclusive)
-            ResultSet rs_orders = database.query("select order_id from \"order\" " +
-                    "where (order_date <= \'" + endDate.toLocalDate() + "\' and order_date >= \'" + startDate.toLocalDate() + "\');");
+            ResultSet rs_orders = database.query("select order_id from \"order\" " + "where (order_date <= \'" + endDate.toLocalDate() + "\' and order_date >= \'" + startDate.toLocalDate() + "\');");
 
             // display no result if no orders in given range
             if (rs_orders == null) {
@@ -108,9 +107,7 @@ public class Analytics {
             // loop through orders to record pairs
             do {
                 String orderId = rs_orders.getString(1);
-                ResultSet rs_order_items = database.query("select item_name from order_item " +
-                        "join menu_item on menu_item.menu_item_id=order_item.menu_item_id " +
-                        "where order_item.order_id = " + orderId + ";");
+                ResultSet rs_order_items = database.query("select item_name from order_item " + "join menu_item on menu_item.menu_item_id=order_item.menu_item_id " + "where order_item.order_id = " + orderId + ";");
 
                 // pair items in order and record
                 ArrayList<String> items = new ArrayList<>();
@@ -129,13 +126,8 @@ public class Analytics {
 
                     items.add(currentItem);
 
-                    System.out.println(rs_order_items.getString(1));
                 } while (rs_order_items.next());
-
-                System.out.println();
             } while (rs_orders.next());
-
-            System.out.println(pairOccurrences);
 
             // order pairs by occurrences
             PriorityQueue<ArrayList<String>> pairsOrdered = new PriorityQueue<>(pairOccurrences.size(), new pairComparator());

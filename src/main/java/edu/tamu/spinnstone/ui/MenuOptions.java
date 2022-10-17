@@ -7,15 +7,16 @@ import edu.tamu.spinnstone.models.Order;
 import edu.tamu.spinnstone.models.OrderItem;
 import edu.tamu.spinnstone.models.Product;
 import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -230,16 +231,11 @@ public class MenuOptions {
 
     // @formatter:on
     private enum PizzaType {
-        one_topping,
-        cheese,
-        BYO
+        one_topping, cheese, BYO
     }
 
     public boolean checkToppingCount(OrderItem item) {
-        int count = item.products.stream()
-                .map(p -> p.productTypeName)
-                .filter(name -> name.equals("Meat") || name.equals("Veggies"))
-                .collect(Collectors.toList()).size();
+        int count = item.products.stream().map(p -> p.productTypeName).filter(name -> name.equals("Meat") || name.equals("Veggies")).collect(Collectors.toList()).size();
 
         if (count >= 4 && pizzaType == PizzaType.BYO) {
             return false;
@@ -403,6 +399,16 @@ public class MenuOptions {
 
         // get the relevant menu items
         if (!menuItemByCategory.containsKey(categoryName)) {
+            // take to blank page if no category name
+            orderOptionsCardRow1.removeAll();
+            orderOptionsCardRow2.removeAll();
+            orderOptionsCardRow3.removeAll();
+            orderOptionsCardRow4.removeAll();
+
+            CardLayout cl = (CardLayout) (MenuOptionCards.getLayout());
+            cl.show(MenuOptionCards, "orderOptionsCard");
+            orderOptionsCard.revalidate();
+            orderOptionsCard.repaint();
             return;
         }
         ArrayList<edu.tamu.spinnstone.models.MenuItem> menuItems = menuItemByCategory.get(categoryName);
@@ -413,11 +419,9 @@ public class MenuOptions {
         orderOptionsCardRow3.removeAll();
         orderOptionsCardRow4.removeAll();
 
-
         for (edu.tamu.spinnstone.models.MenuItem menuItem : menuItems) {
             JButton button = new JButton(menuItem.itemName);
             Theme.button(button);
-
 
             if (orderOptionsCardRow1.getComponentCount() < 4) {
                 orderOptionsCardRow1.add(button);
@@ -473,8 +477,7 @@ public class MenuOptions {
         // check if there is already a menuitem matching this one (excluding pizzas)
 
         if (menuItem.categoryName != "Pizza") {
-            OrderItem matchingItem = activeOrder.orderItems.stream()
-                    .filter(item -> item.menuItem.itemName.equals(menuItem.itemName)).findFirst().orElse(null);
+            OrderItem matchingItem = activeOrder.orderItems.stream().filter(item -> item.menuItem.itemName.equals(menuItem.itemName)).findFirst().orElse(null);
 
             if (matchingItem != null) {
                 // increase this order item quantity instead
@@ -496,13 +499,7 @@ public class MenuOptions {
         if (!menuItem.configurable) {
             try {
                 // other items will have 1 associated product, add it to the menu item here
-                PreparedStatement statement =
-                        db.connection.prepareStatement(
-                                "select * from menu_item "
-                                        + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id "
-                                        + "where menu_item.menu_item_id = ? "
-                                        + "limit 1"
-                        );
+                PreparedStatement statement = db.connection.prepareStatement("select * from menu_item " + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id " + "where menu_item.menu_item_id = ? " + "limit 1");
                 statement.setLong(1, menuItem.menuItemId);
                 ResultSet rs = statement.executeQuery();
                 if (rs.next()) {

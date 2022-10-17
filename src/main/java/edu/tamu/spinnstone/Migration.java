@@ -62,7 +62,6 @@ public class Migration {
         // Add menu item to order
         orderItem.products.add(topping);
 
-
       }
 
       order.orderItems.add(orderItem);
