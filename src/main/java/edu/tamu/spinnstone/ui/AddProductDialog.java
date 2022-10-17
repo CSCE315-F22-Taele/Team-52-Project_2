@@ -9,6 +9,8 @@ import edu.tamu.spinnstone.models.sql.Table;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
@@ -27,6 +29,7 @@ public class AddProductDialog {
   private JCheckBox configurableCheckBox;
   private JList<String> productOptions;
   private JButton submitButton;
+  private JTextField newProduct;
 
   HashMap<String, Product> productNameMap;
   HashMap<String, Long> categoryNameMap;
@@ -93,7 +96,35 @@ public class AddProductDialog {
         boolean configurable = configurableCheckBox.isSelected();
         ArrayList<String> selectedProducts = new ArrayList<>(productOptions.getSelectedValuesList());
 
+        if (!configurableCheckBox.isSelected()) {
+          if (selectedProducts.size() == 0 && newProduct.getText().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Please select or create at least one product");
+            return;
+          }
+        }
+
         try {
+          String newProductName = newProduct.getText();
+          long product_type_id = 8;
+          double quantity_in_stock = 1000;
+          double conversion_factor = 1;
+
+          if (newProductName != "") {
+            ResultSet rs = db.insert(Table.Names.PRODUCT.toString())
+                    .columns("product_name", "quantity_in_stock", "conversion_factor", "product_type_id")
+                    .values(newProductName, quantity_in_stock, conversion_factor, product_type_id)
+                    .returning("product_id")
+                    .execute();
+            if (rs.next()) {
+              long productId = rs.getLong("product_id");
+              selectedProducts.add(newProductName);
+              Product product = new Product(db);
+              product.productId = productId;
+              product.sync();
+              productNameMap.put(newProductName, product);
+            }
+          }
+
           ResultSet rs = db.insert(Table.Names.MENU_ITEM.toString())
                   .columns("item_name", "menu_item_price", "menu_item_category_id", "configurable")
                   .values(name, new BigDecimal(price), categoryId, configurable)
@@ -106,11 +137,12 @@ public class AddProductDialog {
               Product product = productNameMap.get(productName);
               db.insert(Table.Names.MENU_ITEM_PRODUCT.toString())
                       .columns("menu_item_menu_item_id", "product_product_id", "optional")
-                      .values(menuItemId, product.productId, true)
+                      .values(menuItemId, product.productId, !configurableCheckBox.isSelected())
                       .execute();
             }
           }
           JDialog dialog = Actions.activeDialog.getValue();
+          Actions.menuItemAdded.onNext(null);
           dialog.dispose();
           dialog.setVisible(false);
           dialog.getParent().setEnabled(true);
@@ -120,6 +152,13 @@ public class AddProductDialog {
       }
     });
 
+    configurableCheckBox.addItemListener(e -> {
+      if (configurableCheckBox.isSelected()) {
+        productOptions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      } else {
+        productOptions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      }
+    });
   }
 
   // @formatter:off
@@ -134,7 +173,7 @@ public class AddProductDialog {
   private void $$$setupUI$$$() {
     createUIComponents();
     container = new JPanel();
-    container.setLayout(new GridLayoutManager(6, 1, new Insets(16, 16, 16, 16), -1, -1));
+    container.setLayout(new GridLayoutManager(7, 1, new Insets(16, 16, 16, 16), -1, -1));
     final JPanel panel1 = new JPanel();
     panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
     container.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -194,7 +233,7 @@ public class AddProductDialog {
     panel13.add(configurableCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final JPanel panel14 = new JPanel();
     panel14.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-    container.add(panel14, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    container.add(panel14, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     final JPanel panel15 = new JPanel();
     panel15.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
     panel14.add(panel15, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(150, -1), null, null, 0, false));
@@ -209,12 +248,26 @@ public class AddProductDialog {
     scrollPane1.setViewportView(productOptions);
     final JPanel panel17 = new JPanel();
     panel17.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-    container.add(panel17, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    container.add(panel17, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     submitButton = new JButton();
     submitButton.setText("Submit");
     panel17.add(submitButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     final Spacer spacer1 = new Spacer();
     panel17.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+    final JPanel panel18 = new JPanel();
+    panel18.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+    container.add(panel18, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    final JPanel panel19 = new JPanel();
+    panel19.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+    panel18.add(panel19, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(150, -1), null, null, 0, false));
+    final JLabel label5 = new JLabel();
+    label5.setText("New Product");
+    panel19.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    final JPanel panel20 = new JPanel();
+    panel20.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+    panel18.add(panel20, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    newProduct = new JTextField();
+    panel20.add(newProduct, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
   }
 
   /**

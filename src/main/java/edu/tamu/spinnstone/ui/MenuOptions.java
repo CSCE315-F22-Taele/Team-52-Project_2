@@ -12,7 +12,9 @@ import edu.tamu.spinnstone.models.sql.Table;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +50,7 @@ public class MenuOptions {
     private Database db;
     private HashMap<String, ArrayList<edu.tamu.spinnstone.models.MenuItem>> menuItemByCategory;
     private HashMap<String, ArrayList<Product>> productByType;
+    private PizzaType pizzaType;
 
     // @formatter:off
 
@@ -228,6 +231,24 @@ public class MenuOptions {
         BYO
     }
 
+    public boolean checkToppingCount(OrderItem item) {
+        int count = item.products.stream()
+                .map(p -> p.productTypeName)
+                .filter(name -> name.equals("Meat") || name.equals("Veggies"))
+                .collect(Collectors.toList()).size();
+
+        if (count >= 4 && pizzaType == PizzaType.BYO) {
+            return false;
+        }
+        if (count >= 1 && pizzaType == PizzaType.one_topping) {
+            return false;
+        }
+        if (count >= 0 && pizzaType == PizzaType.cheese) {
+            return false;
+        }
+        return true;
+    }
+
 
     private void buildPizzaOptions() {
         crustButtonGroup.removeAll();
@@ -238,18 +259,15 @@ public class MenuOptions {
             crustButtons.add(button);
             crustButtonGroup.add(button);
             crustGroup.add(button);
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
                 }
+                Actions.getOrder.onNext(order);
             });
         }
         sauceButtonGroup.removeAll();
@@ -260,18 +278,15 @@ public class MenuOptions {
             sauceButtons.add(button);
             sauceButtonGroup.add(button);
             sauceGroup.add(button);
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
                 }
+                Actions.getOrder.onNext(order);
             });
         }
         cheeseButtonGroup.removeAll();
@@ -282,18 +297,15 @@ public class MenuOptions {
             cheeseButtons.add(button);
             cheeseButtonGroup.add(button);
             cheeseGroup.add(button);
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
                 }
+                Actions.getOrder.onNext(order);
             });
         }
         drizzleButtonGroup.removeAll();
@@ -302,18 +314,15 @@ public class MenuOptions {
             Theme.button(button);
             drizzleButtons.add(button);
             drizzleButtonGroup.add(button);
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
                 }
+                Actions.getOrder.onNext(order);
             });
         }
         meatButtonGroup1.removeAll();
@@ -327,18 +336,19 @@ public class MenuOptions {
             } else {
                 meatButtonGroup2.add(button);
             }
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected() && !checkToppingCount(item)) {
+                    button.setSelected(false);
+                    return;
                 }
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
             });
         }
         veggieButtonGroup1.removeAll();
@@ -355,18 +365,19 @@ public class MenuOptions {
             } else {
                 veggieButtonGroup3.add(button);
             }
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    OrderItem item = Actions.activeOrderItem.getValue();
-                    Order order = Actions.getOrder.getValue();
-                    if (button.isSelected()) {
-                        item.addProduct(product);
-                    } else {
-                        item.removeProduct(product);
-                    }
-                    Actions.getOrder.onNext(order);
+            button.addItemListener(event -> {
+                OrderItem item = Actions.activeOrderItem.getValue();
+                Order order = Actions.getOrder.getValue();
+                if (button.isSelected() && !checkToppingCount(item)) {
+                    button.setSelected(false);
+                    return;
                 }
+                if (button.isSelected()) {
+                    item.addProduct(product);
+                } else {
+                    item.removeProduct(product);
+                }
+                Actions.getOrder.onNext(order);
             });
         }
 
@@ -421,6 +432,18 @@ public class MenuOptions {
 
                     // if it's a pizza, head to the configuration screen
                     if (categoryName == edu.tamu.spinnstone.models.MenuItem.Categories.PIZZA.toString()) {
+                        switch (menuItem.itemName) {
+                            case "2-4 Topping Pizza":
+                                pizzaType = PizzaType.BYO;
+                                break;
+                            case "Original Cheese Pizza":
+                                pizzaType = PizzaType.cheese;
+                                break;
+                            case "1 Topping Pizza":
+                                pizzaType = PizzaType.one_topping;
+                                break;
+
+                        }
                         CardLayout cl = (CardLayout) (MenuOptionCards.getLayout());
                         cl.show(MenuOptionCards, "pizzaOptionsCard");
                     }
@@ -455,6 +478,8 @@ public class MenuOptions {
                 Actions.getOrder.onNext(activeOrder);
                 return;
             }
+
+
         }
 
 
@@ -464,21 +489,35 @@ public class MenuOptions {
         orderItem.menuItem = menuItem;
         orderItem.quantity = 1;
 
+        if (!menuItem.configurable) {
+            try {
+                // other items will have 1 associated product, add it to the menu item here
+                PreparedStatement statement =
+                        db.connection.prepareStatement(
+                        "select * from menu_item "
+                                + "join menu_item_product mip on menu_item.menu_item_id = mip.menu_item_menu_item_id "
+                                + "where menu_item.menu_item_id = ? "
+                                + "limit 1"
+                        );
+                statement.setLong(1, menuItem.menuItemId);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    Product product = new Product(db);
+                    product.productId = rs.getLong("product_product_id");
+                    product.sync();
+                    orderItem.addProduct(product);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         activeOrder.orderItems.add(orderItem);
         Actions.activeOrderItem.onNext(orderItem);
         Actions.getOrder.onNext(activeOrder);
     }
 
-    public MenuOptions() {
-        sauceButtonGroup.removeAll();
-        cheeseButtonGroup.removeAll();
-        crustButtonGroup.removeAll();
-        meatButtonGroup1.removeAll();
-        meatButtonGroup2.removeAll();
-        veggieButtonGroup1.removeAll();
-        veggieButtonGroup2.removeAll();
-        veggieButtonGroup3.removeAll();
-
+    public void buildItemMaps() {
         pizzaButtons = new ArrayList<>();
         sauceButtons = new ArrayList<>();
         crustButtons = new ArrayList<>();
@@ -486,18 +525,8 @@ public class MenuOptions {
         cheeseButtons = new ArrayList<>();
         meatButtons = new ArrayList<>();
         veggieButtons = new ArrayList<>();
-
-        // initialize
-        db = Actions.getDatabase.getValue();
         menuItemByCategory = new HashMap<>();
         productByType = new HashMap<>();
-
-        if (db == null) {
-            System.out.println("database is null");
-            return;
-        }
-
-        // fetch menu items and group by category
         try {
             ResultSet rs = db.query("select * from menu_item join menu_item_category mic on menu_item.menu_item_category_id = mic.menu_item_category_id");
             while (rs.next()) {
@@ -534,7 +563,32 @@ public class MenuOptions {
         }
 
         // build the pizza options
+
+    }
+
+    public MenuOptions() {
+        sauceButtonGroup.removeAll();
+        cheeseButtonGroup.removeAll();
+        crustButtonGroup.removeAll();
+        meatButtonGroup1.removeAll();
+        meatButtonGroup2.removeAll();
+        veggieButtonGroup1.removeAll();
+        veggieButtonGroup2.removeAll();
+        veggieButtonGroup3.removeAll();
+
+
+        // initialize
+        db = Actions.getDatabase.getValue();
+
+        if (db == null) {
+            System.out.println("database is null");
+            return;
+        }
+
+        buildItemMaps();
         buildPizzaOptions();
+
+        Actions.menuItemAdded.subscribe(a -> buildItemMaps());
 
         // listen for card change actions
         Actions.setOptionsCard.subscribe(card -> setOptionCardListener(card));

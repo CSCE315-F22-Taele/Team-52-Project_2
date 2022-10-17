@@ -52,6 +52,7 @@ public class Actions {
 
     public static PublishSubject<OptionCards> setOptionsCard = PublishSubject.create();
     public static PublishSubject<ViewNames> setViewCard = PublishSubject.create();
+    public static PublishSubject<Void> menuItemAdded = PublishSubject.create();
 
     public static BehaviorSubject<Database> getDatabase = BehaviorSubject.create();
     public static BehaviorSubject<Order> getOrder = BehaviorSubject.create();
