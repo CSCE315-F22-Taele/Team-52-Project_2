@@ -38,6 +38,10 @@ public class MenuOptions {
     private JPanel orderOptionsCardRow3;
     private JPanel orderOptionsCardRow4;
 
+    private ButtonGroup sauceGroup;
+    private ButtonGroup cheeseGroup;
+    private ButtonGroup crustGroup;
+
     private List<JToggleButton> pizzaButtons;
     private List<JToggleButton> sauceButtons;
     private List<JToggleButton> crustButtons;
@@ -252,7 +256,7 @@ public class MenuOptions {
 
     private void buildPizzaOptions() {
         crustButtonGroup.removeAll();
-        ButtonGroup crustGroup = new ButtonGroup();
+        crustGroup = new ButtonGroup();
         for (Product product : productByType.get(Product.ProductType.CRUST.toString())) {
             JToggleButton button = new JToggleButton(product.productName);
             Theme.button(button);
@@ -271,7 +275,7 @@ public class MenuOptions {
             });
         }
         sauceButtonGroup.removeAll();
-        ButtonGroup sauceGroup = new ButtonGroup();
+        sauceGroup = new ButtonGroup();
         for (Product product : productByType.get(Product.ProductType.SAUCE.toString())) {
             JToggleButton button = new JToggleButton(product.productName);
             Theme.button(button);
@@ -290,7 +294,7 @@ public class MenuOptions {
             });
         }
         cheeseButtonGroup.removeAll();
-        ButtonGroup cheeseGroup = new ButtonGroup();
+        cheeseGroup = new ButtonGroup();
         for (Product product : productByType.get(Product.ProductType.CHEESE.toString())) {
             JToggleButton button = new JToggleButton(product.productName);
             Theme.button(button);
@@ -515,6 +519,24 @@ public class MenuOptions {
         activeOrder.orderItems.add(orderItem);
         Actions.activeOrderItem.onNext(orderItem);
         Actions.getOrder.onNext(activeOrder);
+
+        pizzaButtons.clear();
+
+        pizzaButtons.addAll(sauceButtons);
+        pizzaButtons.addAll(crustButtons);
+        pizzaButtons.addAll(drizzleButtons);
+        pizzaButtons.addAll(cheeseButtons);
+        pizzaButtons.addAll(meatButtons);
+        pizzaButtons.addAll(veggieButtons);
+
+
+        for (JToggleButton button : pizzaButtons) {
+            button.setSelected(false);
+        }
+
+        sauceGroup.clearSelection();
+        cheeseGroup.clearSelection();
+        crustGroup.clearSelection();
     }
 
     public void buildItemMaps() {
@@ -562,7 +584,6 @@ public class MenuOptions {
             return;
         }
 
-        // build the pizza options
 
     }
 
