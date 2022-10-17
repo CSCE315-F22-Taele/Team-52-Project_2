@@ -180,7 +180,7 @@ public class NavBar {
         ANALYTICSButton = new JToggleButton();
         ANALYTICSButton.setBackground(new Color(-15066598));
         ANALYTICSButton.setForeground(new Color(-1));
-        ANALYTICSButton.setText("ANALYTICS");
+        ANALYTICSButton.setText("PAIR ANALYTICS");
         col5.add(ANALYTICSButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
