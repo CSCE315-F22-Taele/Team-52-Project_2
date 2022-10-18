@@ -83,18 +83,17 @@ public class ExcessReport {
         String[][] excessReportArray = excessReport.toArray(new String[excessReport.size()][]);
         String[][] inventoryArray = inventoryOfProduct.toArray(new String[inventoryOfProduct.size()][]);
 
-        for (int row = 0; row < excessReport.size(); ++row) {
-            for (int col = 0; col < 2; ++col) {
+        for (int row = 0; row < excessReportArray.length; ++row) {
+            for (int col = 0; col < excessReportArray[row].length; ++col) {
                 //if the amount sold / total inventory of item < 10%, then add to table
-                double percent = Double.parseDouble(excessReport.get(row)[col]) / Double.parseDouble(inventoryOfProduct.get(row)[2]);
+                double percent = Double.parseDouble(excessReportArray[row][col]) / Double.parseDouble(inventoryArray[row][2]);
                 if (abs(percent) < .10) {
                     excessReportRemaining.add(inventoryOfProduct.get(row));
                 }
             }
         }
 
-        //String[] columnNames = {"Products Sold Less Than 10% From" + timeStampStart};
-        String[] columnNames = {"Product ID", "Product Name", "Quantity"};
+        String[] columnNames = {"Product ID", "Product Name", "Current Quantity in Stock"};
         String[][] dataToDisplayArray = excessReportRemaining.toArray(new String[excessReportRemaining.size()][]);
         ExcessTable = new JTable(dataToDisplayArray, columnNames);
         ExcessTableContainer.setViewportView(ExcessTable);
@@ -159,8 +158,5 @@ public class ExcessReport {
     public JComponent $$$getRootComponent$$$() {
         return Container;
     }
-
-    //generateExcessReport("2022-10-15", "2022-10-17");
-
 }
 
