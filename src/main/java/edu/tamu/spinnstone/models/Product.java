@@ -217,7 +217,7 @@ public class Product extends Table {
   //getting inventory of item at a certain product id
   public ResultSet totalInventoryOfProduct(int productId) throws SQLException {
     return database.query(
-            "select product.quantity_in_stock from product where product_id = " + productId
+            "select product.* from product where product_id = " + productId
     );
   }
 }

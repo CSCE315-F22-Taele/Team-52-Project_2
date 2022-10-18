@@ -48,8 +48,8 @@ public class ExcessReport {
         timeStampEnd = (LocalDate.now(ZoneId.systemDefault())).toString();
 
         ArrayList<String[]> excessReport = new ArrayList<>();
-//        ArrayList<String[]> inventoryOfProduct = new ArrayList<>();
-//        ArrayList<String[]> excessReportRemaining = new ArrayList<>();
+        ArrayList<String[]> inventoryOfProduct = new ArrayList<>();
+        ArrayList<String[]> excessReportRemaining = new ArrayList<>();
 
         try {
             //This query tells how much of each product has been sold between a specific start and end date
@@ -62,37 +62,38 @@ public class ExcessReport {
 
                 excessReport.add(dataRow);
 
-                //This holds product_id of each product
-//                ResultSet productId = product.totalInventoryOfProduct(Integer.parseInt(dataRow[0]));
-//
-//                String[] productRow = new String[1];
-//
-//                productRow[0] = productId.getString("product_id");
-//
-//                inventoryOfProduct.add(productRow);
+                //This holds the quantity in stock for each product
+                ResultSet productId = product.totalInventoryOfProduct(Integer.parseInt(dataRow[0]));
+
+                String[] productRow = new String[3];
+
+                productRow[0] = productId.getString("product_id");
+                productRow[1] = productId.getString("product_name");
+                productRow[2] = productId.getString("quantity_in_stock");
+
+                inventoryOfProduct.add(productRow);
             }
             while (productItems.next());
         } catch (SQLException e) {
             System.out.println("SQL exception: " + e);
         }
 
-//        String[][] excessReportArray = excessReport.toArray(new String[excessReport.size()][]);
-//        String[][] inventoryArray = inventoryOfProduct.toArray(new String[inventoryOfProduct.size()][]);
-//
-//        for (int i = 0; i < excessReport.size(); ++i) {
-//            for (int j = 0; j < 2; j++) {
-//                //if the amount sold / total inventory of item < 10%, then add to table
-//                //int division = Integer.parseInt(excessReport.get(i)[j]) / Integer.parseInt(inventoryOfProduct.get(i)[0]);
-//                double percent = Integer.parseInt(excessReport.get(i)[j]) / Integer.parseInt(inventoryOfProduct.get(i)[0]);
-//                if (percent < .10) {
-//                    excessReportRemaining.add(excessReport.get(i));
-//                }
-//            }
-//        }
+        String[][] excessReportArray = excessReport.toArray(new String[excessReport.size()][]);
+        String[][] inventoryArray = inventoryOfProduct.toArray(new String[inventoryOfProduct.size()][]);
+
+        for (int row = 0; row < excessReport.size(); ++row) {
+            for (int col = 0; col < 2; ++col) {
+                //if the amount sold / total inventory of item < 10%, then add to table
+                double percent = Integer.parseInt(excessReport.get(row)[col]) / Integer.parseInt(inventoryOfProduct.get(row)[2]);
+                if (percent < .10) {
+                    excessReportRemaining.add(excessReport.get(row));
+                }
+            }
+        }
 
         //String[] columnNames = {"Products Sold Less Than 10% From" + timeStampStart};
         String[] columnNames = {"product", "?column?"};
-        String[][] dataToDisplayArray = excessReport.toArray(new String[excessReport.size()][]);
+        String[][] dataToDisplayArray = excessReportRemaining.toArray(new String[excessReportRemaining.size()][]);
         ExcessTable = new JTable(dataToDisplayArray, columnNames);
         ExcessTableContainer.setViewportView(ExcessTable);
     }
