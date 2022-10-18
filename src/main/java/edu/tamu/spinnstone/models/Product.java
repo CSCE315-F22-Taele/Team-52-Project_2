@@ -209,7 +209,7 @@ public class Product extends Table {
       "join order_item oi on \"order\".order_id = oi.order_id " +
       "join order_item_product oip on oi.order_item_id = oip.order_item_order_item_id " +
       "join product p on oip.product_product_id = p.product_id " +
-      "where order_date >= " + startDate + " and order_date < " + endDate +
+      "where order_date between " + "\'"+startDate+"\'" + " and " + "\'"+endDate+"\'" +
       "group by p.product_id"
     );
   }
