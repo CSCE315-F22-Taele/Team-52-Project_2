@@ -84,15 +84,15 @@ public class ExcessReport {
         for (int row = 0; row < excessReport.size(); ++row) {
             for (int col = 0; col < 2; ++col) {
                 //if the amount sold / total inventory of item < 10%, then add to table
-                double percent = Integer.parseInt(excessReport.get(row)[col]) / Integer.parseInt(inventoryOfProduct.get(row)[2]);
+                double percent = Double.parseDouble(excessReport.get(row)[col]) / Double.parseDouble(inventoryOfProduct.get(row)[2]);
                 if (percent < .10) {
-                    excessReportRemaining.add(excessReport.get(row));
+                    excessReportRemaining.add(inventoryOfProduct.get(row));
                 }
             }
         }
 
         //String[] columnNames = {"Products Sold Less Than 10% From" + timeStampStart};
-        String[] columnNames = {"product", "?column?"};
+        String[] columnNames = {"Product ID", "Product Name", "Quantity"};
         String[][] dataToDisplayArray = excessReportRemaining.toArray(new String[excessReportRemaining.size()][]);
         ExcessTable = new JTable(dataToDisplayArray, columnNames);
         ExcessTableContainer.setViewportView(ExcessTable);
