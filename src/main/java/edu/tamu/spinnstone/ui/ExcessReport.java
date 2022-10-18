@@ -22,7 +22,7 @@ public class ExcessReport {
     private JTextField StartDateExcess;
     private JButton ExcessSubmit;
     private JLabel ExcessLabel;
-    private JScrollPane StartDateLabel;
+    private JScrollPane ExcessTableContainer;
 
     public ExcessReport() {
         ExcessSubmit.addMouseListener(new MouseAdapter() {
@@ -100,7 +100,7 @@ public class ExcessReport {
         String[] columnNames = {"Product Sold Less Than 10%"};
         String[][] dataToDisplayArray = excessReportRemaining.toArray(new String[excessReportRemaining.size()][]);
         ExcessTable = new JTable(dataToDisplayArray, columnNames);
-        //Container.setViewportView(ExcessTable);
+        ExcessTableContainer.setViewportView(ExcessTable);
     }
 
     {
@@ -120,10 +120,10 @@ public class ExcessReport {
     private void $$$setupUI$$$() {
         Container = new JPanel();
         Container.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
-        StartDateLabel = new JScrollPane();
-        Container.add(StartDateLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        ExcessTableContainer = new JScrollPane();
+        Container.add(ExcessTableContainer, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         ExcessTable = new JTable();
-        StartDateLabel.setViewportView(ExcessTable);
+        ExcessTableContainer.setViewportView(ExcessTable);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         Container.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
