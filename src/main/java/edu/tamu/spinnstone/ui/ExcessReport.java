@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+import static java.lang.Math.abs;
+
 public class ExcessReport {
     private JPanel Container;
     private JTable ExcessTable;
@@ -85,7 +87,7 @@ public class ExcessReport {
             for (int col = 0; col < 2; ++col) {
                 //if the amount sold / total inventory of item < 10%, then add to table
                 double percent = Double.parseDouble(excessReport.get(row)[col]) / Double.parseDouble(inventoryOfProduct.get(row)[2]);
-                if (percent < .10) {
+                if (abs(percent) < .10) {
                     excessReportRemaining.add(inventoryOfProduct.get(row));
                 }
             }
