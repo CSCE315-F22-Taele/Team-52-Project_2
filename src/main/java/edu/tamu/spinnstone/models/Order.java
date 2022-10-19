@@ -7,6 +7,7 @@ import edu.tamu.spinnstone.models.sql.Table;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -91,6 +92,27 @@ public class Order extends Table {
         this.orderTotal = orderTotal;
     }
 
+    public void updateOrderTotal() {
+        try {
+
+            PreparedStatement stmt =
+                    database.connection.prepareStatement(
+                            "UPDATE \"order\""
+                                    + "SET  order_total=("
+                                    + "    SELECT sum(menu_item_price)"
+                                    + "    FROM order_item"
+                                    + "    JOIN menu_item mi on order_item.menu_item_id = mi.menu_item_id"
+                                    + "    WHERE order_item.order_id = ?"
+                                    + ") where order_id = ?");
+            stmt.setLong(1, orderId);
+            stmt.setLong(2, orderId);
+            stmt.executeUpdate();
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
     // endregion
 
     public void placeOrder() throws SQLException {
@@ -115,7 +137,7 @@ public class Order extends Table {
         }
 
         // calculate the order total
-        calculateOrderTotal();
+        updateOrderTotal();
     }
 
     public boolean addOrderItem(OrderItem orderItem) {

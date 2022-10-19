@@ -9,6 +9,7 @@ import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.tamu.spinnstone.models.MenuItem;
 import edu.tamu.spinnstone.models.Order;
@@ -95,10 +96,23 @@ public class Migration {
     return order;
   }
 
+  public void updateOrderTotals() throws SQLException {
+    ResultSet rs = db.connection.createStatement().executeQuery("SELECT * FROM \"order\"");
+    while(rs.next()){
+      long orderId = rs.getLong("order_id");
+      Order order = new Order(db);
+      order.orderId = orderId;
+      order.updateOrderTotal();
+    };
+  }
+
   public static void main(String[] args) throws SQLException, IOException {
     Migration m = new Migration();
     m.populate();
+    m.updateOrderTotals();
   }
+
+
 
   public void populate() throws SQLException, IOException {
     // drop and recreate tables
@@ -235,6 +249,20 @@ public class Migration {
       );
     }
 
+    // add drink product to menu item relation this must be included but is not tested
+
+//    for(String[] item :Arrays.asList(menuItemsDefinitions).stream().skip(3).collect(Collectors.toList())) {
+//      ResultSet rs = db.select("product_id").from("product").where("product_name", item[0]).execute();
+//      long pid = rs.getLong("product_id");
+//      rs = db.select("product_id").from("menu_item").where("item_name", item[0]).execute();
+//      long mid = rs.getLong("menu_item_id");
+//
+//      db.insert(Table.Names.MENU_ITEM_PRODUCT.toString())
+//              .columns("menu_item_menu_item_id", "product_product_id", "optional")
+//              .values(mid, pid, true)
+//              .execute();
+//    }
+
     String[] pizzaOptions = {
       "Cauliflower",
       "Standard",
@@ -315,13 +343,13 @@ public class Migration {
 
     // multiplicity, increase for more orders
 
-    for(int day = 4; day < 6; ++day){
+    for(int day = 4; day < 29; ++day){
       Date date = Date.valueOf(LocalDate.of(2022, 9, day));
-      int numOrders = 2;
+      int numOrders = 150;
       boolean gameday = false;
 
       if(date.compareTo(gameday1) == 0 || date.compareTo(gameday2) == 0){
-        numOrders = 10;
+        numOrders = 300;
         gameday = true;
       }
 
