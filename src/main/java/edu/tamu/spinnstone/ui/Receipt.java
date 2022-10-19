@@ -227,9 +227,6 @@ public class Receipt {
         return fontWithFallback instanceof FontUIResource ? fontWithFallback : new FontUIResource(fontWithFallback);
     }
 
-    /**
-     * @noinspection ALL
-     */
     public JComponent $$$getRootComponent$$$() {
         return container;
     }

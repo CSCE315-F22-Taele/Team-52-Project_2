@@ -75,10 +75,6 @@ public class ReceiptLine {
         ingredients.setText("");
         panel5.add(ingredients, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
-
-    /**
-     * @noinspection ALL
-     */
     public JComponent $$$getRootComponent$$$() {
         return container;
     }

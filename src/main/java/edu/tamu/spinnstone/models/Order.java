@@ -1,11 +1,10 @@
 package edu.tamu.spinnstone.models;
 
 import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Query;
 import edu.tamu.spinnstone.models.sql.Table;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,12 +12,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.math.RoundingMode;
-
-import org.postgresql.core.SqlCommand;
-
-import edu.tamu.spinnstone.models.sql.Database;
-import edu.tamu.spinnstone.models.sql.Table;
 
 public class Order extends Table {
     // db values
@@ -55,6 +48,15 @@ public class Order extends Table {
         this.orderTotal = (BigDecimal) values.get(2);
     }
 
+    /**
+     * Create Order
+     *
+     * @param db
+     * @param date
+     * @param total
+     * @return created order
+     * @throws SQLException
+     */
     public static Order create(Database db, Date date, BigDecimal total) throws SQLException {
         Order order = new Order(db);
         order.orderDate = date;
@@ -64,28 +66,21 @@ public class Order extends Table {
         return order;
     }
 
-    /*
-     * Updates the local model orderTotal for currently referenced order from all menu_items currently in the database 
+    /**
+     * Updates the local model orderTotal for currently referenced order from all menu_items currently in the database
      * Includes 6.25% food tax
      * Does not update database
-     * Return value of -1 indicates SQLException
-     * 
-     * @param   None
-     * @return  None
      */
     public void calculateOrderTotal() {
         ResultSet rs;
         BigDecimal orderTotal;
         try {
-            rs = database.query("select sum(menu_item_price) from order_item " +
-                                      "join menu_item on menu_item.menu_item_id = order_item.menu_item_id " +
-                                      "where order_item.order_id = " + orderId +";");
+            rs = database.query("select sum(menu_item_price) from order_item " + "join menu_item on menu_item.menu_item_id = order_item.menu_item_id " + "where order_item.order_id = " + orderId + ";");
             rs.next();
             subTotal = rs.getBigDecimal("sum");
             taxCharge = subTotal.multiply(new BigDecimal("0.0625")).setScale(2, RoundingMode.HALF_UP);
             orderTotal = subTotal.add(taxCharge);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             orderTotal = new BigDecimal("-1");
         }
         this.orderTotal = orderTotal;
@@ -93,8 +88,11 @@ public class Order extends Table {
 
     // endregion
 
+    /**
+     * @throws SQLException
+     */
     public void placeOrder() throws SQLException {
-        if(orderDate == null) {
+        if (orderDate == null) {
             orderDate = Date.valueOf(LocalDate.now());
         }
         // create the order
@@ -109,7 +107,7 @@ public class Order extends Table {
             orderItem.insertProducts();
 
             // update product inventory
-            for(Product product : orderItem.products) {
+            for (Product product : orderItem.products) {
                 product.decrementQuantity(orderItem.quantity);
             }
         }
@@ -118,21 +116,37 @@ public class Order extends Table {
         calculateOrderTotal();
     }
 
+    /**
+     * Adds an order item of the given menu item type to the order
+     *
+     * @param orderItem
+     * @return true if successful, false otherwise
+     */
     public boolean addOrderItem(OrderItem orderItem) {
-        // adds an order item of the given menuitem type to the order and returns true if successful
         orderItems.add(orderItem);
         return true;
     }
 
+    /**
+     * Removes an order item of the given menu item type from the order
+     *
+     * @param orderItem
+     * @return true if successful, false otherwise
+     * @throws SQLException
+     */
     public boolean removeOrderItem(OrderItem orderItem) throws SQLException {
-        // removes an order item of the given menuitem type from the order and returns true if successful
         // this should update the model to reflect the change
         orderItems.remove(orderItem);
         return true;
     }
 
+    /**
+     * Cancel the order
+     *
+     * @return true if successful, false otherwise
+     * @throws SQLException
+     */
     public boolean cancelOrder() throws SQLException {
-        // cancels the order and returns true if successful
         orderItems.clear();
         return true;
     }
