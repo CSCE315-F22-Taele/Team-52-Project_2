@@ -88,11 +88,10 @@ public class ProductTest {
             {"Tomatoes"       , "2000", "1"  }
         };
         
-        for (String[] p : products) {
-            db.query("update product set quantity_in_stock = " + Integer.parseInt(p[1]) + " where product_name = \'" + p[0] + "\'");
-            db.query("update product set conversion_factor = " + Float.parseFloat(p[2]) + " where product_name = \'" + p[0] + "\'");
-
-           
+        for (int i = 0; i < products.length; ++i) {
+            db.query("update product set product_name = \'" + products[i][0] + "\' where product_id = " + i);
+            db.query("update product set quantity_in_stock = " + Integer.parseInt(products[i][1]) + " where product_id = " + i);
+            db.query("update product set conversion_factor = " + Float.parseFloat(products[i][2]) + " where product_id = " + i); 
         }
 
     }

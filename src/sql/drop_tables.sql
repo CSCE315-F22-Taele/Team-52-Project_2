@@ -1,7 +1,10 @@
-drop table "order" cascade;
-drop table shipment cascade;
-drop table product cascade;
-drop table shipment_product cascade;
-drop table menu_item cascade;
-drop table order_item_product cascade;
-drop table order_item cascade;
+DROP TABLE IF EXISTS menu_item_category CASCADE;
+DROP TABLE IF EXISTS menu_item CASCADE;
+DROP TABLE IF EXISTS menu_item_product CASCADE;
+DROP TABLE IF EXISTS "order" CASCADE;
+DROP TABLE IF EXISTS order_item CASCADE;
+DROP TABLE IF EXISTS order_item_product CASCADE;
+DROP TABLE IF EXISTS product_type CASCADE;
+DROP TABLE IF EXISTS product CASCADE;
+DROP TABLE IF EXISTS shipment CASCADE;
+DROP TABLE IF EXISTS shipment_product CASCADE;

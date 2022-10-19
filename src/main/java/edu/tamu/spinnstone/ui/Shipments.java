@@ -51,6 +51,8 @@ public class Shipments {
         label2.setText("Past Shipments");
         panel1.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         submitShipmentButton = new JButton();
+        submitShipmentButton.setBackground(new Color(-15066598));
+        submitShipmentButton.setForeground(new Color(-1));
         submitShipmentButton.setText("Submit Shipment");
         panel1.add(submitShipmentButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
@@ -63,7 +65,6 @@ public class Shipments {
     }
 
     public void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 
     private void populateShipmentTable() {

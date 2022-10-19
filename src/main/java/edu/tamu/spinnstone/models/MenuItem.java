@@ -4,6 +4,7 @@ import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.models.sql.Table;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,24 +14,24 @@ public class MenuItem extends Table {
     public long menuItemId;
     public String itemName;
     public BigDecimal menuItemPrice;
-
+    public long categoryId;
+    public static String TableName = "menu_item";
+    public boolean configurable;
+    public String categoryName;
 
     public MenuItem(Database db) {
         super(db);
         tableName = "menu_item";
-        columnNames = new ArrayList<>(Arrays.asList("menu_item_id", "item_name", "menu_item_price"));
-        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.MONEY));
+        columnNames = new ArrayList<>(Arrays.asList("menu_item_id", "item_name", "menu_item_price", "menu_item_category_id", "configurable"));
+        columnTypes = new ArrayList<>(Arrays.asList(ColumnType.LONG, ColumnType.STRING, ColumnType.MONEY, ColumnType.LONG, ColumnType.BOOLEAN));
+        categoryName = "";
     }
 
     // region overrides
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<>(Arrays.asList(
-                this.menuItemId,
-                this.itemName,
-                this.menuItemPrice
-        ));
+        return new ArrayList<>(Arrays.asList(this.menuItemId, this.itemName, this.menuItemPrice, this.categoryId, this.configurable));
     }
 
     @Override
@@ -38,16 +39,31 @@ public class MenuItem extends Table {
         this.menuItemId = (long) values.get(0);
         this.itemName = (String) values.get(1);
         this.menuItemPrice = (BigDecimal) values.get(2);
+        this.categoryId = (long) values.get(3);
+        this.configurable = (boolean) values.get(4);
     }
 
     // endregion
 
     // region static methods
 
-    public static MenuItem create(Database db, String name, BigDecimal price) throws SQLException {
+    /**
+     * Create MenuItem
+     *
+     * @param db
+     * @param name
+     * @param price
+     * @param categoryId
+     * @param configurable
+     * @return created MenuItem
+     * @throws SQLException
+     */
+    public static MenuItem create(Database db, String name, BigDecimal price, long categoryId, boolean configurable) throws SQLException {
         MenuItem menuItem = new MenuItem(db);
         menuItem.itemName = name;
         menuItem.menuItemPrice = price;
+        menuItem.categoryId = categoryId;
+        menuItem.configurable = configurable;
         menuItem.menuItemId = menuItem.insert();
 
         return menuItem;
@@ -57,23 +73,33 @@ public class MenuItem extends Table {
 
     // region instance methods
 
-    public boolean setPrice(BigDecimal price) throws SQLException {
+    /**
+     * Set MenuItem price
+     *
+     * @param price
+     * @throws SQLException
+     */
+    public void setPrice(BigDecimal price) throws SQLException {
         sync();
         menuItemPrice = price;
         update();
-        return true;
+    }
+
+    /**
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws SQLException
+     */
+    public ResultSet getSalesReport(String startDate, String endDate) throws SQLException {
+        return database.query("select menu_item.item_name, sum(menu_item.menu_item_price) as sales from \"order\" " + "join order_item on order_item.order_id = \"order\".order_id " + "join menu_item on menu_item.menu_item_id = order_item.menu_item_id " + "where \"order\".order_date between '" + startDate + "' and '" + endDate + "' " + "group by menu_item.menu_item_id " + "order by menu_item.menu_item_id;");
     }
 
     // endregion
 
     // region static declarations
-
-    public static String TableName = "menu_item";
-
     public enum ColumnIndexes {
-        MENU_ITEM_ID(0),
-        ITEM_NAME(1),
-        MENU_ITEM_PRICE(2);
+        MENU_ITEM_ID(0), ITEM_NAME(1), MENU_ITEM_PRICE(2);
 
         private int index;
 
@@ -87,9 +113,7 @@ public class MenuItem extends Table {
     }
 
     public enum ColumnNames {
-        MENU_ITEM_ID("menu_item_id"),
-        ITEM_NAME("item_name"),
-        MENU_ITEM_PRICE("menu_item_price");
+        MENU_ITEM_ID("menu_item_id"), ITEM_NAME("item_name"), MENU_ITEM_PRICE("menu_item_price");
 
         private String name;
 
@@ -103,12 +127,7 @@ public class MenuItem extends Table {
     }
 
     public enum ItemNames {
-        ONE_TOPPING_PIZZA("1 Topping Pizza"),
-        TWO_TO_FOUR_TOPPING_PIZZA("2-4 Topping Pizza"),
-        ORIGINAL_CHEESE_PIZZA("Original Cheese Pizza"),
-        BOTTLED_BEVERAGE("Bottled Beverage"),
-        GATORADE("Gatorade"),
-        FOUNTAIN_DRINK("Fountain Drink");
+        ONE_TOPPING_PIZZA("1 Topping Pizza"), TWO_TO_FOUR_TOPPING_PIZZA("2-4 Topping Pizza"), ORIGINAL_CHEESE_PIZZA("Original Cheese Pizza"), BOTTLED_BEVERAGE("Bottled Beverage"), GATORADE("Gatorade"), FOUNTAIN_DRINK("Fountain Drink");
 
         private String name;
 
@@ -119,7 +138,20 @@ public class MenuItem extends Table {
         public String toString() {
             return name;
         }
+    }
 
+    public enum Categories {
+        PIZZA("Pizza"), BEVERAGE("Beverage"), OTHER("Other");
+
+        private String name;
+
+        Categories(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
     }
 
     //endregion

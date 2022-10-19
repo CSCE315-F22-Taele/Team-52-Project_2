@@ -29,13 +29,11 @@ public class Receipt {
     public Receipt() {
         receiptLines = new ArrayList<>();
 
-        Actions.orderUpdated.subscribe(order -> {
+        Actions.getOrder.subscribe(order -> {
             // update total
-            order.subTotal = order.orderItems.stream()
-                    .map(item -> item.menuItem.menuItemPrice.multiply(new BigDecimal(item.quantity)))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            order.subTotal = order.orderItems.stream().map(item -> item.menuItem.menuItemPrice.multiply(new BigDecimal(item.quantity))).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            order.taxCharge = new BigDecimal("1.062").multiply(order.subTotal);
+            order.taxCharge = new BigDecimal("0.062").multiply(order.subTotal);
             order.orderTotal = order.subTotal.add(order.taxCharge);
 
             // set total labels
@@ -77,10 +75,7 @@ public class Receipt {
             }
 
             for (int i = 0; i < receiptLines.size(); i++) {
-                receiptItems.add(
-                        receiptLines.get(i).$$$getRootComponent$$$(),
-                        new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(50, -1), null, 0, false)
-                );
+                receiptItems.add(receiptLines.get(i).$$$getRootComponent$$$(), new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(50, -1), null, 0, false));
             }
 
             // add spacer to bottom to make lines stick to the top

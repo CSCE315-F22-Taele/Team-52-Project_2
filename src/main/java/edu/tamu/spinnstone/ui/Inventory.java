@@ -12,9 +12,7 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Inventory {
     private JTable InventoryTable;
@@ -22,6 +20,8 @@ public class Inventory {
     private JScrollPane InventoryTableContainer;
     private JButton refreshButton;
     private JButton commitChangeSButton;
+    private JPanel Container;
+    private JPanel ExcessPanel;
 
     public Inventory() {
         $$$setupUI$$$();
@@ -46,9 +46,6 @@ public class Inventory {
                 for (int i = 0; i < InventoryTable.getRowCount(); i++) {
                     productUpdates.put(String.valueOf(InventoryTable.getValueAt(i, 0)), String.valueOf(InventoryTable.getValueAt(i, 1)));
                 }
-
-                // TODO: Undo unit conversion on product values
-                // System.out.println(productUpdates);
 
                 try {
                     ResultSet product_data = inventory.getView();
@@ -78,24 +75,36 @@ public class Inventory {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
+        Container = new JPanel();
+        Container.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setLayout(new GridLayoutManager(2, 2, new Insets(8, 8, 8, 8), -1, -1));
+        Container.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         InventoryTableContainer = new JScrollPane();
         panel1.add(InventoryTableContainer, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         InventoryTable = new JTable();
         InventoryTableContainer.setViewportView(InventoryTable);
         refreshButton = new JButton();
+        refreshButton.setBackground(new Color(-15066598));
+        refreshButton.setForeground(new Color(-1));
         refreshButton.setText("Refresh");
         panel1.add(refreshButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         commitChangeSButton = new JButton();
+        commitChangeSButton.setBackground(new Color(-15066598));
+        commitChangeSButton.setForeground(new Color(-1));
         commitChangeSButton.setText("Commit Change(s)");
         panel1.add(commitChangeSButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ExcessPanel = new JPanel();
+        ExcessPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        Container.add(ExcessPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final ExcessReport nestedForm1 = new ExcessReport();
+        ExcessPanel.add(nestedForm1.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return panel1;
+        return Container;
     }
 
     private void populateTable() {
@@ -127,7 +136,6 @@ public class Inventory {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         panel1 = new JPanel();
     }
 }

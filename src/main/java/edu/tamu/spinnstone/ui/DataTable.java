@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DataTable extends AbstractTableModel implements TableModelListener {
-
     private ArrayList<ArrayList<String>> data;
-
     private ArrayList<String> columnNames;
-
     private PublishSubject<TableModelEvent> stream;
+    private ArrayList<Integer> editableColumns;
+    public boolean suppressEvents;
 
-    private  ArrayList<Integer> editableColumns;
-
-    public boolean supressEvents;
-
+    /**
+     * @param rawData
+     * @param rawColumnNames
+     * @param _editableColumns
+     */
     public DataTable(String[][] rawData, String[] rawColumnNames, Integer[] _editableColumns) {
         columnNames = new ArrayList<>();
         columnNames.addAll(Arrays.asList(rawColumnNames));
@@ -29,13 +29,13 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
         editableColumns = new ArrayList<Integer>();
         editableColumns.addAll(Arrays.asList(_editableColumns));
 
-        for(String[] row : rawData) {
+        for (String[] row : rawData) {
             ArrayList<String> row_array = new ArrayList<>();
             row_array.addAll(Arrays.asList(row));
             data.add(row_array);
         }
 
-        supressEvents = false;
+        suppressEvents = false;
     }
 
     @Override
@@ -54,24 +54,16 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
         return columnNames.get(index);
     }
 
-    public void addRow() {
-
-        ArrayList<String> new_row = new ArrayList<>();
-        new_row.addAll(Arrays.asList("", ""));
-        data.add(new_row);
-        fireTableStructureChanged();
-    }
-
     public ArrayList<ArrayList<String>> getData() {
         return data;
     }
 
     @Override
     public void tableChanged(TableModelEvent e) {
-        if(supressEvents == true) {
+        if (suppressEvents == true) {
             return;
         }
-        if(stream != null) {
+        if (stream != null) {
             stream.onNext(e);
         }
     }
@@ -83,7 +75,7 @@ public class DataTable extends AbstractTableModel implements TableModelListener 
 
     @Override
     public int getColumnCount() {
-        if(data.isEmpty()) {
+        if (data.isEmpty()) {
             return 0;
         }
         return data.get(0).size();

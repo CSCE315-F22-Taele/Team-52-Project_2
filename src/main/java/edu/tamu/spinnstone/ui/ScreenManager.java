@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ScreenManager {
-
     public ScreenManager(Database db) {
         Order order = new Order(db);
 

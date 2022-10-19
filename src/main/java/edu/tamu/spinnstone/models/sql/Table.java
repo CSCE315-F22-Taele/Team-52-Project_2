@@ -1,30 +1,18 @@
 package edu.tamu.spinnstone.models.sql;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.sql.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class Table {
 
     public static enum ColumnType {
-        STRING,
-        FLOAT,
-        DATE,
-        INT,
-        BOOL,
-        LONG,
-        DOUBLE,
-        BOOLEAN,
-        MONEY
+        STRING, FLOAT, DATE, INT, BOOL, LONG, DOUBLE, BOOLEAN, MONEY
     }
 
     public String tableName;
@@ -53,11 +41,13 @@ public class Table {
 
     // region helpers
 
-    protected void setStatementValue(
-            PreparedStatement statement,
-            int index,
-            Object value
-    ) throws SQLException {
+    /**
+     * @param statement
+     * @param index
+     * @param value
+     * @throws SQLException
+     */
+    protected void setStatementValue(PreparedStatement statement, int index, Object value) throws SQLException {
         if (value instanceof String) {
             statement.setString(index, (String) value);
         } else if (value instanceof Float) {
@@ -81,11 +71,15 @@ public class Table {
         }
     }
 
+    /**
+     * Prepares a list of values for use in an SQL statement.
+     *
+     * @param values
+     * @return
+     * @throws SQLException
+     */
     protected List<String> prepareValues(List<Object> values) throws SQLException {
-        // prepare a list of values for use in a sql statement
-        PreparedStatement statement = database.connection.prepareStatement(
-                String.join("~", values.stream().map(v -> "?").collect(Collectors.toList()))
-        );
+        PreparedStatement statement = database.connection.prepareStatement(String.join("~", values.stream().map(v -> "?").collect(Collectors.toList())));
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
             if (value == null) {
@@ -97,14 +91,27 @@ public class Table {
         return Arrays.asList(statement.toString().split("~"));
     }
 
+    /**
+     * Prepare a single value for use in an SQL statement.
+     *
+     * @param value
+     * @return
+     * @throws SQLException
+     */
     protected String prepareValue(Object value) throws SQLException {
-        // prepare a single value for use in a sql statement
         return prepareValues(new ArrayList<Object>(Arrays.asList(value))).get(0);
     }
 
+    /**
+     * Get a result set value at the given index.
+     * Note that the columntypes are 0 indexed but the result set is 1 indexed.
+     *
+     * @param resultSet
+     * @param index
+     * @return
+     * @throws SQLException
+     */
     private Object getResultSetValue(ResultSet resultSet, int index) throws SQLException {
-        // get a result set value at the given index
-        // the columntypes are 0 indexed, the result set is 1 indexed
         switch (columnTypes.get(index)) {
             case STRING:
                 return resultSet.getString(index + 1);
@@ -117,17 +124,15 @@ public class Table {
             case INT:
                 return resultSet.getInt(index + 1);
             case BOOL:
+            case BOOLEAN:
                 return resultSet.getBoolean(index + 1);
             case LONG:
                 return resultSet.getLong(index + 1);
-            case BOOLEAN:
-                return resultSet.getBoolean(index + 1);
             case MONEY:
                 return resultSet.getBigDecimal(index + 1);
         }
         return null;
     }
-
 
     public void updateFromResultSet(ResultSet rs) throws SQLException {
         ArrayList<Object> values = new ArrayList<Object>();
@@ -142,12 +147,7 @@ public class Table {
     // region crud operations
     public long insert() throws SQLException {
         // right now the caller is expected to populate all fields on the object before calling insert
-        Query query = database.insert(tableName)
-                .columns(columnNames.subList(1, columnNames.size()))
-                .values(
-                        prepareValues(getColumnValues().subList(1, getColumnValues().size()))
-                )
-                .returning(columnNames.get(0));
+        Query query = database.insert(tableName).columns(columnNames.subList(1, columnNames.size())).values(prepareValues(getColumnValues().subList(1, getColumnValues().size()))).returning(columnNames.get(0));
 
         ResultSet rs = query.execute();
 
@@ -167,11 +167,7 @@ public class Table {
             setMap.put(columnNames.get(i), prepareValue(values.get(i)));
         }
 
-        ResultSet result = database.update(tableName)
-                .set(setMap)
-                .where(columnNames.get(0), values.get(0))
-                .returning(columnNames.get(0))
-                .execute();
+        ResultSet result = database.update(tableName).set(setMap).where(columnNames.get(0), values.get(0)).returning(columnNames.get(0)).execute();
 
         if (result.next()) {
             // we are updating id in case this was a new object
@@ -180,19 +176,16 @@ public class Table {
         }
     }
 
-
     public void delete() throws SQLException {
-        database.delete(tableName)
-                .where(columnNames.get(0), getColumnValues().get(0))
-                .execute();
+        database.delete(tableName).where(columnNames.get(0), getColumnValues().get(0)).execute();
     }
 
+    /**
+     * @return true if successful, false otherwise
+     * @throws SQLException
+     */
     public boolean sync() throws SQLException {
-        // return true if successful, false if not
-        ResultSet rs = database.select(columnNames)
-                .from(tableName)
-                .where(columnNames.get(0), getColumnValues().get(0))
-                .execute();
+        ResultSet rs = database.select(columnNames).from(tableName).where(columnNames.get(0), getColumnValues().get(0)).execute();
 
         boolean exists = rs.next();
 
@@ -203,14 +196,16 @@ public class Table {
         return exists;
     }
 
+    /**
+     * @param id
+     * @return true if found, false otherwise
+     * @throws SQLException
+     */
     public boolean find(long id) throws SQLException {
-        // true if found, false if not found
         // same as sync but intended to be used for a new object
         // a little awkward
 
-        Query query = database.select(columnNames)
-                .from(tableName)
-                .where(columnNames.get(0), prepareValue(id));
+        Query query = database.select(columnNames).from(tableName).where(columnNames.get(0), prepareValue(id));
 
         ResultSet rs = query.execute();
 
@@ -222,7 +217,13 @@ public class Table {
         return false;
     }
 
-
+    /**
+     * @param where
+     * @param orderBy
+     * @param limit
+     * @return
+     * @throws SQLException
+     */
     public ResultSet findWhere(String where, String orderBy, int limit) throws SQLException {
         Query query = database.select(columnNames).from(tableName);
         if (where != null) {
@@ -237,7 +238,7 @@ public class Table {
 
         ResultSet rs = query.execute();
 
-        if(rs.next()) {
+        if (rs.next()) {
             return rs;
         }
 
@@ -246,6 +247,20 @@ public class Table {
 
     public ResultSet getView() throws SQLException {
         return findWhere(null, columnNames.get(0), -1);
+    }
+
+    public enum Names {
+        PRODUCT("product"), PRODUCT_TYPE("product_type"), MENU_ITEM("menu_item"), MENU_ITEM_CATEGORY("menu_item_category"), MENU_ITEM_PRODUCT("menu_item_product"), ORDER("order"), ORDER_ITEM("order_item"), ORDER_ITEM_PRODUCT("order_item_product"), SHIPMENT("shipment"), SHIPMENT_PRODUCT("shipment_product");
+
+        private final String name;
+
+        Names(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return this.name;
+        }
     }
 
     // endregion
