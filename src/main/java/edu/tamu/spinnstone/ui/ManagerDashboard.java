@@ -14,12 +14,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -75,20 +71,6 @@ public class ManagerDashboard {
                 generateSalesReport(SalesReportStartDate.getText(), SalesReportEndDate.getText());
             }
         });
-    }
-
-    private void addNewItem(String name, String price) {
-        Database database = Actions.getDatabase.getValue();
-        MenuItem menu_item = new MenuItem(database);
-        menu_item.itemName = name;
-
-        try {
-            database.insert(MenuItem.TableName).columns(MenuItem.ColumnNames.ITEM_NAME.toString(), MenuItem.ColumnNames.MENU_ITEM_PRICE.toString()).values(name, price).execute();
-
-            database.insert(Product.TableName).columns(Product.ColumnNames.PRODUCT_NAME.toString(), Product.ColumnNames.QUANTITY_IN_STOCK.toString()).values(name, 0).execute();
-        } catch (SQLException e) {
-            System.out.println("");
-        }
     }
 
     private void populateMenuItemsTable() {
@@ -206,7 +188,6 @@ public class ManagerDashboard {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 
     /**
@@ -287,6 +268,9 @@ public class ManagerDashboard {
         panel3.add(SalesReportError, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return container;
     }

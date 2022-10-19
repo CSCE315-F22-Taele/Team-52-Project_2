@@ -12,9 +12,7 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Inventory {
     private JTable InventoryTable;
@@ -22,7 +20,7 @@ public class Inventory {
     private JScrollPane InventoryTableContainer;
     private JButton refreshButton;
     private JButton commitChangeSButton;
-  private JPanel Container;
+    private JPanel Container;
     private JPanel ExcessPanel;
 
     public Inventory() {
@@ -48,9 +46,6 @@ public class Inventory {
                 for (int i = 0; i < InventoryTable.getRowCount(); i++) {
                     productUpdates.put(String.valueOf(InventoryTable.getValueAt(i, 0)), String.valueOf(InventoryTable.getValueAt(i, 1)));
                 }
-
-                // TODO: Undo unit conversion on product values
-                // System.out.println(productUpdates);
 
                 try {
                     ResultSet product_data = inventory.getView();
@@ -105,6 +100,9 @@ public class Inventory {
         ExcessPanel.add(nestedForm1.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return Container;
     }
@@ -138,7 +136,6 @@ public class Inventory {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         panel1 = new JPanel();
     }
 }

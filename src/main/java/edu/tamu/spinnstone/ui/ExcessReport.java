@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -28,27 +27,25 @@ public class ExcessReport {
     private JScrollPane ExcessTableContainer;
 
     public ExcessReport() {
-
         String endDate = (LocalDate.now(ZoneId.systemDefault())).toString();
         ExcessSubmit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                generateExcessReport(StartDateExcess.getText(), endDate);
+                generateExcessReport(StartDateExcess.getText());
             }
         });
     }
 
-    /*
-     * @param
-     * @param
+    /**
+     * @param timeStampStart
      */
-    private void generateExcessReport(String timeStampStart, String timeStampEnd) {
+    private void generateExcessReport(String timeStampStart) {
         Database database = Actions.getDatabase.getValue();
         Product product = new Product(database);
 
         //the time stamp ending date is the current date
-        timeStampEnd = (LocalDate.now(ZoneId.systemDefault())).toString();
+        String timeStampEnd = (LocalDate.now(ZoneId.systemDefault())).toString();
 
         ArrayList<String[]> excessReport = new ArrayList<>();
         ArrayList<String[]> excessReportRemaining = new ArrayList<>();
@@ -64,19 +61,17 @@ public class ExcessReport {
                 dataRow[2] = productItems.getString("sold");
 
                 excessReport.add(dataRow);
-            }
-            while (productItems.next());
+            } while (productItems.next());
         } catch (SQLException e) {
             System.out.println("SQL exception: " + e);
         }
 
         String[][] excessReportArray = excessReport.toArray(new String[excessReport.size()][]);
-        String[] percentArray = new String[excessReportRemaining.size()];
 
         for (int row = 0; row < excessReportArray.length; ++row) {
             //if the amount sold / total inventory of item < 10%, then add to table
-            Double totalStock = Double.parseDouble(excessReportArray[row][0]) + Double.parseDouble(excessReportArray[row][2]);
-            Double percent = Double.parseDouble(excessReportArray[row][2]) / totalStock;
+            double totalStock = Double.parseDouble(excessReportArray[row][0]) + Double.parseDouble(excessReportArray[row][2]);
+            double percent = Double.parseDouble(excessReportArray[row][2]) / totalStock;
             if (abs(percent) < .10) {
                 excessReportRemaining.add(excessReportArray[row]);
             }
@@ -141,8 +136,12 @@ public class ExcessReport {
         panel4.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return Container;
     }
+
 }
 

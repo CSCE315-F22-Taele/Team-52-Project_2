@@ -3,7 +3,6 @@ package edu.tamu.spinnstone;
 import edu.tamu.spinnstone.models.sql.Database;
 import edu.tamu.spinnstone.ui.Actions;
 import edu.tamu.spinnstone.ui.ScreenManager;
-import edu.tamu.spinnstone.ui.screens.ServerScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,16 +32,15 @@ public final class App {
 
         ScreenManager screenManager = new ScreenManager(db);
 
-        javax.swing.SwingUtilities.invokeLater(
-                () -> {
-                    try {
-                        UIManager.put("ToggleButton.select", Color.getColor("#197278"));
-                    } catch (Exception e) {
-                        System.out.println("unable to set look and feel");
-                    }
-                    frame.setSize(980, 735);
-                    frame.setContentPane(screenManager.manageContainer);
-                    frame.setVisible(true);
-                });
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.put("ToggleButton.select", Color.getColor("#197278"));
+            } catch (Exception e) {
+                System.out.println("unable to set look and feel");
+            }
+            frame.setSize(980, 735);
+            frame.setContentPane(screenManager.manageContainer);
+            frame.setVisible(true);
+        });
     }
 }

@@ -10,7 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class ManagerView {
-
     public ManagerView() {
         $$$setupUI$$$();
         Actions.setViewCard.subscribe(cardName -> ((CardLayout) ManagerViewCard.getLayout()).show(ManagerViewCard, cardName.toString()));
@@ -52,16 +51,17 @@ public class ManagerView {
         ManagerViewCard.add(nestedForm4.$$$getRootComponent$$$(), "AnalyticsCard");
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return Container;
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         ArrayList<NavBar> navBars = Actions.navBars.getValue();
         navBar = new NavBar();
         navBars.add(navBar);
         Actions.navBars.onNext(navBars);
     }
-
 }

@@ -9,17 +9,10 @@ import rx.subjects.PublishSubject;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Actions {
-//    public static PublishSubject<Order> orderUpdated = PublishSubject.create();
-
     public enum OptionCards {
-
-        PIZZA("pizza"),
-        OTHER("other"),
-        DRINKS("drinks");
-
+        PIZZA("pizza"), OTHER("other"), DRINKS("drinks");
         private final String name;
 
         private OptionCards(String name) {
@@ -29,16 +22,10 @@ public class Actions {
         public String toString() {
             return this.name;
         }
-
     }
 
     public enum ViewNames {
-        SERVER("ServerCard"),
-        MANAGER("ManagerCard"),
-        INVENTORY("InventoryCard"),
-        SHIPMENTS("ShipmentsCard"),
-        DASHBOARD("DashboardCard"),
-        ANALYTICS("AnalyticsCard");
+        SERVER("ServerCard"), MANAGER("ManagerCard"), INVENTORY("InventoryCard"), SHIPMENTS("ShipmentsCard"), DASHBOARD("DashboardCard"), ANALYTICS("AnalyticsCard");
 
         private final String name;
 

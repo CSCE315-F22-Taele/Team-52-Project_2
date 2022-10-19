@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /*
@@ -30,27 +29,7 @@ public class ServerScreen {
     private NavBar navBar;
     private JLabel otherButton;
 
-
     public ServerScreen() {
-        /**
-         * to generate the menu from the database i need to know where to place the items. I need to
-         * know in which top level menu to place the item (pizza, drinks, something else?). Next I need to know whether
-         * the product is configurable. If it is configurable, I need to know what the options are. For a pizza in particular,
-         * the options need to be separated into crust, sauce, and toppings, drizzle. These options should be checked for
-         * inventory and if they are out of stock, they should be grayed out. If the menu item is not configurable, then
-         * I need to know which product it is represented by (soda, water, cookie, etc).
-         *
-         * To accomplish these tasks I need:
-         * - the menu item to have a category (pizza, drink, desserts etc)
-         * - the menu item to have a configurable flag
-         * - the menu item to list all the products it is made up of (options)
-         * - the product to have a type (crust, sauce, topping, drizzle, drink)
-         *
-         * it will get confusing if i try to combine the ideas of product category and
-         * which section of the menu an item should be placed. I will
-         */
-
-
         $$$setupUI$$$();
         pizzaButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -167,12 +146,14 @@ public class ServerScreen {
         panel6.add(nestedForm2.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(240, -1), new Dimension(240, 720), null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return screen;
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         navBar = new NavBar();
         ArrayList<NavBar> navBars = new ArrayList<>();
         navBars.add(navBar);
@@ -185,5 +166,4 @@ public class ServerScreen {
     }
 
     // @formatter:on
-
 }

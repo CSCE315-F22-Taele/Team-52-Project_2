@@ -76,16 +76,26 @@ public class Analytics {
         panel1.add(label2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return panel1;
     }
 
+    /**
+     * @param rows
+     */
     private void displayTable(String[][] rows) {
         String[] labels = {"Menu Item Pair", "Occurrences"};
         pairTable = new JTable(rows, labels);
         tableContainer.setViewportView(pairTable);
     }
 
+    /**
+     * @param startDate
+     * @param endDate
+     */
     private void determinePairs(java.sql.Date startDate, java.sql.Date endDate) {
         Database database = Actions.getDatabase.getValue();
         HashMap<Set<String>, Integer> pairOccurrences = new HashMap<>();

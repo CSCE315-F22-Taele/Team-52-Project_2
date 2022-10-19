@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ScreenManager {
-
     public ScreenManager(Database db) {
         Order order = new Order(db);
 
@@ -43,6 +42,9 @@ public class ScreenManager {
         manageContainer.add(ManagerButton.$$$getRootComponent$$$(), "ManagerCard");
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return manageContainer;
     }

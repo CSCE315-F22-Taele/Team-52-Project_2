@@ -221,6 +221,9 @@ public class MenuOptions {
         panel11.add(veggieButtonGroup3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return MenuOptionCards;
     }
@@ -231,6 +234,10 @@ public class MenuOptions {
         one_topping, cheese, BYO
     }
 
+    /**
+     * @param item
+     * @return
+     */
     public boolean checkToppingCount(OrderItem item) {
         int count = item.products.stream().map(p -> p.productTypeName).filter(name -> name.equals("Meat") || name.equals("Veggies")).collect(Collectors.toList()).size();
 
@@ -245,7 +252,6 @@ public class MenuOptions {
         }
         return true;
     }
-
 
     private void buildPizzaOptions() {
         crustButtonGroup.removeAll();
@@ -379,6 +385,9 @@ public class MenuOptions {
         }
     }
 
+    /**
+     * @param optionCard
+     */
     private void setOptionCardListener(Actions.OptionCards optionCard) {
         String categoryName;
         switch (optionCard) {
@@ -460,6 +469,9 @@ public class MenuOptions {
         orderOptionsCard.repaint();
     }
 
+    /**
+     * @param menuItem
+     */
     private void addOrderItem(edu.tamu.spinnstone.models.MenuItem menuItem) {
         Order activeOrder = Actions.getOrder.getValue();
         if (activeOrder == null) {
@@ -600,8 +612,5 @@ public class MenuOptions {
 
         // listen for card change actions
         Actions.setOptionsCard.subscribe(card -> setOptionCardListener(card));
-
-
     }
-
 }
