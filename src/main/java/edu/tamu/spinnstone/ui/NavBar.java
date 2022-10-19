@@ -132,7 +132,7 @@ public class NavBar {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         navContainer = new JPanel();
@@ -188,7 +188,7 @@ public class NavBar {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return navContainer;

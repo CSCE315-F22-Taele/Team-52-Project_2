@@ -71,7 +71,7 @@ public class MenuOptions {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         MenuOptionCards = new JPanel();
@@ -222,7 +222,7 @@ public class MenuOptions {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return MenuOptionCards;

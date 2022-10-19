@@ -31,7 +31,7 @@ public class ScreenManager {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         manageContainer = new JPanel();
@@ -43,7 +43,7 @@ public class ScreenManager {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return manageContainer;

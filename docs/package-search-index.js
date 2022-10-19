@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"edu.tamu.spinnstone.models"},{"l":"edu.tamu.spinnstone.models.sql"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"edu.tamu.spinnstone"},{"l":"edu.tamu.spinnstone.models"},{"l":"edu.tamu.spinnstone.models.sql"},{"l":"edu.tamu.spinnstone.ui"},{"l":"edu.tamu.spinnstone.ui.screens"}];updateSearchResults();

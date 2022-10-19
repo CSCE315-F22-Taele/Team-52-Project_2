@@ -102,7 +102,7 @@ public class Receipt {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         container = new JPanel();
@@ -201,7 +201,7 @@ public class Receipt {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
         if (currentFont == null) return null;
@@ -223,7 +223,7 @@ public class Receipt {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return container;

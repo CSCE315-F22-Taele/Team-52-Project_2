@@ -95,7 +95,7 @@ public class ExcessReport {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         Container = new JPanel();
@@ -137,7 +137,7 @@ public class ExcessReport {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return Container;

@@ -50,7 +50,7 @@ public class Analytics {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
@@ -77,7 +77,7 @@ public class Analytics {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return panel1;

@@ -31,7 +31,7 @@ public class Shipments {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         createUIComponents();
@@ -58,7 +58,7 @@ public class Shipments {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return panel1;

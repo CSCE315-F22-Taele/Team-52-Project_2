@@ -195,7 +195,7 @@ public class ManagerDashboard {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         container = new JPanel();
@@ -269,7 +269,7 @@ public class ManagerDashboard {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return container;

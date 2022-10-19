@@ -80,7 +80,7 @@ public class ServerScreen {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
+     * 
      */
     private void $$$setupUI$$$() {
         createUIComponents();
@@ -147,7 +147,7 @@ public class ServerScreen {
     }
 
     /**
-     * @noinspection ALL
+     * 
      */
     public JComponent $$$getRootComponent$$$() {
         return screen;
