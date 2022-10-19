@@ -43,9 +43,6 @@ public class ScreenManager {
         manageContainer.add(ManagerButton.$$$getRootComponent$$$(), "ManagerCard");
     }
 
-    /**
-     * @noinspection ALL
-     */
     public JComponent $$$getRootComponent$$$() {
         return manageContainer;
     }

@@ -272,9 +272,6 @@ public class AddProductDialog {
     panel20.add(newProduct, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
   }
 
-  /**
-   * @noinspection ALL
-   */
   public JComponent $$$getRootComponent$$$() {
     return container;
   }
@@ -283,11 +280,8 @@ public class AddProductDialog {
 
 
   private void createUIComponents() {
-    // TODO: place custom component creation code here
     productOptions = new JList<String>();
     productOptions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     productOptions.setLayoutOrientation(JList.VERTICAL);
-
-
   }
 }
