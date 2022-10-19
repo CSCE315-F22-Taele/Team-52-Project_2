@@ -84,12 +84,10 @@ public class ExcessReport {
         String[][] inventoryArray = inventoryOfProduct.toArray(new String[inventoryOfProduct.size()][]);
 
         for (int row = 0; row < excessReportArray.length; ++row) {
-            for (int col = 0; col < excessReportArray[row].length; ++col) {
-                //if the amount sold / total inventory of item < 10%, then add to table
-                double percent = Double.parseDouble(excessReportArray[row][col]) / Double.parseDouble(inventoryArray[row][2]);
-                if (abs(percent) < .10) {
-                    excessReportRemaining.add(inventoryOfProduct.get(row));
-                }
+            //if the amount sold / total inventory of item < 10%, then add to table
+            double percent = Double.parseDouble(excessReportArray[row][1]) / Double.parseDouble(inventoryArray[row][2]);
+            if (abs(percent) < .10) {
+                excessReportRemaining.add(inventoryArray[row]);
             }
         }
 
