@@ -17,6 +17,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
+/*
+ * @author ServerScreen
+ * This class is the UI for the Server
+ */
 public class ServerScreen {
     public JPanel screen;
     private JButton CHECKOUTButton;

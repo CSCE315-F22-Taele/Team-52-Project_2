@@ -201,4 +201,23 @@ public class Product extends Table {
       return this.name;
     }
   }
+
+  //This query tells how much of each product has been sold between a specific start and end date
+  public ResultSet getProductReport(String startDate, String endDate) throws SQLException {
+    return database.query(
+      "select p.product_id, sum(p.product_id) / p.product_id from \"order\" " +
+      "join order_item oi on \"order\".order_id = oi.order_id " +
+      "join order_item_product oip on oi.order_item_id = oip.order_item_order_item_id " +
+      "join product p on oip.product_product_id = p.product_id " +
+      "where order_date between " + "\'"+startDate+"\'" + " and " + "\'"+endDate+"\'" +
+      "group by p.product_id"
+    );
+  }
+
+  //getting inventory of item at a certain product id
+  public ResultSet totalInventoryOfProduct(int productId) throws SQLException {
+    return database.query(
+            "select product.* from product where product_id = " + productId
+    );
+  }
 }

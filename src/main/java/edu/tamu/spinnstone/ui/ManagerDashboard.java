@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -201,7 +204,6 @@ public class ManagerDashboard {
         SalesReportTableContainer.setViewportView(SalesReportTable);
 
     }
-
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
