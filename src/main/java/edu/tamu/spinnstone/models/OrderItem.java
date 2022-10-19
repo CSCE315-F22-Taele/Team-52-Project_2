@@ -20,7 +20,9 @@ public class OrderItem extends Table {
     public int quantity;
     public boolean isDrink;
 
-
+    /**
+     * @param db
+     */
     public OrderItem(Database db) {
         super(db);
         tableName = "order_item";
@@ -35,11 +37,7 @@ public class OrderItem extends Table {
     // region overrides
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<>(Arrays.asList(
-                this.orderItemId,
-                this.orderId,
-                this.menuItemId
-        ));
+        return new ArrayList<>(Arrays.asList(this.orderItemId, this.orderId, this.menuItemId));
     }
 
     @Override
@@ -59,18 +57,26 @@ public class OrderItem extends Table {
     }
     // endregion
 
+    /**
+     * Assume all products have not been inserted and insert products into the database
+     *
+     * @throws SQLException
+     */
     public void insertProducts() throws SQLException {
-        // assume all products have not been inserted
         for (Product product : products) {
-
-            database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString())
-                    .columns("order_item_order_item_id", "product_product_id")
-                    .values(orderItemId, product.productId).execute();
-
+            database.insert(Database.TableNames.ORDER_ITEM_PRODUCT.toString()).columns("order_item_order_item_id", "product_product_id").values(orderItemId, product.productId).execute();
         }
     }
 
     //region static methods
+
+    /**
+     * @param db
+     * @param orderId
+     * @param menuItemId
+     * @return
+     * @throws SQLException
+     */
     public static OrderItem create(Database db, long orderId, long menuItemId) throws SQLException {
         OrderItem orderItem = new OrderItem(db);
         orderItem.orderId = orderId;
@@ -81,29 +87,21 @@ public class OrderItem extends Table {
     }
     //endregion
 
-    public void getMenuItem() throws SQLException {
-        MenuItem item = new MenuItem(database);
-        boolean found = item.find(menuItemId);
-        if (!found) {
-            throw new SQLException("unable to find menu item");
-        }
-
-        this.menuItem = item;
-
-    }
-
+    /**
+     * @param product
+     */
     public void addProduct(Product product) {
-        if(products.stream().anyMatch(p -> p.productId == product.productId)) {
+        if (products.stream().anyMatch(p -> p.productId == product.productId)) {
             return;
         }
         products.add(product);
     }
 
-    public void removeProductByName(Product.Name name) {
-        // removes a product from the order item
-        products.removeIf(product -> product.productName.equals(name.toString()));
-    }
-
+    /**
+     * Remove given product from the order item
+     *
+     * @param p
+     */
     public void removeProduct(Product p) {
         // removes a product from the order item and returns true if successful
         products.removeIf(product -> product.productId == p.productId);

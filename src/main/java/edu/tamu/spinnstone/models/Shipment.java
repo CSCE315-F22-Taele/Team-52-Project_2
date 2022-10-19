@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class Shipment extends Table {
@@ -28,11 +27,7 @@ public class Shipment extends Table {
 
     @Override
     public ArrayList<Object> getColumnValues() {
-        return new ArrayList<>(Arrays.asList(
-                this.shipmentId,
-                this.shipmentDate,
-                this.fulfilled
-        ));
+        return new ArrayList<>(Arrays.asList(this.shipmentId, this.shipmentDate, this.fulfilled));
     }
 
     @Override
@@ -45,8 +40,14 @@ public class Shipment extends Table {
     // endregion
 
     // region static methods
-
-    // Create new shipment in table
+    /**
+     * Create new shipment in table
+     * @param db
+     * @param shipmentDate
+     * @param fulfilled
+     * @return
+     * @throws SQLException
+     */
     public static Shipment create(Database db, Date shipmentDate, Boolean fulfilled) throws SQLException {
         Shipment shipment = new Shipment(db);
         shipment.shipmentDate = shipmentDate;
@@ -58,31 +59,43 @@ public class Shipment extends Table {
 
     // endregion
 
-    // Add product to current shipment, updates database
+    /**
+     * Add product to current shipment and update database
+     * @param product
+     * @param quantity
+     * @throws SQLException
+     */
     public void addProduct(Product product, double quantity) throws SQLException {
-        database.insert("shipment_product")
-                .columns("shipment_shipment_id", "product_product_id", "quantity_ordered")
-                .values(shipmentId, product.productId, quantity)
-                .execute();
-    }
-    
-    // Remove product from current shipment, updates database
-    public void removeProduct(Product product) throws SQLException {
-        database.query("delete from shipment_product where shipment_shipment_id = "+ shipmentId + " and product_product_id = " + product.productId);
+        database.insert("shipment_product").columns("shipment_shipment_id", "product_product_id", "quantity_ordered").values(shipmentId, product.productId, quantity).execute();
     }
 
-    // Edit product quantity in current shipment, updates database
+    /**
+     * Remove product from current shipment and update database
+     * @param product
+     * @throws SQLException
+     */
+    public void removeProduct(Product product) throws SQLException {
+        database.query("delete from shipment_product where shipment_shipment_id = " + shipmentId + " and product_product_id = " + product.productId);
+    }
+
+    /**
+     * Edit product quantity in current shipment and update databse
+     * @param product
+     * @param quantity
+     * @throws SQLException
+     */
     public void updateQuantity(Product product, int quantity) throws SQLException {
         database.query("update shipment_product set quantity_ordered = " + quantity + " where shipment_shipment_id = " + shipmentId + " and product_product_id = " + product.productId);
     }
 
-    // Returns true if current shipment is set as fulfilled, false otherwise
+    /**
+     * @return true if current shipment is set as fulfilled, false otherwise
+     */
     public boolean finalizeShipment() {
         fulfilled = true;
         try {
             update();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             return false;
         }
         return true;
