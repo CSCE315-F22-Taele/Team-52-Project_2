@@ -1,12 +1,9 @@
 package edu.tamu.spinnstone.models.sql;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,7 +12,7 @@ import java.util.stream.Collectors;
 public class Query {
     /*
      * Below I am defining a set of classes that will be used to build a query.
-     * In particular I am creating the idea of a clause which matches the SQL
+     * In particular, I am creating the idea of a clause which matches the SQL
      * concept of a clause (e.g. WHERE, ORDER BY, etc.). I am then using the
      * query options to define which clauses are relevant to which queries.
      */
@@ -23,25 +20,11 @@ public class Query {
     // region enums
 
     private enum QueryType {
-        SELECT,
-        INSERT,
-        UPDATE,
-        DELETE
+        SELECT, INSERT, UPDATE, DELETE
     }
 
     private enum ClauseType {
-        FROM,
-        WHERE,
-        ORDER_BY,
-        LIMIT,
-        OFFSET,
-        VALUES,
-        SET,
-        RETURNING,
-        TABLENAME,
-        SELECT,
-        ORDER,
-        COLUMNS
+        FROM, WHERE, ORDER_BY, LIMIT, OFFSET, VALUES, SET, RETURNING, TABLENAME, SELECT, ORDER, COLUMNS
     }
 
     // endregion
@@ -52,6 +35,12 @@ public class Query {
     protected List<ClauseType> optionalClauses;
     protected Database database;
 
+    /**
+     * @param queryType
+     * @param clauses
+     * @param requiredClauses
+     * @param optionalClauses
+     */
     public Query(QueryType queryType, HashMap<ClauseType, String> clauses, List<ClauseType> requiredClauses, List<ClauseType> optionalClauses) {
         this.queryType = queryType;
         this.clauses = clauses;
@@ -59,11 +48,13 @@ public class Query {
         this.optionalClauses = optionalClauses;
     }
 
-    private void setStatementValue(
-            PreparedStatement statement,
-            int index,
-            Object value
-    ) throws SQLException {
+    /**
+     * @param statement
+     * @param index
+     * @param value
+     * @throws SQLException
+     */
+    private void setStatementValue(PreparedStatement statement, int index, Object value) throws SQLException {
         if (value instanceof String) {
             statement.setString(index, (String) value);
         } else if (value instanceof Float) {
@@ -87,12 +78,14 @@ public class Query {
         }
     }
 
+    /**
+     * @param values
+     * @return
+     */
     private List<String> prepareValues(List<Object> values) {
         // prepare a list of values for use in a sql statement
         try {
-            PreparedStatement statement = database.connection.prepareStatement(
-                    String.join("~", values.stream().map(v -> "?").collect(Collectors.toList()))
-            );
+            PreparedStatement statement = database.connection.prepareStatement(String.join("~", values.stream().map(v -> "?").collect(Collectors.toList())));
             for (int i = 0; i < values.size(); i++) {
                 Object value = values.get(i);
                 if (value == null) {
@@ -108,12 +101,19 @@ public class Query {
 
     }
 
+    /**
+     * @param value
+     * @return single value for use in an SQL statement
+     */
     private String prepareValue(Object value) {
-        // prepare a single value for use in a sql statement
         return prepareValues(new ArrayList<Object>(Arrays.asList(value))).get(0);
     }
 
-    // make sure that all required clauses are present
+    /**
+     * Function to ensure that all required clauses are present.
+     *
+     * @return missing required clauses
+     */
     public ArrayList<ClauseType> missingRequiredClauses() {
         ArrayList<ClauseType> missingRequiredClauses = new ArrayList<ClauseType>();
         for (ClauseType clauseType : this.requiredClauses) {
@@ -124,6 +124,11 @@ public class Query {
         return missingRequiredClauses;
     }
 
+    /**
+     * @param database
+     * @return
+     * @throws SQLException
+     */
     public ResultSet execute(Database database) throws SQLException {
         ArrayList<ClauseType> missingRequiredClauses = this.missingRequiredClauses();
 
@@ -134,15 +139,17 @@ public class Query {
         Statement statement = database.connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
         boolean resultSet = statement.execute(this.toString());
 
-
         if (resultSet) {
             return statement.getResultSet();
         }
 
         return null;
-
     }
 
+    /**
+     * @return
+     * @throws SQLException
+     */
     public ResultSet execute() throws SQLException {
         if (this.database == null) {
             throw new SQLException("No database set");
@@ -150,6 +157,10 @@ public class Query {
         return this.execute(this.database);
     }
 
+    /**
+     * @param consumer
+     * @throws SQLException
+     */
     public void forEach(Consumer<ResultSet> consumer) throws SQLException {
         ResultSet resultSet = this.execute();
         while (resultSet.next()) {
@@ -157,18 +168,23 @@ public class Query {
         }
     }
 
+    /**
+     * @param mapper
+     * @return
+     * @throws SQLException
+     */
     public <T> ArrayList<T> map(Function<ResultSet, T> mapper) throws SQLException {
         ArrayList<T> results = new ArrayList<T>();
         ResultSet resultSet = this.execute();
-        if(!resultSet.next()) {
+        if (!resultSet.next()) {
             throw new SQLException("No results");
-        };
+        }
+        ;
         while (resultSet.next()) {
             results.add(mapper.apply(resultSet));
         }
         return results;
     }
-
 
 
     // region static methods
@@ -330,21 +346,9 @@ public class Query {
 
     public static class Select extends Query {
         public Select(String selectClause) {
-            super(
-                    QueryType.SELECT,
-                    new HashMap<ClauseType, String>() {{
-                        put(ClauseType.SELECT, selectClause);
-                    }},
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.FROM
-                    )),
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.WHERE,
-                            ClauseType.ORDER_BY,
-                            ClauseType.LIMIT,
-                            ClauseType.OFFSET
-                    ))
-            );
+            super(QueryType.SELECT, new HashMap<ClauseType, String>() {{
+                put(ClauseType.SELECT, selectClause);
+            }}, new ArrayList<ClauseType>(Arrays.asList(ClauseType.FROM)), new ArrayList<ClauseType>(Arrays.asList(ClauseType.WHERE, ClauseType.ORDER_BY, ClauseType.LIMIT, ClauseType.OFFSET)));
         }
 
         public Select(String selectClause, Database database) {
@@ -362,35 +366,16 @@ public class Query {
         }
 
         public String toString() {
-            return String.format(
-                    "SELECT %s FROM %s%s%s%s%s",
-                    this.clauses.get(ClauseType.SELECT),
-                    this.clauses.get(ClauseType.FROM),
-                    this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "",
-                    this.clauses.containsKey(ClauseType.ORDER_BY) ? " ORDER BY " + this.clauses.get(ClauseType.ORDER_BY) : "",
-                    this.clauses.containsKey(ClauseType.LIMIT) ? " LIMIT " + this.clauses.get(ClauseType.LIMIT) : "",
-                    this.clauses.containsKey(ClauseType.OFFSET) ? " OFFSET " + this.clauses.get(ClauseType.OFFSET) : ""
-            );
+            return String.format("SELECT %s FROM %s%s%s%s%s", this.clauses.get(ClauseType.SELECT), this.clauses.get(ClauseType.FROM), this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "", this.clauses.containsKey(ClauseType.ORDER_BY) ? " ORDER BY " + this.clauses.get(ClauseType.ORDER_BY) : "", this.clauses.containsKey(ClauseType.LIMIT) ? " LIMIT " + this.clauses.get(ClauseType.LIMIT) : "", this.clauses.containsKey(ClauseType.OFFSET) ? " OFFSET " + this.clauses.get(ClauseType.OFFSET) : "");
         }
 
     }
 
     public static class Insert extends Query {
         public Insert(String tableName) {
-            super(
-                    QueryType.INSERT,
-                    new HashMap<ClauseType, String>() {{
-                        put(ClauseType.TABLENAME, tableName);
-                    }},
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.TABLENAME,
-                            ClauseType.COLUMNS,
-                            ClauseType.VALUES
-                    )),
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.RETURNING
-                    ))
-            );
+            super(QueryType.INSERT, new HashMap<ClauseType, String>() {{
+                put(ClauseType.TABLENAME, tableName);
+            }}, new ArrayList<ClauseType>(Arrays.asList(ClauseType.TABLENAME, ClauseType.COLUMNS, ClauseType.VALUES)), new ArrayList<ClauseType>(Arrays.asList(ClauseType.RETURNING)));
         }
 
         public Insert(String tableName, Database database) {
@@ -399,32 +384,15 @@ public class Query {
         }
 
         public String toString() {
-            return String.format(
-                    "INSERT INTO %s (%s) VALUES (%s)%s",
-                    this.clauses.get(ClauseType.TABLENAME),
-                    this.clauses.get(ClauseType.COLUMNS),
-                    this.clauses.get(ClauseType.VALUES),
-                    this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : ""
-            );
+            return String.format("INSERT INTO %s (%s) VALUES (%s)%s", this.clauses.get(ClauseType.TABLENAME), this.clauses.get(ClauseType.COLUMNS), this.clauses.get(ClauseType.VALUES), this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : "");
         }
     }
 
     public static class Update extends Query {
         public Update(String tableName) {
-            super(
-                    QueryType.UPDATE,
-                    new HashMap<ClauseType, String>() {{
-                        put(ClauseType.TABLENAME, tableName);
-                    }},
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.TABLENAME,
-                            ClauseType.SET
-                    )),
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.WHERE,
-                            ClauseType.RETURNING
-                    ))
-            );
+            super(QueryType.UPDATE, new HashMap<ClauseType, String>() {{
+                put(ClauseType.TABLENAME, tableName);
+            }}, new ArrayList<ClauseType>(Arrays.asList(ClauseType.TABLENAME, ClauseType.SET)), new ArrayList<ClauseType>(Arrays.asList(ClauseType.WHERE, ClauseType.RETURNING)));
         }
 
         public Update(String tableName, Database database) {
@@ -448,31 +416,15 @@ public class Query {
         }
 
         public String toString() {
-            return String.format(
-                    "UPDATE %s SET %s%s%s",
-                    this.clauses.get(ClauseType.TABLENAME),
-                    this.clauses.get(ClauseType.SET),
-                    this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "",
-                    this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : ""
-            );
+            return String.format("UPDATE %s SET %s%s%s", this.clauses.get(ClauseType.TABLENAME), this.clauses.get(ClauseType.SET), this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "", this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : "");
         }
     }
 
     public static class Delete extends Query {
         public Delete(String tableName) {
-            super(
-                    QueryType.DELETE,
-                    new HashMap<ClauseType, String>() {{
-                        put(ClauseType.TABLENAME, tableName);
-                    }},
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.TABLENAME
-                    )),
-                    new ArrayList<ClauseType>(Arrays.asList(
-                            ClauseType.WHERE,
-                            ClauseType.RETURNING
-                    ))
-            );
+            super(QueryType.DELETE, new HashMap<ClauseType, String>() {{
+                put(ClauseType.TABLENAME, tableName);
+            }}, new ArrayList<ClauseType>(Arrays.asList(ClauseType.TABLENAME)), new ArrayList<ClauseType>(Arrays.asList(ClauseType.WHERE, ClauseType.RETURNING)));
         }
 
         public Delete(String tableName, Database database) {
@@ -481,12 +433,7 @@ public class Query {
         }
 
         public String toString() {
-            return String.format(
-                    "DELETE FROM %s%s%s",
-                    this.clauses.get(ClauseType.TABLENAME),
-                    this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "",
-                    this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : ""
-            );
+            return String.format("DELETE FROM %s%s%s", this.clauses.get(ClauseType.TABLENAME), this.clauses.containsKey(ClauseType.WHERE) ? " WHERE " + this.clauses.get(ClauseType.WHERE) : "", this.clauses.containsKey(ClauseType.RETURNING) ? " RETURNING " + this.clauses.get(ClauseType.RETURNING) : "");
         }
     }
 
