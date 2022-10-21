@@ -52,6 +52,9 @@ public class ManagerView {
         ManagerViewCard.add(nestedForm4.$$$getRootComponent$$$(), "AnalyticsCard");
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return Container;
     }
